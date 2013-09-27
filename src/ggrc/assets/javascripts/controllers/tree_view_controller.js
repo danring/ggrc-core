@@ -88,6 +88,7 @@ can.Control("CMS.Controllers.TreeView", {
     // In some cases, this controller is immediately replaced
     setTimeout(function() {
       if (that.element) {
+        that.element.trigger("updateCount", 0)
         that.element.trigger("loading");
         that.init_view();
         that.options.list ? that.draw_list() : that.fetch_list();

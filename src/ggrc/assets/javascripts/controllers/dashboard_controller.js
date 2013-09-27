@@ -142,6 +142,10 @@ can.Control("CMS.Controllers.Dashboard", {
 
   , " widgets_updated" : "update_inner_nav"
 
+  , " updateCount": function(el, ev, count) {
+      this.inner_nav_controller.update_widget_count($(ev.target), count);
+    }
+
   , " inner_nav_sort_updated": function(el, ev, widget_ids) {
         this.apply_widget_sort(widget_ids);
       }
@@ -387,25 +391,24 @@ can.Control("CMS.Controllers.InnerNav", {
         ;
 
       can.each(widget_elements, function(widget_element) {
-        var $widget = $(widget_element);
+        var $widget = $(widget_element)
+          , $header = $widget.find(".header h2")
+          , icon = $header.find("i").attr("class")
+          , menuItem = $header.text().trim()
+          , match = menuItem.match(/\s*(\S.*?)\s*(?:\((?:(\d+)|\.*)\))?$/)
+          , title = match[1]
+          , count = match[2]
+          ;
+
+        if (title.substr(0, 6) === "Mapped")
+          title = title.slice(6);
+
         widget_list.push({
             selector: "#" + $widget.attr("id")
-          , internav_icon: $widget.find(".header h2 i").attr("class")
-          , internav_display: function() {
-              var menuItem = $widget.find(".header").text().trim()
-              ,   first = menuItem.substring(0,6)
-              ,   last = menuItem.slice(-12)
-              ;
-
-              if (first === "Mapped") {
-                menuItem = menuItem.substr(6);
-              }
-              if (last === "and Controls") {
-                menuItem = menuItem.slice(0,-64);
-              }
-
-              return menuItem;
-            }
+          , internav_icon: icon
+          , internav_display: title
+          , count: count
+          , has_count: count != null
           , spinner : that.options.spinners["#" + $widget.attr("id")]
           });
       });
@@ -495,6 +498,21 @@ can.Control("CMS.Controllers.InnerNav", {
       }, 100);
     }
 
+  , update_widget_count : function($el, count) {
+      var widget_id = $el.closest('.widget').attr('id')
+        , i
+        ;
+
+      for (i=0; i<this.options.widget_list.length; i++) {
+        if (this.options.widget_list[i].selector === "#" + widget_id) {
+          this.options.widget_list[i].attr({
+              count: count
+            , has_count: true
+          });
+          return;
+        }
+      }
+    }
 });
 
 })(this.can, this.can.$);

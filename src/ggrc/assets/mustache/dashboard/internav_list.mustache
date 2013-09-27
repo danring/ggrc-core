@@ -1,13 +1,10 @@
 {{#widget_list}}
   <li>
-  	{{#spinner}}
-  		<span class="spinner" {{(el) -> $(new Spinner({ radius: 4, length: 7, width: 2 }).spin().el).css({left: '-15px', top: '15px', float: "right" }).prependTo(el) }}>
-    </span>
-  	{{/spinner}}
     <a href="{{ selector }}">
       <div class="oneline">
         <i class="{{ internav_icon }}"></i>
         {{ internav_display }}
+        {{#has_count}}({{count}}{{#spinner}}...{{/spinner}}){{/has_count}}
       </div>
     </a>
     <div class="drag"></div>
