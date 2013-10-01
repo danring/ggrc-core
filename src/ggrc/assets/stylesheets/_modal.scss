@@ -182,6 +182,16 @@
         }
       }
     }
+    &.multi-selector {
+      .modal-content {
+        .selector-info {
+          border-right:1px solid #777;
+          &.main-description {
+            border-right:none;
+          }
+        }
+      }
+    }
     .code {
       font-size:$f-small;
     }
