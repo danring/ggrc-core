@@ -303,11 +303,11 @@
         ul {
           background:$white;
           li {
-            .simple-link {
-              cursor: pointer;
+            a.openclose {
               .row-fluid {
                 &:hover {
-                  background: #ffffb3;
+                  background-image: none !important;
+                  background-color: #ffffb3 !important;
                 }
               }
             }
