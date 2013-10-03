@@ -230,11 +230,13 @@
       }
       .modal-content {
         .selector-holder {
-          [class*="span"] {
+          .selector-custom {
             margin-left: 0;
           }
           .span3 {
-            width: 25.63%;
+            &.selector-custom {
+              width: 25.63%;
+            }
           }
         }
         .selector-description {
@@ -310,9 +312,49 @@
                   background-color: #ffffb3 !important;
                 }
               }
+              &.active {
+                .row-fluid {
+                  background-image: none !important;
+                  background-color: #ffffb3 !important;
+                }
+                .grcicon-carot {
+                  background-position:-78px -56px;
+                  margin-left: -6px;
+                }
+              }
+              .grcicon-carot {
+                background-position: -222px -56px;
+                margin-left: -6px;
+              }
+            }
+            .owner,
+            .object-url {
+              margin-bottom: 0;
+            }
+            .show-description {
+              padding-top: 7px;
+            }
+            .tier-2-info {
+              padding-left: 10px;
+              padding-right: 10px;
+              .tier-2-info-content {
+                padding-left: 0;
+                padding-right: 0;
+              }
+              &.content-open {
+                background-color: #ffffb3;
+              }
+              .show-description {
+                font-size: 13px;
+                line-height: 18px;
+              }
             }
             .item-data {
               padding: 0 10px;
+            }
+            .selector-check {
+              float: right;
+              margin-top: 10px;
             }
           }
         }
