@@ -38,7 +38,7 @@ can.Control("CMS.Controllers.TreeView", {
   defaults : {
     model : null
     , header_view : null
-    , show_view : "/static/mustache/base_objects/tree.mustache"
+    , show_view : null
     , footer_view : null
     , parent : null
     , list : null
@@ -400,7 +400,9 @@ can.Control("CMS.Controllers.TreeViewNode", {
   defaults : {
     model : null
     , parent : null
-    , show_view : "/static/mustache/base_objects/tree.mustache"
+    , instance : null
+    , options_property : "tree_view_options"
+    , show_view : null
     , expanded : false
     , draw_children : true
     , child_options : []
@@ -432,6 +434,12 @@ can.Control("CMS.Controllers.TreeViewNode", {
   }
   , init : function(el, opts) {
     var that = this;
+    if(that.options.instance && !that.options.show_view) {
+      that.options.show_view =
+        that.options.instance.constructor[that.options.options_property].show_view
+        || that.options.model[that.options.options_property].show_view
+        || GGRC.mustache_path + "/base_objects/tree.mustache";
+    }
     this.add_child_lists_to_child();
     setTimeout(function() {
       can.view(that.options.show_view, that.options, function(frag) {
@@ -462,13 +470,6 @@ can.Control("CMS.Controllers.TreeViewNode", {
           //, "parent": that.options
           , "parent_instance": that.options.instance
         });
-        // Don't allow mapping or creating unless this is the last list
-        if (i < original_child_options.length - 1)
-          options.attr({
-            allow_mapping: false,
-            allow_creating: false,
-            allow_mapping_or_creating: false
-          });
         new_child_options.push(options);
       });
       that.options.attr("child_options", new_child_options);

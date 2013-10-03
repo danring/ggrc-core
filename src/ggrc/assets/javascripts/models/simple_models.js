@@ -869,28 +869,8 @@ can.Model.Cacheable("CMS.Models.Objective", {
     //, draw_children : true
     , start_expanded : false
     , child_options : [{
-        model : "Control"
-      , mapping : "controls"
-      , show_view : "/static/mustache/controls/tree.mustache"
-      , draw_children : false
-    }, {
-        model : "Person"
-      , mapping : "people"
-      , show_view : "/static/mustache/people/tree.mustache"
-      , draw_children : false
-    }, {
-        model : "Document"
-      , mapping : "documents"
-      , show_view : "/static/mustache/documents/tree.mustache"
-      , draw_children : false
-/*    }, {
-        model : "Section"
-      , mapping : "sections"
-      , show_view : "/static/mustache/sections/tree.mustache"
-*/    }, {
         model : can.Model.Cacheable
-      , mapping : "related_objects"
-      , show_view : GGRC.mustache_path + "/base_objects/tree.mustache"
+      , mapping : "related_and_able_objects"
       , footer_view : GGRC.mustache_path + "/base_objects/tree_footer.mustache"
       , title_plural : "Business Objects"
       , draw_children : false

@@ -85,6 +85,7 @@
         _mixins: ["personable", "documentable"] //controllable
       , related_objects: Proxy(
           null, "controllable", "ObjectControl", "control", "object_controls") //control_objects
+      , related_and_able_objects : Multi(["objectives", "implemented_controls", "related_objects", "people", "documents"])
       , related_data_assets: TypeFilter("related_objects", "DataAsset")
       , related_facilities:  TypeFilter("related_objects", "Facility")
       , related_markets:     TypeFilter("related_objects", "Market")
@@ -119,6 +120,7 @@
         _mixins: ["personable", "documentable"] //objectiveable
       , related_objects: Proxy(
           null, "objectiveable", "ObjectObjective", "objective", "objective_objects")
+      , related_and_able_objects : Multi(["controls", "objectives", "related_objects", "people", "documents"])
       , related_data_assets: TypeFilter("related_objects", "DataAsset")
       , related_facilities:  TypeFilter("related_objects", "Facility")
       , related_markets:     TypeFilter("related_objects", "Market")
@@ -138,6 +140,7 @@
         _mixins: ["personable", "documentable"] //sectionable
       , related_objects: Proxy(
           null, "sectionable", "ObjectSection", "section", "object_sections") //section_objects
+      , related_and_able_objects : Multi(["objectives", "controls", "related_objects", "people", "documents"])
       , related_data_assets: TypeFilter("related_objects", "DataAsset")
       , related_facilities:  TypeFilter("related_objects", "Facility")
       , related_markets:     TypeFilter("related_objects", "Market")
