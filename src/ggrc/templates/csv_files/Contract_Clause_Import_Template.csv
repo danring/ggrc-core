@@ -1,0 +1,13 @@
+Type,Contract Code,Regulation Title,Regulation Description,Version,Start,Stop,Kind,Audit Start,Audit Frequency,Audit Duration,Created,Updated
+Contract,{{directive_slug}},,,,,,,,,,,
+*Rows 3 and 4 are ignored on import.  We use these rows to describe the legal values for cells above and below.,"*Type and Contract Code are very important.  
+
+For Contract Clause import, Type should be ""Contract"", in cell A2.
+
+Then copy the Code from your Contract Info widget on your Contract page in gGRC to cell B2 above",,,,,,,,,,,
+* The gGRC system will generate Clause Codes if necessary but we recommend you assign Clause Codes that help you identify these as part of a specific Contract,*Clause Titles are required text fields.  You MUST fill in a title for all sections in order to import them.,"* Clause Description is an optional text field.  If you have the description available, we recommend entering it now.  Otherwise, it can be filled in later after creating your Clauses. ",* Abstract is an optional text field,"* You can link Controls to your Clauses on import by specifying the Control code.  Use <option><return> to delineate between Control Codes.
+Example:
+
+CONTROL-1
+CONTROL-2",*Ignore Created and Updated date columns for import.  These are really only useful for Exports.,,,,,,,
+Clause Code,Clause Title,Clause Description,Abstract,Controls,Created,Updated,,,,,,

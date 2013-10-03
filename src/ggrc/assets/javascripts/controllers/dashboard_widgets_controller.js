@@ -96,8 +96,18 @@ CMS.Controllers.Filterable("CMS.Controllers.DashboardWidgets", {
           controller_content.find(this.options.content_controller_selector);
 
       // Determine whether the user can read this widget
-      var options = this.options.content_controller_options;
-      options.allow_reading = Permission.is_allowed("read", (options.model && options.model.shortName) || options.model, Permission.page_context_id());
+      // FIXME: This only affects TreeView widgets and should be moved
+      var options = this.options.content_controller_options
+        , list_model_name =
+            options.model && options.model.shortName || options.model
+        , page_instance = GGRC.page_instance()
+        , page_model_name =
+            page_instance && page_instance.constructor.shortName
+        , mapping_model_name = GGRC.JoinDescriptor.join_model_name_for(
+            page_model_name, list_model_name)
+        ;
+      options.allow_reading = Permission.is_allowed(
+          "read", mapping_model_name, Permission.page_context_id());
 
       if (options.allow_reading) {
         controller_content
@@ -110,7 +120,7 @@ CMS.Controllers.Filterable("CMS.Controllers.DashboardWidgets", {
             }));
       }
       else {
-        options.footer_view = "/static/mustache/base_objects/tree_footer_no_access.mustache"
+        options.footer_view = GGRC.mustache_path + "/base_objects/tree_footer_no_access.mustache"
       }
 
       new this.options.content_controller(

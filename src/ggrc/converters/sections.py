@@ -19,11 +19,11 @@ class SectionRowConverter(BaseRowConverter):
 
   def reify(self):
     self.handle('slug', SlugColumnHandler)
-    self.handle_date('created_at', no_import = True)
-    self.handle_date('updated_at', no_import = True)
+    self.handle_date('created_at', no_import=True)
+    self.handle_date('updated_at', no_import=True)
     self.handle_text_or_html('description')
     self.handle('controls', LinkControlsHandler)
-    self.handle_raw_attr('title')
+    self.handle_raw_attr('title', is_required=True)
 
   def save_object(self, db_session, **options):
     if options.get('directive_id'):

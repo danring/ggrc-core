@@ -1,6 +1,6 @@
--set width_pcts = [8, 8, 9, 8, 9, 7, 7, 7, 7, 7, 7, 4, 4]
--set column_names = ["slug", "title", "description", "start_date", "people_responsible", "people_accountable", "controls", "sub_systems", "sub_processes", "org_groups", "documents", "network_zone", "infrastructure"]
--set header_overrides = {'slug' : "Code", 'controls' : "Controls", 'sub_systems' : "Sub Systems", 'sub_processes' : "Sub Processes", 'documents' : "References", 'people_responsible' : "People:Responsible", 'people_accountable' : "People:Accountable", 'org_groups' : "Org Groups"}
+-set width_pcts = [8, 8, 9, 8, 9, 7, 7, 7, 7, 7, 4, 4]
+-set column_names = ["slug", "title", "description", "start_date", "owner", "controls", "sub_systems", "sub_processes", "org_groups", "documents", "network_zone", "infrastructure"]
+-set header_overrides = {'slug' : "Code", 'controls' : "Controls", 'sub_systems' : "Sub Systems", 'sub_processes' : "Sub Processes", 'documents' : "References", 'owner' : 'Person of Contact', 'org_groups' : "Org Groups"}
 -set all_errors = converter.errors
 -set has_errors = converter.has_errors()
 -set all_warnings = converter.warnings

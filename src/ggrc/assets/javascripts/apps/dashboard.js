@@ -187,6 +187,18 @@ var model_descriptors = {
   */
 };
 
+var sort_by_name_email = function(list) {
+  return new list.constructor(can.makeArray(list).sort(function(a,b) {
+    a = a.person || a;
+    b = b.person || b;
+    a = can.trim(a.name) || can.trim(a.email);
+    b = can.trim(b.name) || can.trim(b.email);
+    if (a > b) return 1;
+    if (a < b) return -1;
+    return 0;
+  }));
+};
+
 var admin_list_descriptors = {
   "people" : {
       model : CMS.Models.Person
@@ -196,6 +208,7 @@ var admin_list_descriptors = {
     , object_display : "People"
     , tooltip_view : "/static/mustache/people/object_tooltip.mustache"
     , list_view : "/static/mustache/people/object_list.mustache"
+    , fetch_post_process : sort_by_name_email
   }
   , "roles" : {
     model : CMS.Models.Role
@@ -204,6 +217,7 @@ var admin_list_descriptors = {
     , object_route : "roles"
     , object_display : "Roles"
     , list_view : "/static/mustache/roles/object_list.mustache"
+    , fetch_post_process : sort_by_name_email
   }
   , "events" : {
       model : CMS.Models.Event
@@ -219,7 +233,7 @@ var admin_list_descriptors = {
     //, object_category : "governance"
     //, object_route : "authorizations"
     //, object_display : "Authorizations"
-    //, list_view : "/static/ggrc_basic_permissions/mustache/people_roles/authorizations_by_person_list.mustache"
+    //, list_view : GGRC.mustache_path + "/ggrc_basic_permissions/people_roles/authorizations_by_person_list.mustache"
     //, list_loader : authorizations_list_loader
   //}
 };
@@ -338,13 +352,14 @@ var admin_widget_descriptors = {
   , "authorizations" : {
       "content_controller": GGRC.Controllers.ListView
     , "content_controller_options": {
-        list_view: "/static/ggrc_basic_permissions/mustache/people_roles/authorizations_by_person_list.mustache"
+        list_view: GGRC.mustache_path + "/ggrc_basic_permissions/people_roles/authorizations_by_person_list.mustache"
       , list_loader: authorizations_list_loader
+      , fetch_post_process : sort_by_name_email
     }
     , "widget_id" : "authorizations_list"
     , "widget_name" : "Authorizations"
     , "widget_icon" : "authorization"
-    , extra_widget_actions_view : "/static/ggrc_basic_permissions/mustache/people_roles/authorizations_modal_actions.mustache"
+    , extra_widget_actions_view : GGRC.mustache_path + "/ggrc_basic_permissions/people_roles/authorizations_modal_actions.mustache"
   }
 };
 

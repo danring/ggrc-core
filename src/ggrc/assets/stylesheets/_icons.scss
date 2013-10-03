@@ -207,6 +207,9 @@
 .grcicon-audit-white {
   background-position:-270px -32px;
 }
+.grcicon-audit-color {
+  background-position:-270px -8px;
+}
 .grcicon-imp-exp {
   background-position:-54px -56px;
 }
@@ -320,6 +323,17 @@
 }
 .grcicon-eye-danger {
   background-position:-102px -200px;
+}
+
+.grcicon-upload {
+  background-position:-54px -344px;
+}
+
+.grcicon-person-green {
+  background-position:-30px -344px;
+}
+.grcicon-pie-chart {
+  background-position:-198px -344px;
 }
 
 // Large icons
@@ -509,6 +523,15 @@
 .grcicon-show { background-position:-222px -320px }
 .grcicon-hide { background-position:-246px -320px }
 
+.grcicon-logout-color { background-position:-150px -8px; }
+
+// events log icons
+.grcicon-mapped { background-position:-6px -56px; }
+.grcicon-unmapped { background-position:-78px -344px; }
+.grcicon-deleted { background-position:-102px -344px; }
+.grcicon-updated { background-position:-126px -344px; }
+.grcicon-created { background-position:-222px -8px; }
+
 i.short {
   margin-top:5px !important;
 }
@@ -552,6 +575,7 @@ i.short {
   .grcicon-risk-color { background-position:-198px -224px; }
   .grcicon-risky_attribute-color { background-position:-222px -224px; }
   .grcicon-audit { background-position:-270px -8px; }
+  .grcicon-audit-color { background-position:-270px -8px; }
   .grcicon-section-color { background-position:-198px -104px; }
   .grcicon-clause-color { background-position:-198px -104px; }
   .grcicon-event-color { background-position:-102px -176px; }
@@ -584,6 +608,7 @@ i.short {
       .grcicon-risk-color { background-position:-198px -248px; }
       .grcicon-risky_attribute-color { background-position:-222px -248px; }
       .grcicon-audit { background-position:-270px -32px; }
+      .grcicon-audit-color { background-position:-270px -32px; }
       .grcicon-section-color { background-position:-198px -128px; }
       .grcicon-clause-color { background-position:-198px -128px; }
       .grcicon-event-color { background-position:-198px -56px; }
@@ -621,6 +646,7 @@ i.short {
       .grcicon-risk-color { background-position:-198px -248px; }
       .grcicon-risky_attribute-color { background-position:-222px -248px; }
       .grcicon-audit { background-position:-270px -32px; }
+      .grcicon-audit-color { background-position:-270px -32px; }
       .grcicon-section-color { background-position:-198px -128px; }
       .grcicon-clause-color { background-position:-198px -128px; }
       .grcicon-event-color { background-position:-198px -56px; }

@@ -114,7 +114,7 @@
   }
 
   @mixin oneline() {
-    overflow: hidden;
+    overflow: hidden !important;
     white-space: nowrap;
     text-overflow: ellipsis;
     width:100%;

@@ -343,10 +343,13 @@ can.Control("CMS.Controllers.LHN_Search", {
         if (model_name) {
           count = search_result.getCountFor(model_name);
 
-          if (!isNaN(parseInt(count))) {
+          if (Permission.is_allowed('read', model_name, null) && !isNaN(parseInt(count))) {
             $list
               .find(self.options.count_selector)
               .text(count);
+          }
+          else {
+            $list.find(self.options.count_selector).closest('small').remove();
           }
         }
       });

@@ -1,0 +1,68 @@
+Type,Regulation Code,,,,,,,,,,,,,,,,,,,,,
+Controls,Regulation-xxxx,,,,,,,,,,,,,,,,,,,,,
+*Rows 3 and 4 are ignored on import.  We use these rows to describe the legal values for cells above and below.,"*Type and Regulation Code are very important.  
+
+For Control Import, Type should be ""Controls"", in cell A2.
+
+Then copy the Code from your Regulation Info widget on your Regulation page in gGRC to cell B2 above",,,,,,,,,,,,,,,,,,,,,
+"*The gGRC system will generate Control Codes if necessary, but we recommend you assign Control Codes that help you identify these from other Controls in the system more easily.",*Control Titles are required text fields.  You MUST fill in a title for all Controls in order to import them.,"*Control Description is an optional text field.  If you have the description available, we recommend entering it now.  Otherwise, it can be filled in later after creating your control. ","*Optional.  
+
+Can be ""Reactive"", ""Preventative"", ""Detective"", or ""Administrative"".
+","*Optional.  
+
+Can be ""Manual"", ""Manual w Segregation of Duties"", ""Automated"", ""IT - Automated ITGC"", ""Fin - IT-Supported Manual"", ""Fin - Application"", or ""Fin - Manual""",*Not yet implemented.  Ignore for now.,"*Optional.
+
+Date fields should always follow standard formats such as year/month/date in the form of xxxx/xx/xx ",,*Optional.  Enter a valid URL,"*Optional.  
+
+You can link Systems to Controls on import by specifying the System code.  Use <option><return> to delineate between System Codes.
+Example:
+
+SYSTEM-1
+SYSTEM-2","*Optional.  
+
+You can link Processes to Controls on import by specifying the Process code.  Use <option><return> to delineate between System Codes.
+Example:
+
+PROCESS-1
+PROCESS-2","*Optional.  
+
+You can assign Categories to your Controls on import by specifying the names of the Categories.  Use <option><return> to delineate between Categories and use only Categories that already exist in gGRC.
+Example:
+
+AUTHORIZATION
+TRAINING","*Optional.  
+
+You can assign Assertions to your Controls on import by specifying the names of the Assertions.  Use <option><return> to delineate between Assertions and use only Assertions that already exist in gGRC.
+Example:
+
+OCCURANCE
+UNDERSTANDABILITY","*Optional.
+This is an optional text field that lets you describe the documentation","*Optional.  
+Can be ""Continuous"", ""Ad-Hoc"", ""Semi-Annual"", ""Bi-Annual"", ""Annual"", ""Indeterminate"", ""Hourly"", ""Daily"", ""Weakly"", ""Monthly"", ""Quarterly"", or ""Transactional""","*Optional.
+Enter a valid URL for References.  Use <option><return> to delineate between multiple References.
+Example:
+
+www.reciprocitylabs.com
+reciprocitynow.com/about","*Optional.
+You can link People to Controls on import by entering their email address.  Linking people from this column will assign that person the role of ""Responsible"".  To link multiple people, use <option><return> to delineate between email addresses.
+
+Example:
+
+jeff@reciprocitylabs.com
+jeffrichm@google.com","*Optional.
+You can link People to Controls on import by entering their email address.  Linking people from this column will assign that person the role of ""Accountable"".  To link multiple people, use <option><return> to delineate between email addresses.
+
+Example:
+
+jeff@reciprocitylabs.com
+jeffrichm@google.com","*Optional.  
+Can be ""Yes"", ""True"", ""Key"" or ""1"" to result in the control being labeled as ""Key"".
+
+Can be ""No"", ""False"", Non-Key"" or ""0"" to result in control being labeled as ""Non-key""","*Optional.
+Can be ""Yes"", ""True"", or ""1"" to result in the control being labeled as ""Active"".
+
+Can be ""No"", ""False"", or ""0"" to result in control being labeled as ""Not Active"".","*Optional
+Can be ""Yes"", ""True"", or ""1"" to result in the control being labeled as Fraud Related.
+
+Can be ""No"", ""False"", or ""0"" to result in control being labeled as Not Fraud Related.",*Ignore Created and Updated date columns for import.  These are really only useful for Exports.        ,
+Control Code,Title,Description,Kind,Means,Version,Start Date,Stop Date,URL,Link:Systems,Link:Processes,Link:Categories,Link:Assertions,Documentation,Frequency,References,Link:People;Responsible,Link:People;Accountable,Key Control,Active,Fraud Related,Created,Updated

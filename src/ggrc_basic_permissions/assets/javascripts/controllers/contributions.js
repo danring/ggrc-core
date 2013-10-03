@@ -381,13 +381,13 @@
     }
 
     return {
-        base_modal_view: "/static/ggrc_basic_permissions/mustache/people_roles/base_modal.mustache"
-      , option_column_view: "/static/ggrc_basic_permissions/mustache/people_roles/option_column.mustache"
-      , option_detail_view: "/static/ggrc_basic_permissions/mustache/people_roles/option_detail.mustache"
-      , active_column_view: "/static/ggrc_basic_permissions/mustache/people_roles/active_column.mustache"
+        base_modal_view: GGRC.mustache_path + "/ggrc_basic_permissions/people_roles/base_modal.mustache"
+      , option_column_view: GGRC.mustache_path + "/ggrc_basic_permissions/people_roles/option_column.mustache"
+      , option_detail_view: GGRC.mustache_path + "/ggrc_basic_permissions/people_roles/option_detail.mustache"
+      , active_column_view: GGRC.mustache_path + "/ggrc_basic_permissions/people_roles/active_column.mustache"
 
-      , object_column_view: "/static/ggrc_basic_permissions/mustache/people_roles/object_column.mustache"
-      , object_detail_view: "/static/ggrc_basic_permissions/mustache/people_roles/object_detail.mustache"
+      , object_column_view: GGRC.mustache_path + "/ggrc_basic_permissions/people_roles/object_column.mustache"
+      , object_detail_view: GGRC.mustache_path + "/ggrc_basic_permissions/people_roles/object_detail.mustache"
 
       , new_object_title: "Person"
       , modal_title: "User Role Assignments"

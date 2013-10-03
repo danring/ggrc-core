@@ -121,6 +121,11 @@ blockquote {
   overflow: visible;
 }
 
+.tooltip {
+  // The bootstrap default is incorrect with modals as of bootstrap 2.0.x
+  z-index: 2000 !important;
+}
+
 // progress bar
 .bar {
   float:left;

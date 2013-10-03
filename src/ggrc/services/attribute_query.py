@@ -104,7 +104,6 @@ class AttributeQueryBuilder(object):
         filters.append(attr == cast(value, attr.type))
       else:
         filters.append(attr == None)
-    print filters
     return joinlist, filters, options
 
   def resolve_path_segment(self, segment, model):

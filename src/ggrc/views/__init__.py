@@ -50,6 +50,12 @@ def dashboard():
   """
   return render_template("dashboard/index.haml")
 
+def generate_query_chunks(query):
+  CHUNK_SIZE = 100
+  count = query.count()
+  for offset in range(0, count, CHUNK_SIZE):
+    yield query.order_by('id').limit(CHUNK_SIZE).offset(offset).all()
+
 @app.route("/admin/reindex", methods=["POST"])
 @login_required
 def admin_reindex():
@@ -75,9 +81,10 @@ def admin_reindex():
     query = model.query.options(
         db.undefer_group(mapper_class.__name__+'_complete'),
         )
-    for instance in query.all():
-      indexer.create_record(fts_record_for(instance), False)
-  db.session.commit()
+    for query_chunk in generate_query_chunks(query):
+      for instance in query_chunk:
+        indexer.create_record(fts_record_for(instance), False)
+      db.session.commit()
 
   return app.make_response((
     'success', 200, [('Content-Type', 'text/html')]))
@@ -141,8 +148,12 @@ def import_people():
               directive_id = "People", exception_message = file_msg)
 
     except ImportException as e:
+      if e.show_preview:
+        converter = e.converter
+        return render_template("people/import_result.haml", exception_message=e,
+            converter=converter, results=converter.objects, heading_map=converter.object_map)
       return render_template("directives/import_errors.haml",
-            directive_id = "People", exception_message = str(e))
+            directive_id="People", exception_message=str(e))
 
   return render_template("people/import.haml", import_kind = 'People')
 
@@ -188,6 +199,11 @@ def import_controls(directive_id):
               directive_id = directive_id, exception_message = file_msg)
 
     except ImportException as e:
+      if e.show_preview:
+        converter = e.converter
+        return render_template("directives/import_controls_result.haml",
+            exception_message=e, converter=converter, results=converter.objects,
+            directive_id=int(directive_id), heading_map=converter.object_map)
       return render_template("directives/import_errors.haml",
             directive_id = directive_id, exception_message = str(e))
 
@@ -221,8 +237,9 @@ def import_sections(directive_id):
           directive_id = directive_id, dry_run = dry_run)
 
         if dry_run:
-          return render_template("directives/import_result.haml",directive_id = directive_id,
-          converter = converter, results=converter.objects, heading_map = converter.object_map)
+          return render_template("directives/import_result.haml",
+              directive_id=int(directive_id), converter=converter,
+              results=converter.objects, heading_map=converter.object_map)
         else:
           count = len(converter.objects)
           flash(u'Successfully imported {} section{}'.format(count, 's' if count > 1 else ''), 'notice')
@@ -233,11 +250,23 @@ def import_sections(directive_id):
               directive_id = directive_id, exception_message = file_msg)
 
     except ImportException as e:
+      if e.show_preview:
+        converter = e.converter
+        return render_template("directives/import_result.haml", exception_message=e,
+            converter=converter, results=converter.objects,
+            directive_id=int(directive_id), heading_map=converter.object_map)
       return render_template("directives/import_errors.haml",
-            directive_id = directive_id, exception_message = str(e))
+            directive_id=int(directive_id), exception_message=e)
 
-  return render_template("directives/import.haml", directive_id = directive_id, import_kind = 'Sections')
+  return render_template("directives/import.haml", directive_id=directive_id, import_kind='Sections')
 
+@app.route("/systems/import_template", methods=['GET'])
+def system_import_template():
+  from flask import current_app
+  filename = "System_Import_Template.csv"
+  headers = [('Content-Type', 'text/csv'), ('Content-Disposition','attachment; filename="{}"'.format(filename))]
+  body = render_template("csv_files/" + filename)
+  return current_app.make_response((body, 200, headers))
 
 @app.route("/systems/import", methods=['GET', 'POST'])
 def import_systems():
@@ -257,22 +286,26 @@ def import_systems():
     try:
       if csv_file and allowed_file(csv_file.filename):
         filename = secure_filename(csv_file.filename)
-        converter = handle_csv_import(SystemsConverter, csv_file, dry_run = dry_run)
+        converter = handle_csv_import(SystemsConverter, csv_file, dry_run=dry_run)
         if dry_run:
           return render_template("systems/import_result.haml",
-            converter = converter, results=converter.objects, heading_map=converter.object_map)
+            converter=converter, results=converter.objects, heading_map=converter.object_map)
         else:
           count = len(converter.objects)
           flash(u'Successfully imported {} system{}'.format(count, 's' if count > 1 else ''), 'notice')
           return import_redirect("/admin")
       else:
         file_msg = "Could not import: invalid csv file."
-        return render_template("directives/import_errors.haml", exception_message = file_msg)
+        return render_template("directives/import_errors.haml", exception_message=file_msg)
 
     except ImportException as e:
-      return render_template("directives/import_errors.haml", exception_message = str(e))
+      if e.show_preview:
+        converter = e.converter
+        return render_template("systems/import_result.haml", exception_message=e,
+            converter=converter, results=converter.objects, heading_map=converter.object_map)
+      return render_template("directives/import_errors.haml", exception_message=e)
 
-  return render_template("systems/import.haml", import_kind = 'Systems')
+  return render_template("systems/import.haml", import_kind='Systems')
 
 def import_redirect(location):
   # The textarea here is a custom response for 'remoteipart' to
@@ -281,6 +314,13 @@ def import_redirect(location):
     '<textarea data-type="application/json" response-code="200">{0}</textarea>'.format(
       json.dumps({ 'location': location })), 200, [('Content-Type', 'text/html')]))
 
+@app.route("/processes/import_template", methods=['GET'])
+def process_import_template():
+  from flask import current_app
+  filename = "Process_Import_Template.csv"
+  headers = [('Content-Type', 'text/csv'), ('Content-Disposition','attachment; filename="{}"'.format(filename))]
+  body = render_template("csv_files/" + filename)
+  return current_app.make_response((body, 200, headers))
 
 @app.route("/processes/import", methods=['GET', 'POST'])
 def import_processes():
@@ -300,21 +340,25 @@ def import_processes():
     try:
       if csv_file and allowed_file(csv_file.filename):
         filename = secure_filename(csv_file.filename)
-        converter = handle_csv_import(SystemsConverter, csv_file, dry_run = dry_run, is_biz_process='1')
+        converter = handle_csv_import(SystemsConverter, csv_file, dry_run=dry_run, is_biz_process='1')
         if dry_run:
           return render_template("systems/import_result.haml",
-            converter = converter, results=converter.objects, heading_map=converter.object_map)
+            converter=converter, results=converter.objects, heading_map=converter.object_map)
         else:
           count = len(converter.objects)
           flash(u'Successfully imported {} process{}'.format(count, 'es' if count > 1 else ''), 'notice')
           return import_redirect("/admin")
       else:
         file_msg = "Could not import: invalid csv file."
-        return render_template("directives/import_errors.haml", exception_message = file_msg)
+        return render_template("directives/import_errors.haml", exception_message=file_msg)
     except ImportException as e:
-      return render_template("directives/import_errors.haml", exception_message = str(e))
+      if e.show_preview:
+        converter = e.converter
+        return render_template("systems/import_result.haml", exception_message=e,
+            converter=converter, results=converter.objects, heading_map=converter.object_map)
+      return render_template("directives/import_errors.haml", exception_message=e)
 
-  return render_template("systems/import.haml", import_kind = 'Processes')
+  return render_template("systems/import.haml", import_kind='Processes')
 
 @app.route("/processes/export", methods=['GET'])
 def export_processes():
@@ -377,6 +421,48 @@ def export_sections(directive_id):
   filename = "{}.csv".format(directive.slug)
   return handle_converter_csv_export(filename, directive.sections, SectionsConverter, **options)
 
+@app.route("/contracts/<directive_id>/import_sections_template", methods=['GET'])
+def import_contract_clauses_template(directive_id):
+  from flask import current_app
+  from ggrc.models.all_models import Directive
+  filename = "Contract_Clause_Import_Template.csv"
+  headers = [('Content-Type', 'text/csv'), ('Content-Disposition','attachment; filename="{}"'.format(filename))]
+  directive = Directive.query.filter_by(id=int(directive_id)).first()
+  options = {
+    # (Policy/Regulation/Contract) Code
+    'directive_slug': directive.slug,
+  }
+  body = render_template("csv_files/" + filename, **options)
+  return current_app.make_response((body, 200, headers))
+
+@app.route("/regulations/<directive_id>/import_sections_template", methods=['GET'])
+def import_regulation_sections_template(directive_id):
+  from flask import current_app
+  from ggrc.models.all_models import Directive
+  filename = "Regulation_Section_Import_Template.csv"
+  headers = [('Content-Type', 'text/csv'), ('Content-Disposition','attachment; filename="{}"'.format(filename))]
+  directive = Directive.query.filter_by(id=int(directive_id)).first()
+  options = {
+    'directive_slug': directive.slug,
+  }
+  body = render_template("csv_files/" + filename, **options)
+  return current_app.make_response((body, 200, headers))
+
+
+@app.route("/policies/<directive_id>/import_sections_template", methods=['GET'])
+def import_policy_sections_template(directive_id):
+  from flask import current_app
+  from ggrc.models.all_models import Directive
+  filename = "Policy_Section_Import_Template.csv"
+  headers = [('Content-Type', 'text/csv'), ('Content-Disposition','attachment; filename="{}"'.format(filename))]
+  directive = Directive.query.filter_by(id=int(directive_id)).first()
+  options = {
+    'directive_slug': directive.slug,
+  }
+  body = render_template("csv_files/" + filename, **options)
+  return current_app.make_response((body, 200, headers))
+
+
 @app.route("/regulations/<directive_id>/export_controls", methods=['GET'])
 @app.route("/policies/<directive_id>/export_controls", methods=['GET'])
 @app.route("/contracts/<directive_id>/export_controls", methods=['GET'])
@@ -396,6 +482,23 @@ def export_controls(directive_id):
     controls = directive.controls
   options['export'] = True
   return handle_converter_csv_export(filename, controls, ControlsConverter, **options)
+
+@app.route("/regulations/<directive_id>/import_controls_template", methods=['GET'])
+@app.route("/policies/<directive_id>/import_controls_template", methods=['GET'])
+@app.route("/policies/<directive_id>/import_controls_template", methods=['GET'])
+def import_controls_template(directive_id):
+  from flask import current_app
+  from ggrc.models.all_models import Directive
+  filename = "Control_Import_Template.csv"
+  headers = [('Content-Type', 'text/csv'), ('Content-Disposition','attachment; filename="{}"'.format(filename))]
+  directive = Directive.query.filter_by(id=int(directive_id)).first()
+  options = {
+    # (Policy/Regulation/Contract) Code
+    'directive_kind': directive.meta_kind,
+    'directive_slug': directive.slug,
+  }
+  body = render_template("csv_files/" + filename, **options)
+  return current_app.make_response((body, 200, headers))
 
 ViewEntry = namedtuple('ViewEntry', 'url model_class service_class')
 

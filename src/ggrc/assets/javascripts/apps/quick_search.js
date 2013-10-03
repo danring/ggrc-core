@@ -470,6 +470,16 @@ $(function() {
     }
     
     resize_areas();  
+
+    CMS.Models.DisplayPrefs.findAll().done(function(prefs) {
+      prefs[0].setCollapsed(null, "lhs", $lhs.hasClass("lhs-closed"));
+    })
+  });
+
+  // Collapse the LHN if they did it on a previous page
+  CMS.Models.DisplayPrefs.findAll().done(function(prefs) {
+    var collapsed = prefs[0].getCollapsed(null, "lhs");
+    collapsed && $(".bar-v").trigger('click');
   });
 
   $(document.body).on("click", ".lhs-closed", function(ev) {
