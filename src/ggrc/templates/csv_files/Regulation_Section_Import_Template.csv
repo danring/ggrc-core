@@ -1,0 +1,13 @@
+Type,Regulation Code,Regulation Title,Regulation Description,Version,Start,Stop,Kind,Audit Start,Audit Frequency,Audit Duration,Created,Updated
+Regulation,{{directive_slug}},,,,,,,,,,,
+*Rows 3 and 4 are ignored on import.  We use these rows to describe the legal values for cells above and below.,"*Type and Regulation Code are very important.  
+
+For Regulation Section import, Type should be ""Regulation"", in cell A2.
+
+Then copy the Code from your Regulation Info widget on your Regulation page in gGRC to cell B2 above",,,,,,,,,,,
+* The gGRC system will generate Section Codes if necessary but we recommend you assign Section Codes that help you identify these as part of a specific regulation,*Section Titles are required text fields.  You MUST fill in a title for all sections in order to import them.,"* Section Description is an optional text field.  If you have the description available, we recommend entering it now.  Otherwise, it can be filled in later after creating your Sections. ",* Abstract is an optional text field,"* You can link Controls to Sections on import by specifying the Control code.  Use <option><return> to delineate between Control Codes.
+Example:
+
+CONTROL-1
+CONTROL-2",*Ignore Created and Updated date columns for import.  These are really only useful for Exports.,,,,,,,
+Section Code,Section Title,Section Description,Abstract,Controls,Created,Updated,,,,,,

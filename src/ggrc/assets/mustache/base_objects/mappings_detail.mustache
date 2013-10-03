@@ -1,4 +1,4 @@
-{{#if_result_has_extended_mappings result parent_instance}}
+{{#if_result_has_extended_mappings result.bindings_compute parent_instance}}
 <div class="row-fluid">
   This {{instance.constructor.title_singular}} is mapped to
   {{#each_with_extras_as "binding" result.bindings_compute}}

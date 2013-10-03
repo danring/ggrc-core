@@ -48,6 +48,7 @@ can.Control("CMS.Controllers.TreeView", {
     , draw_children : true
     , find_function : null
     , options_property : "tree_view_options"
+    , allow_reading : true
     , allow_mapping : true
     , allow_creating : true
     , child_options : [] //this is how we can make nested configs. if you want to use an existing 
@@ -91,7 +92,8 @@ can.Control("CMS.Controllers.TreeView", {
         that.element.trigger("updateCount", 0)
         that.element.trigger("loading");
         that.init_view();
-        that.options.list ? that.draw_list() : that.fetch_list();
+        if (that.options.allow_reading)
+          that.options.list ? that.draw_list() : that.fetch_list();
       }
     }, 100);
 

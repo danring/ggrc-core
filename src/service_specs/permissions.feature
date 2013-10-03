@@ -326,6 +326,10 @@ Feature: RBAC Permissions enforcement for REST API
             {{context.context1.value['context']['id']}},
             {{context.context2.value['context']['id']}}
           ],
+          "ProgramDirective": [
+            {{context.context1.value['context']['id']}},
+            {{context.context2.value['context']['id']}}
+          ],
           "Program": [
             {{context.context1.value['context']['id']}},
             {{context.context2.value['context']['id']}}
@@ -333,6 +337,10 @@ Feature: RBAC Permissions enforcement for REST API
         },
         "read": {
           "Contract": [
+            {{context.context1.value['context']['id']}},
+            {{context.context2.value['context']['id']}}
+          ],
+          "ProgramDirective": [
             {{context.context1.value['context']['id']}},
             {{context.context2.value['context']['id']}}
           ],
@@ -359,10 +367,18 @@ Feature: RBAC Permissions enforcement for REST API
     And "directive_in_2" link property "context" is "context2"
     And "directive_in_2" is POSTed to its collection
     And a new "Program" named "program"
-    And "directive_in_1" is added to links property "directives" of "program"
-    And "directive_in_2" is added to links property "directives" of "program"
     And "program" link property "context" is "context1"
     And "program" is POSTed to its collection
+    And a new "ProgramDirective" named "program_directive_1"
+    And "program_directive_1" link property "directive" is "directive_in_1"
+    And "program_directive_1" link property "context" is "context1"
+    And "program_directive_1" link property "program" is "program"
+    And "program_directive_1" is POSTed to its collection
+    And a new "ProgramDirective" named "program_directive_2"
+    And "program_directive_2" link property "directive" is "directive_in_2"
+    And "program_directive_2" link property "context" is "context2"
+    And "program_directive_2" link property "program" is "program"
+    And "program_directive_2" is POSTed to its collection
     When Querying "Program" with "program_directives.directive.kind=Contract&__include=directives"
     Then query result selfLink query string is "program_directives.directive.kind=Contract&__include=directives"
     And "program" is in query result
@@ -380,6 +396,9 @@ Feature: RBAC Permissions enforcement for REST API
         },
         "read": {
           "Contract": [
+            {{context.context1.value['context']['id']}}
+          ],
+          "ProgramDirective": [
             {{context.context1.value['context']['id']}}
           ],
           "Program": [
@@ -406,6 +425,9 @@ Feature: RBAC Permissions enforcement for REST API
       "permissions": {
         "read": {
           "Contract": [333],
+          "ProgramDirective": [
+            {{context.context1.value['context']['id']}}
+          ],
           "Program": [
             {{context.context1.value['context']['id']}}
           ]

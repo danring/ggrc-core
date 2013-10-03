@@ -181,6 +181,7 @@ class ColumnHandler(object):
   def __init__(self, importer, key, **options):
     options.setdefault('no_import', False)
     self.importer = importer
+    self.base_importer = importer.importer
     self.key = key
     self.options = options
 
@@ -213,7 +214,11 @@ class ColumnHandler(object):
     return value
 
   def validate(self, data):
-    pass
+    if self.options.get('is_required') and data in ("", None):
+      obj_map = self.base_importer.object_map
+      missing_column = self.base_importer.get_header_for_column(
+                        self.base_importer.object_map, self.key)
+      self.add_error("{} is required.".format(missing_column))
 
   def do_import(self, content):
     self.original = content
@@ -221,7 +226,7 @@ class ColumnHandler(object):
       self.go_import(content)
 
   def go_import(self, content):
-    if content or content == '':
+    if content is not None:
       data = self.parse_item(content)
       self.validate(data)
       if data is not None:
@@ -239,18 +244,52 @@ class TextOrHtmlColumnHandler(ColumnHandler):
   def parse_item(self, value):
     if value:
       value = value.strip()
-      if not isinstance(value, unicode):
-        value = value.encode('utf-8')
-        value = unicode(value, 'utf-8')
-
-    is_email = self.options.get('is_email')
-    if is_email and value == '':
-      self.add_error("A valid email address is required.")
-    elif is_email and not re.match(Person.EMAIL_RE_STRING, value):
-      self.add_error("{} is not a valid email. \
-                  Please use following format: janedoe@example.com".format(value))
-
     return value or ''
+
+class ContactEmailHandler(ColumnHandler):
+
+  def parse_item(self, value):
+    value = value.strip()
+    is_required = self.options.get('is_required')
+    person_must_exist = self.options.get('person_must_exist')
+
+    if is_required and not value:
+      self.add_error("A valid email address is required")
+    elif person_must_exist:
+      value = self.find_contact(value, is_required=is_required)
+    elif value and not re.match(Person.EMAIL_RE_STRING, value):
+      message = "{} is not a valid email. \
+                Plerse use following format: user@example.com".format(value)
+      self.add_error(message) if is_required else self.add_warning(message)
+    return value
+
+  def find_contact(self, email_str, is_required=False):
+    from ggrc.models.person import Person
+
+    existing_person = Person.query.filter_by(email=email_str).first()
+    if not existing_person and is_required:
+      self.add_error("{} was not found. Please enter a valid email address"
+                     .format(email_str))
+    elif not existing_person and email_str:
+      self.add_warning("{} was not found and will not be entered"
+                       .format(email_str))
+    return existing_person
+
+  def display(self):
+    value = getattr(self.importer.obj, self.key, '') or ''
+    # In the case import was used to add a person of contact
+    if type(value) is Person:
+      return value.email
+    return value if value != 'null' else ''
+
+  def export(self):
+    attr = getattr(self.importer.obj, self.key, '') or ''
+    if type(attr) is Person:
+      return attr.email
+    return attr
+
+  def validate(self, data):
+    pass
 
 class SlugColumnHandler(ColumnHandler):
 
@@ -258,10 +297,10 @@ class SlugColumnHandler(ColumnHandler):
   def go_import(self, content):
     if content:
       self.value = content
-      if self.value in self.importer.importer.get_slugs():
+      if self.value in self.base_importer.get_slugs():
         self.add_error('Slug Code is duplicated in CSV')
       else:
-        self.importer.importer.add_slug_to_slugs(self.value)
+        self.base_importer.add_slug_to_slugs(self.value)
       self.validate(content)
     else:
       self.add_error('Code is required')
@@ -273,11 +312,16 @@ class OptionColumnHandler(ColumnHandler):
   def parse_item(self, value):
     if value:
       role = self.options.get('role') or self.key
-      option = Option.query.filter_by(role = role.lower(), title = value.lower()).first()
-      if not option:
+      option = Option.query.filter_by(role=role.lower(), title=value.lower()).first()
+      if not option and self.key != 'network_zone':
         self.warnings.append(
           'Unknown "{}" option "{}" -- create this option from the Admin Dashboard'.format(
             role, value.lower()))
+      elif not option and self.key == "network_zone":
+        self.warnings.append(
+          "{} is an illegal value. 'prod' or 'corp' are legal values. If you "
+          "proceed with import, the current data will be ignored.".format(
+          value.lower()))
       return option
 
   def display(self):
@@ -418,7 +462,8 @@ class LinksHandler(ColumnHandler):
       self.link_index = i
       self.link_values[self.link_index] = value
       data = self.parse_item(value)
-      if not data: next
+      if not data:
+        next
 
       linked_object = self.find_existing_item(data)
 
@@ -462,11 +507,11 @@ class LinksHandler(ColumnHandler):
 
   def create_item(self, data):
     where_params = self.get_where_params(data)
-    obj = self.importer.importer.find_object(self.model_class, where_params.get('slug'))
+    obj = self.base_importer.find_object(self.model_class, where_params.get('slug'))
     if not obj and data:
       create_params = self.get_create_params(data)
       obj = self.create_with_params(self.model_class, **create_params)
-      self.importer.importer.add_object(self.model_class, where_params.get('slug'), obj)
+      self.base_importer.add_object(self.model_class, where_params.get('slug'), obj)
 
     if data:
       self.create_item_warnings(obj, data)
@@ -712,7 +757,6 @@ class LinkRelationshipsHandler(LinksHandler):
       where_params['source_type'] = model_class.__name__
       relationships = Relationship.query.filter_by(**where_params).all()
       objects = [rel.source for rel in relationships]
-
     return objects
 
   def model_human_name(self):

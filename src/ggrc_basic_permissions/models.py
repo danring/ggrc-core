@@ -26,6 +26,7 @@ class Role(Base, Described, db.Model):
 
   name = db.Column(db.String(128), nullable=False)
   permissions_json = db.Column(db.Text(), nullable=False)
+  scope = db.Column(db.String(64), nullable=False)
 
   @simple_property
   def permissions(self):
@@ -40,7 +41,7 @@ class Role(Base, Described, db.Model):
   def permissions(self, value):
     self.permissions_json = json.dumps(value)
 
-  _publish_attrs = ['name', 'permissions']
+  _publish_attrs = ['name', 'permissions', 'scope']
 
   @classmethod
   def eager_query(cls):

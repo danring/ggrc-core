@@ -8,6 +8,6 @@
     %h4
       -if exception_message is defined
         %b
-          =exception_message
+          =exception_message.__str__()
       -else
         =default_message

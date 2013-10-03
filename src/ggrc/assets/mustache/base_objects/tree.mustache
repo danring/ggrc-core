@@ -3,7 +3,7 @@
     <div class="item-main" {{#instance}}{{data 'model'}}{{/instance}}>
       <a href="javascript://" class="openclose">
         <div class="row-fluid">
-          <div class="span11">
+          <div class="span10">
             <div class="item-data">
               <div class="tree-title-area">
                 <i class="grcicon-{{instance.constructor.table_singular}}-color"></i>
@@ -14,6 +14,15 @@
                   {{{firstnonempty instance.description_inline ''}}}
                 {{/instance.title}}
               </div>
+            </div>
+          </div>
+          <div class="span1">
+            <div class="counter">
+              {{#instance}}
+                {{#is_private}}
+                <i class="grcicon-private"></i>
+                {{/is_private}}
+              {{/instance}}
             </div>
           </div>
           <div class="span1">

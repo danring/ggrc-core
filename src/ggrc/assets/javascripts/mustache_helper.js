@@ -940,22 +940,28 @@ Mustache.registerHelper("unmap_or_delete", function(instance, mappings) {
         return "Delete"
     }
     else
-      return "Unmap and Delete"
+      return "Unmap" // "Unmap and Delete"
   } else
     return "Unmap"
 });
 
-Mustache.registerHelper("if_result_has_extended_mappings", function(result, parent_instance, options) {
+Mustache.registerHelper("if_result_has_extended_mappings", function(
+    bindings, parent_instance, options) {
   //  Render the `true` / `fn` block if the `result` exists (in this list)
   //  due to mappings other than directly to the `parent_instance`.  Otherwise
   //  Render the `false` / `inverse` block.
-  result = Mustache.resolve(result);
+  bindings = Mustache.resolve(bindings);
+  bindings = resolve_computed(bindings);
   parent_instance = Mustache.resolve(parent_instance);
-  var has_extended_mappings = false;
-  result.walk_instances(function(instance, result, depth) {
-    if (depth === 1 && result.binding.instance !== parent_instance)
+  var has_extended_mappings = false
+    , i
+    ;
+
+  for (i=0; i<bindings.length; i++) {
+    if (bindings[i].instance !== parent_instance)
       has_extended_mappings = true;
-  });
+  }
+
   if (has_extended_mappings)
     return options.fn(options.contexts);
   else
@@ -1036,7 +1042,7 @@ Mustache.registerHelper("is_allowed", function() {
     , args = Array.prototype.slice.call(arguments, 0)
     , actions = []
     , resource_type = allowed_page && allowed_page.constructor.shortName
-    , context_id = allowed_page && allowed_page.context && allowed_page.context.id
+    , context_id = (allowed_page && allowed_page.context && allowed_page.context.id) || null
     , options = args[args.length-1]
     , passed = true
     ;
@@ -1062,6 +1068,9 @@ Mustache.registerHelper("is_allowed", function() {
       }
     }
   });
+  if (options.hash && typeof options.hash.context !== undefined && !options.hash.context) {
+    context_id = null;
+  }
   actions = actions.length ? actions : allowed_actions;
 
   // Check permissions
@@ -1082,7 +1091,7 @@ Mustache.registerHelper("is_allowed", function() {
     ;
 });
 
-Mustache.registerHelper("is_allowed_for_all", function(action, instances, options) {
+Mustache.registerHelper("is_allowed_all", function(action, instances, options) {
   var passed = true;
 
   action = resolve_computed(action);

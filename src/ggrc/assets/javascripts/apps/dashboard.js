@@ -187,6 +187,18 @@ var model_descriptors = {
   */
 };
 
+var sort_by_name_email = function(list) {
+  return new list.constructor(can.makeArray(list).sort(function(a,b) {
+    a = a.person || a;
+    b = b.person || b;
+    a = can.trim(a.name) || can.trim(a.email);
+    b = can.trim(b.name) || can.trim(b.email);
+    if (a > b) return 1;
+    if (a < b) return -1;
+    return 0;
+  }));
+};
+
 var admin_list_descriptors = {
   "people" : {
       model : CMS.Models.Person
@@ -196,6 +208,7 @@ var admin_list_descriptors = {
     , object_display : "People"
     , tooltip_view : "/static/mustache/people/object_tooltip.mustache"
     , list_view : "/static/mustache/people/object_list.mustache"
+    , fetch_post_process : sort_by_name_email
   }
   , "roles" : {
     model : CMS.Models.Role
@@ -204,6 +217,7 @@ var admin_list_descriptors = {
     , object_route : "roles"
     , object_display : "Roles"
     , list_view : "/static/mustache/roles/object_list.mustache"
+    , fetch_post_process : sort_by_name_email
   }
   , "events" : {
       model : CMS.Models.Event
@@ -213,7 +227,82 @@ var admin_list_descriptors = {
     , object_display : "Events"
     , list_view : "/static/mustache/events/object_list.mustache"
   }
+  //, "authorizations" : {
+      //model : CMS.Models.UserRole
+    //, object_type : "user-role"
+    //, object_category : "governance"
+    //, object_route : "authorizations"
+    //, object_display : "Authorizations"
+    //, list_view : GGRC.mustache_path + "/ggrc_basic_permissions/people_roles/authorizations_by_person_list.mustache"
+    //, list_loader : authorizations_list_loader
+  //}
 };
+
+function collated_user_roles_by_person(user_roles) {
+  var person_roles = new can.Observe.List([])
+    , refresh_queue = new RefreshQueue()
+    ;
+
+  function insert_user_role(user_role) {
+    var found = false;
+    can.each(person_roles, function(data, index) {
+      if (user_role.person.id == data.person.id) {
+        person_roles.attr(index).attr('roles').push(user_role.role.reify());
+        refresh_queue.enqueue(user_role.role);
+        found = true;
+      }
+    });
+    if (!found) {
+      person_roles.push({
+        person: user_role.person.reify(),
+        roles: [user_role.role.reify()]
+      });
+      refresh_queue.enqueue(user_role.person);
+      refresh_queue.enqueue(user_role.role);
+    }
+  }
+
+  function remove_user_role(user_role) {
+    var roles, role_index
+      , person_index_to_remove = null
+      ;
+
+    can.each(person_roles, function(data, index) {
+      if (user_role.person.id == data.person.id) {
+        roles = person_roles.attr(index).attr('roles');
+        role_index = roles.indexOf(user_role.role.reify());
+        if (role_index > -1) {
+          roles.splice(role_index, 1);
+          if (roles.length == 0)
+            person_index_to_remove = index;
+        }
+      }
+    });
+    if (person_index_to_remove)
+      person_roles.splice(person_index_to_remove, 1);
+  }
+
+  CMS.Models.UserRole.bind("created", function(ev, user_role) {
+    if (user_role.constructor == CMS.Models.UserRole)
+      insert_user_role(user_role);
+  });
+  CMS.Models.UserRole.bind("destroyed", function(ev, user_role) {
+    if (user_role.constructor == CMS.Models.UserRole)
+      remove_user_role(user_role);
+  });
+
+  can.each(user_roles.reverse(), function(user_role) {
+    insert_user_role(user_role);
+  });
+
+  return refresh_queue.trigger().then(function() { return person_roles });
+}
+
+function authorizations_list_loader() {
+  return CMS.Models.UserRole
+    .findAll({ context_id: null })
+    .then(collated_user_roles_by_person);
+}
 
 var admin_widget_descriptors = {
   "people" : {
@@ -260,7 +349,36 @@ var admin_widget_descriptors = {
       return "";
     }
   }
+  , "authorizations" : {
+      "content_controller": GGRC.Controllers.ListView
+    , "content_controller_options": {
+        list_view: GGRC.mustache_path + "/ggrc_basic_permissions/people_roles/authorizations_by_person_list.mustache"
+      , list_loader: authorizations_list_loader
+      , fetch_post_process : sort_by_name_email
+    }
+    , "widget_id" : "authorizations_list"
+    , "widget_name" : "Authorizations"
+    , "widget_icon" : "authorization"
+    , extra_widget_actions_view : GGRC.mustache_path + "/ggrc_basic_permissions/people_roles/authorizations_modal_actions.mustache"
+  }
 };
+
+if (/admin\/\d+/.test(window.location)) {
+  var widget_ids = [
+        'authorizations'
+      ]
+
+  if (!GGRC.extra_widget_descriptors)
+    GGRC.extra_widget_descriptors = {};
+  $.extend(GGRC.extra_widget_descriptors, program_widget_descriptors);
+
+  if (!GGRC.extra_default_widgets)
+    GGRC.extra_default_widgets = [];
+  GGRC.extra_default_widgets.push.apply(
+      GGRC.extra_default_widgets, widget_ids);
+}
+
+
 
 dashboard_menu_spec = [
   { title : "Governance / Compliance"
@@ -278,7 +396,7 @@ dashboard_menu_spec = [
 //function make_admin_menu(widget_descriptors) {
 var admin_menu_spec = [
   { title : "Admin"
-  , objects: [ "roles", "events", "people" ]
+  , objects: [ "roles", "events", "people", "authorizations" ]
   }
 ]
 
@@ -343,7 +461,7 @@ $(function() {
       $area.cms_controllers_dashboard({
           widget_descriptors: admin_widget_descriptors
         , menu_tree_spec: admin_menu_spec
-        , default_widgets : ["people", "roles", "events"]
+        , default_widgets : ["people", "roles", "events", "authorizations"]
       });
     } else {
       $area.cms_controllers_dashboard({ model_descriptors: [] });

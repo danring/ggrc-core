@@ -1,6 +1,6 @@
--set width_pcts = [5, 5, 10, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 3, 3, 3]
--set column_names = ["slug", "title", "description", "kind", "means", "start_date", "end_date", "url", "systems", "processes", "categories", "assertions","documentation_description", "verify_frequency", "documents", "people_responsible", "people_accountable", "key_control", "active", "fraud_related"]
--set header_overrides = { "documents" : "References", "systems" : "Systems", "processes" : "Processes", "categories" : "Categories","assertions" : "Assertions", "people_responsible" : "People:Responsible", "people_accountable" : "People:Accountable" }
+-set width_pcts = [5, 5, 10, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 3, 3, 3]
+-set column_names = ["slug", "title", "description", "kind", "means", "start_date", "end_date", "url", "systems", "processes", "categories", "assertions","documentation_description", "verify_frequency", "documents", "owner", "key_control", "active", "fraud_related"]
+-set header_overrides = { "documents" : "References", "systems" : "Systems", "processes" : "Processes", "categories" : "Categories","assertions" : "Assertions", "owner" : "Person of Contact" }
 -set all_errors = converter.errors
 -set has_errors = converter.has_errors()
 -set all_warnings = converter.warnings

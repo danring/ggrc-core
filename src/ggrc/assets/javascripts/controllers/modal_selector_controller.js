@@ -1190,14 +1190,13 @@
         , extra_options = modal_descriptor_view_options[option_model_name]
         ;
 
-      /*if (option_descriptors[option_model_name])
-        console.debug(
-            "Found duplicate option descriptors for"
-          , option_model_name
-          , join_descriptors);*/
-
       if (!option_set.default_option_descriptor)
         option_set.default_option_descriptor = option_model_name;
+
+      //  If we have duplicate options, we want to use the first, so return
+      //    early.
+      if (option_descriptors[option_model_name])
+        return;
 
       if (!extra_options)
         extra_options = {

@@ -103,6 +103,7 @@ dashboard-js-template-files:
   - base_objects/page_header.mustache
   - base_objects/search_result.mustache
   - base_objects/tree.mustache
+  - base_objects/tree_footer_no_access.mustache
   - contracts/modal_content.mustache
   - controls/categories_tree.mustache
   - controls/list_popover.mustache

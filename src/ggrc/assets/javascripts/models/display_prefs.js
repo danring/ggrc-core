@@ -89,18 +89,18 @@ can.Model.LocalStorage("CMS.Models.DisplayPrefs", {
 
   // collapsed state
   // widgets on a page may be collapsed such that only the title bar is visible.
+  // if page_id === null, this is a global value
   , setCollapsed : function(page_id, widget_id, is_collapsed) {
-
-    this.makeObject(path, COLLAPSE).attr(widget_id, is_collapsed);
+    this.makeObject(page_id === null ? page_id : path, COLLAPSE).attr(widget_id, is_collapsed);
 
     this.autoupdate && this.save();
     return this;
   }
 
   , getCollapsed : function(page_id, widget_id) {
-    var collapsed = this.getObject(path, COLLAPSE);
+    var collapsed = this.getObject(page_id === null ? page_id : path, COLLAPSE);
     if(!collapsed) {
-      collapsed = this.makeObject(path, COLLAPSE).attr(this.makeObject(COLLAPSE, page_id).serialize());
+      collapsed = this.makeObject(page_id === null ? page_id : path, COLLAPSE).attr(this.makeObject(COLLAPSE, page_id).serialize());
     }
 
     return widget_id ? collapsed.attr(widget_id) : collapsed;

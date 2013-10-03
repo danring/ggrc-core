@@ -1,27 +1,71 @@
 {{! dashboard object listing}}
-<ul class="tree-structure new-tree">
+<!--
+<div class="advanced-filters">
+  <div class="row-fluid">
+    <div class="span3">
+      <select class="input-block-level">
+        <option>Show All Events</option>
+        <option>Mappings</option>
+        <option>Unmappings</option>
+        <option>Updates</option>
+        <option>Creations</option>
+        <option>Deletions</option>
+      </select>
+    </div>
+    <div class="span5">
+      <ul class="filter-date-range">
+        <li>
+          <span>Date Range:</span>
+        </li>
+        <li>
+          <input class="input-small date" name="filter_start_date" data-toggle="datepicker" data-before="filter_end_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date filter_start_date}}"> - 
+        </li>
+        <li>
+          <input class="input-small date" name="filter_end_date" data-toggle="datepicker" data-after="filter_start_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date filter_end_date}}">
+        </li>
+      </ul>
+    </div>
+    <div class="span4">
+      <div class="objective-selector">
+        {{#using owner=owner}}
+        <input type="text" name="owner.email" data-lookup="Person" class="span9 audit-selector" value="{{firstnonempty owner.email ''}}">
+        <i class="grcicon-person-green"></i>
+        {{/using}}
+      </div>
+    </div>
+  </div>
+</div>
+-->
+<ul class="tree-structure new-tree event-tree">
   {{#list}}
     <li class="tree-item {{resource_type.toLowerCase}}" data-model="true" {{data 'model'}}>
-      <div class="simple-link">
+      <div class="item-main" {{#instance}}{{data 'model'}}{{/instance}}>
         <div class="row-fluid">
           <div class="span12">
             <div class="item-data">
               <div class="tree-title-area">
-                <i class="grcicon-{{resource_type.toLowerCase}}-color" rel="tooltip" title="{{resource_type}}"></i>
-                {{#revisions}}
-                  <strong>
-                    {{firstnonempty description display_name}};
-                  </strong>
-                {{/revisions}}
-                <span class="event-owner">
-                  by
-                  {{#modified_by}}
-                    {{email}}
-                  {{/modified_by}}
-                </span>
-                <span class="event-time">
-                  on {{date created_at}}
-                </span>
+                <ul>
+                  {{#revisions}}
+                  <li>
+                    <strong>
+                      {{firstnonempty description display_name}}
+                    </strong>
+                  </li>
+                  {{/revisions}}
+                  <li>
+                    <span class="event-owner">
+                      by
+                      {{#modified_by}}
+                        {{email}}
+                      {{/modified_by}}
+                    </span>
+                  </li>
+                  <li>
+                    <span class="event-time">
+                      on {{date created_at}}
+                    </span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>

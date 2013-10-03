@@ -5,7 +5,7 @@
 
 """Manage "static" assets
 
-The actual list of stylesheets and javascripts to compile is in 
+The actual list of stylesheets and javascripts to compile is in
 `assets/assets.yaml`.
 
 When developing, you can use `webassets` to automatically recompile changed
@@ -84,6 +84,12 @@ for module_load_base in module_load_paths:
         for load_suffix in _per_module_load_suffixes]
   environment.load_path.extend(module_load_paths)
 
+def path_without_assets_base(path):
+  steps = path.split(os.path.sep)
+  if len(steps) > 3 and steps[1] == 'assets' and steps[2] == 'mustache':
+    return os.path.join(*steps[3:])
+  return path
+
 from webassets.filter.jst import JSTemplateFilter
 class MustacheFilter(JSTemplateFilter):
   """
@@ -103,6 +109,7 @@ class MustacheFilter(JSTemplateFilter):
         .format('{}', namespace=namespace))
 
     for name, hunk in self.iter_templates_with_base(hunks):
+      name = path_without_assets_base(name)
       contents = hunk.data().replace('\n', '\\n').replace("'", r"\'")
       out.write("{namespace}['{name}']"
           .format(namespace=namespace, name=name))

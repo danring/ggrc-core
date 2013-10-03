@@ -5,11 +5,18 @@
     <div class="item-main" {{data 'model'}}>
       <a href="javascript://" class="openclose">
         <div class="row-fluid">
-          <div class="span11">
+          <div class="span10">
             <div class="item-data">
               <div class="tree-title-area">
                 {{title}}
               </div>
+            </div>
+          </div>
+          <div class="span1">
+            <div class="counter">
+              {{#is_private}}
+                <i class="grcicon-private"></i>
+              {{/is_private}}
             </div>
           </div>
           <div class="span1">
@@ -82,41 +89,49 @@
   </li>
 {{/list}}
 </ul>
-<ul class="new-tree">
-  <li class="tree-item tree-item-add">
-    {{#is_related}}
-    <a
-      href="javascript://"
-      rel="tooltip"
-      data-placement="left"
-      data-toggle="modal-relationship-selector"
-      data-modal-class="modal-wide"
-      data-modal-reset="reset"
-      data-original-title="Map {{model.title_singular}} to this {{parent_instance.constructor.shortName}}"
-      data-related-model="{{model.model_singular}}"
-      data-related-title-singular="{{model.title_singular}}"
-      data-related-title-plural="{{model.title_plural}}"
-      data-related-side="source" {{! FIXME This should depend on relationship type }}
-      data-related-table-plural="{{model.table_plural}}"
-      data-related-model-singular="{{model.model_singular}}"
-      data-relationship-type="" {{! FIXME This should be a real relationship type }}
-      data-tab-target="#related-objects-{{find_params.relationship_type_id}}">
-      + {{model.title_singular}} {{find_params.relationship_type_id}}
-    </a>
-    {{/is_related}}
-    {{^is_related}}
-    <a
-      href="javascript://"
-      rel="tooltip"
-      data-placement="left"
-      data-toggle="modal-ajax-form"
-      data-object-plural="{{model.model_plural.toLowerCase}}"
-      data-object-singular="{{model.model_singular}}"
-      data-modal-class="modal-wide"
-      data-modal-reset="reset"
-      data-original-title="Create New {{model.title_singular.toLowerCase}}">
-      + {{model.title_singular}}
-    </a>
-    {{/is_related}}
-  </li>
-</ul>
+{{#is_allowed_to_map parent_instance.constructor.shortName model.title_singular}}
+  {{#is_related}}
+    <ul class="new-tree">
+      <li class="tree-item tree-item-add">
+      <a
+        href="javascript://"
+        rel="tooltip"
+        data-placement="left"
+        data-toggle="modal-relationship-selector"
+        data-modal-class="modal-wide"
+        data-modal-reset="reset"
+        data-original-title="Map {{model.title_singular}} to this {{parent_instance.constructor.shortName}}"
+        data-related-model="{{model.model_singular}}"
+        data-related-title-singular="{{model.title_singular}}"
+        data-related-title-plural="{{model.title_plural}}"
+        data-related-side="source" {{! FIXME This should depend on relationship type }}
+        data-related-table-plural="{{model.table_plural}}"
+        data-related-model-singular="{{model.model_singular}}"
+        data-relationship-type="" {{! FIXME This should be a real relationship type }}
+        data-tab-target="#related-objects-{{find_params.relationship_type_id}}">
+        + {{model.title_singular}} {{find_params.relationship_type_id}}
+      </a>
+      </li>
+    </ul>
+  {{/is_related}}
+{{/is_allowed_to_map}}
+{{#is_allowed 'create' model.title_singular}}
+  {{^is_related}}
+    <ul class="new-tree">
+      <li class="tree-item tree-item-add">
+      <a
+        href="javascript://"
+        rel="tooltip"
+        data-placement="left"
+        data-toggle="modal-ajax-form"
+        data-object-plural="{{model.model_plural.toLowerCase}}"
+        data-object-singular="{{model.model_singular}}"
+        data-modal-class="modal-wide"
+        data-modal-reset="reset"
+        data-original-title="Create New {{model.title_singular.toLowerCase}}">
+        + {{model.title_singular}}
+      </a>
+      </li>
+    </ul>
+  {{/is_related}}
+{{/is_allowed}}

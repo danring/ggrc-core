@@ -343,6 +343,10 @@ GGRC.RELATIONSHIP_TYPES = RELATIONSHIP_TYPES;
           "ObjectObjective", "objective", "objectiveable", "object_objectives"]
       , ["Objective", "Objective",
           "ObjectObjective", "objectiveable", "objective", "objective_objects"]
+      , ["Control", "Control",
+          "ControlControl", "implemented_control", "control", "control_controls"]
+      , ["Control", "Control",
+          "ControlControl", "control", "implemented_control", "implementing_control_controls"]
       , [all_object_types,
           "Person", "ObjectPerson", "person", "personable"]
       , [business_object_types,
@@ -466,6 +470,16 @@ $(function() {
     }
     
     resize_areas();  
+
+    CMS.Models.DisplayPrefs.findAll().done(function(prefs) {
+      prefs[0].setCollapsed(null, "lhs", $lhs.hasClass("lhs-closed"));
+    })
+  });
+
+  // Collapse the LHN if they did it on a previous page
+  CMS.Models.DisplayPrefs.findAll().done(function(prefs) {
+    var collapsed = prefs[0].getCollapsed(null, "lhs");
+    collapsed && $(".bar-v").trigger('click');
   });
 
   $(document.body).on("click", ".lhs-closed", function(ev) {

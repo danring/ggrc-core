@@ -927,6 +927,10 @@ can.Model.Cacheable("CMS.Models.Role", {
   , update : "PUT /api/roles/{id}"
   , destroy : "DELETE /api/roles/{id}"
   , create : "POST /api/roles"
+  , scopes : [
+        "Private Program"
+      , "System"
+    ]
   , defaults : {
       permissions: {
           read: []
@@ -943,8 +947,7 @@ can.Model.Cacheable("CMS.Models.Role", {
   }
 
   , not_system_role : function() {
-    return can.inArray(
-        this.name, ["ProgramOwner", "ProgramEditor", "ProgramReader"]) < 0;
+    return this.attr('scope') !== "System";
   }
 
   , permission_summary : function() {

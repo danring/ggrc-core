@@ -94,14 +94,35 @@ CMS.Controllers.Filterable("CMS.Controllers.DashboardWidgets", {
       if (this.options.content_controller_selector)
         controller_content =
           controller_content.find(this.options.content_controller_selector);
-      controller_content
-        .html($(new Spinner().spin().el)
-          .css({
-            width: '100px',
-            height: '100px',
-            left: '50px',
-            top: '40px'
-          }));
+
+      // Determine whether the user can read this widget
+      // FIXME: This only affects TreeView widgets and should be moved
+      var options = this.options.content_controller_options
+        , list_model_name =
+            options.model && options.model.shortName || options.model
+        , page_instance = GGRC.page_instance()
+        , page_model_name =
+            page_instance && page_instance.constructor.shortName
+        , mapping_model_name = GGRC.JoinDescriptor.join_model_name_for(
+            page_model_name, list_model_name)
+        ;
+      options.allow_reading = Permission.is_allowed(
+          "read", mapping_model_name, Permission.page_context_id());
+
+      if (options.allow_reading) {
+        controller_content
+          .html($(new Spinner().spin().el)
+            .css({
+              width: '100px',
+              height: '100px',
+              left: '50px',
+              top: '40px'
+            }));
+      }
+      else {
+        options.footer_view = GGRC.mustache_path + "/base_objects/tree_footer_no_access.mustache"
+      }
+
       new this.options.content_controller(
           controller_content
         , this.options.content_controller_options

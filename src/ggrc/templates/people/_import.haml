@@ -23,6 +23,6 @@
             %input{ 'value': 'Upload and Review', 'class': 'btn btn-primary', 'type': 'submit' }
             -#%a{ 'href': 'javascript://', 'class': 'import-help', 'data-toggle': 'modal-ajax', 'data-original-title': 'help', 'data-modal-type': 'help-form' }
               -#View Help
-    -if exception_message is defined
+    -if exception_message is defined and not exception_message.show_preview
       -include 'directives/import_errors.haml'
     #results-container
