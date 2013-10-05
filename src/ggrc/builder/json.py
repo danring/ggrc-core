@@ -255,135 +255,211 @@ class UpdateAttrHandler(object):
     return json_obj.get(attr_name)
 
 class Builder(AttributeInfo):
-  """JSON Dictionary builder for ggrc.models.* objects and their mixins."""
+  """JSON Dictionary builder for ggrc.models.* objects and their mixins.
 
-  def generate_link_object_for_foreign_key(self, id, type):
-    """Generate a link object for this object reference."""
-    return {'id': id, 'type': type, 'href': url_for(type, id=id)}
+  `_make_*` methods are designed to preprocess all possible class-based
+    decisions, to make the generation from instances as fast as possible.
 
-  def generate_link_object_for(self, obj, inclusions, include):
-    """Generate a link object for this object. If there are property paths
-    to be included specified in the ``inclusions`` parameter, those properties
-    will be added to the object representation. If the ``include`` parameter
-    is ``True`` the entire object will be represented in the result.
+  There are multiple `_make_*_links_publisher` methods to minimize object
+    access in cases where we can build the link without touching the object
+    itself (which would cause SQLAlchemy to issue a query).
+  """
+
+  def _make_included_collection_publisher(self, attr_name, class_attr):
+    return lambda join_objects:\
+        []
+
+  def _make_link_object_generator(self):
+    return lambda id, type:\
+        {'id': id, 'type': type, 'href': url_for(type, id=id)}
+
+  def _make_polymorphic_links_publisher(self, id_attr, type_attr):
+    """For polymorphic joins where we know the `*_id` and `*_type` columns
     """
-    if include:
-      return publish(obj, inclusions)
-    result = {'id': obj.id, 'type': type(obj).__name__, 'href': url_for(obj)}
-    for path in inclusions:
-      if type(path) is not str and type(path) is not unicode:
-        attr_name, remaining_path = path[0], path[1:]
-      else:
-        attr_name, remaining_path = path, ()
-      result[attr_name] = self.publish_attr(obj, attr_name, remaining_path)
-    return result
+    link_object_generator = self._make_link_object_generator()
+    return lambda join_objects:\
+        [link_object_generator(getattr(o, id_attr), getattr(o, type_attr))
+            for o in join_objects]
 
-  def publish_link_collection(self, obj, attr_name, inclusions, include):
-    """The ``attr_name`` attribute is a collection of object references;
-    translate the collection of object references into a collection of link
-    objects for the JSON dictionary representation.
+  def _make_typed_links_publisher(self, id_attr, type_value):
+    """For joins where we know the `*_id` column and have a constant `type`
+    value
     """
-    # FIXME: Remove the "if o is not None" when we can guarantee referential
-    #   integrity
-    return [
-        self.generate_link_object_for(o, inclusions, include)
-        for o in getattr(obj, attr_name) if o is not None]
+    link_object_generator = self._make_link_object_generator()
+    return lambda join_objects:\
+        [link_object_generator(getattr(o, id_attr), type_value)
+            for o in join_objects]
 
-  def publish_link(self, obj, attr_name, inclusions, include):
-    """The ``attr_name`` attribute is an object reference; translate the object
-    reference into a link object for the JSON dictionary representation.
+  def _make_naive_join_links_publisher(self, attr_name):
+    """For joins with a polymorphic target type, where we have to look at the
+    object itself to know its real `type`.
     """
-    attr_value = getattr(obj, attr_name)
-    if attr_value:
-      return self.generate_link_object_for(attr_value, inclusions, include)
+    link_object_generator = self._make_link_object_generator()
+    def publish_links(join_objects):
+      objects_generator = (getattr(jo, attr_name) for jo in join_objects)
+      return [link_object_generator(o.id, o.__class__.__name__)
+          for o in objects_generator if o is not None]
+    return publish_links
+
+  def _make_naive_attr_links_publisher(self, attr_name):
+    """For joins with a polymorphic target type, where we have to look at the
+    object itself to know its real `type`.
+    """
+    link_object_generator = self._make_link_object_generator()
+    def publish_links(base_object):
+      objects_generator = getattr(base_object, attr_name)
+      return [link_object_generator(o.id, o.__class__.__name__)
+          for o in objects_generator if o is not None]
+    return publish_links
+
+  def _make_association_proxy_publisher(self, attr_name, class_attr):
+    """For `association_proxy` links, e.g., linking across a table/object to
+    get the target `id` and `type`
+    """
+    included_collection_publisher =\
+      self._make_included_collection_publisher(attr_name, class_attr)
+
+    join_objects_key = class_attr.local_attr.key
+    if isinstance(class_attr.remote_attr, property):
+      # Here, we don't have to inspect the linked object, since the target
+      # type and id are available on the join object
+      id_attr = class_attr.value_attr + '_id'
+      type_attr = class_attr.value_attr + '_type'
+      links_publisher =\
+          self._make_polymorphic_links_publisher(id_attr, type_attr)
     else:
-      return None
-
-  def publish_association_proxy(
-      self, obj, attr_name, class_attr, inclusions, include):
-    if include:
-      return self.publish_link_collection(obj, attr_name, inclusions, include)
-    else:
-      join_objects = getattr(obj, class_attr.local_attr.key)
-      if isinstance(class_attr.remote_attr, property):
-        target_name = class_attr.value_attr + '_id'
-        target_type = class_attr.value_attr + '_type'
-        return [self.generate_link_object_for_foreign_key(
-            getattr(o, target_name), getattr(o, target_type))
-              for o in join_objects]
+      target_mapper = class_attr.remote_attr.property.mapper
+      if len(list(target_mapper.self_and_descendants)) > 1:
+        # Here we have to use the naive link publisher, since we don't know
+        # what the actual target type is, due to inheritance
+        target_attr = class_attr.remote_attr.property.key
+        links_publisher =\
+            self._make_naive_join_links_publisher(target_attr)
       else:
-        target_mapper = class_attr.remote_attr.property.mapper
-        # Handle inheritance -- we must check the object itself for the type
-        if len(list(target_mapper.self_and_descendants)) > 1:
-          target_attr = class_attr.remote_attr.property.key
-          return [self.generate_link_object_for(
-            getattr(o, target_attr), inclusions, include) for o in join_objects]
-        else:
-          target_name = list(class_attr.remote_attr.property.local_columns)[0].key
-          target_type = class_attr.remote_attr.property.mapper.class_.__name__
-          return [self.generate_link_object_for_foreign_key(
-              getattr(o, target_name), target_type) for o in join_objects]
+        # Here, we don't have to inspect, since we have a constant target
+        # type and a local column for the id
+        id_attr = list(class_attr.remote_attr.property.local_columns)[0].key
+        type_value = class_attr.remote_attr.property.mapper.class_.__name__
+        links_publisher =\
+            self._make_typed_links_publisher(id_attr, type_value)
 
-  def publish_relationship(
-      self, obj, attr_name, class_attr, inclusions, include):
+    def publish_association_proxy(obj, inclusions, include):
+      # If `include` then we have to "enter" the object anyway
+      if include:
+        return included_collection_publisher(obj, inclusions, include)
+      else:
+        return links_publisher(getattr(obj, join_objects_key))
+
+    return publish_association_proxy
+
+  def _make_relationship_list_publisher(self, attr_name, class_attr):
+    included_collection_publisher =\
+        self._make_included_collection_publisher(attr_name, class_attr)
+
+    # `relationship` is only `uselist` if it is a remote key, so we have to
+    # "enter" the target object anyway
+    links_publisher = self._make_naive_attr_links_publisher(attr_name)
+    def publish_link_collection(obj, inclusions, include):
+      if include:
+        return included_collection_publisher(obj, inclusions, include)
+      else:
+        return links_publisher(obj)
+    return publish_link_collection
+
+  def _make_polymorphic_link_publisher(self, id_attr, type_attr):
+    """For polymorphic joins where we know the `*_id` and `*_type` columns
+    """
+    link_object_generator = self._make_link_object_generator()
+    def publish_link(base_object):
+      id = getattr(base_object, id_attr)
+      if id is None:
+        return None
+      return link_object_generator(id, getattr(base_object, type_attr))
+    return publish_link
+
+  def _make_typed_link_publisher(self, id_attr, type_value):
+    """For joins where we know the `*_id` column and have a constant `type`
+    value
+    """
+    link_object_generator = self._make_link_object_generator()
+    def publish_link(base_object):
+      id = getattr(base_object, id_attr)
+      if id is None:
+        return None
+      return link_object_generator(id, type_value)
+    return publish_link
+
+  def _make_naive_link_publisher(self, attr_name):
+    """For joins with a polymorphic target type, where we have to look at the
+    object itself to know its real `type`.
+    """
+    link_object_generator = self._make_link_object_generator()
+    def publish_link(base_object):
+      obj = getattr(base_object, attr_name)
+      if obj is None:
+        return None
+      return link_object_generator(obj.id, obj.__class__.__name__)
+    return publish_link
+
+  def _make_relationship_publisher(self, attr_name, class_attr):
     uselist = class_attr.property.uselist
     if uselist:
-      return self.publish_link_collection(obj, attr_name, inclusions, include)
-    elif include or class_attr.property.backref:
-      return self.publish_link(obj, attr_name, inclusions, include)
-    else:
-      if class_attr.property.mapper.class_.__mapper__.polymorphic_on \
-          is not None:
-        target = getattr(obj, attr_name)
-        target_type = target.__class__.__name__
-      else:
-        target_type = class_attr.property.mapper.class_.__name__
-      target_name = list(class_attr.property.local_columns)[0].key
-      attr_value = getattr(obj, target_name)
-      if attr_value is not None:
-        return self.generate_link_object_for_foreign_key(
-            attr_value, target_type)
-      else:
-        return None
+      return self._make_relationship_list_publisher(attr_name, class_attr)
 
-  def publish_attr(self, obj, attr_name, inclusions, include):
-    class_attr = getattr(obj.__class__, attr_name)
+    # Is this necessary?
+    if class_attr.property.backref:
+      link_publisher = self._make_naive_link_publisher(attr_name)
+    elif class_attr.property.mapper.class_.__mapper__.polymorphic_on is not None:
+      link_publisher = self._make_naive_link_publisher(attr_name)
+    else:
+      type_value = class_attr.property.mapper.class_.__name__
+      id_attr = list(class_attr.property.local_columns)[0].key
+      link_publisher = self._make_typed_link_publisher(id_attr, type_value)
+
+    def publish_related_object(obj, inclusions, include):
+      if include:
+        # Requested to include the full object
+        return included_object_publisher(obj, inclusions, include)
+      else:
+        return link_publisher(obj)
+    return publish_related_object
+
+  def _make_attr_publisher(self, target_class, attr_name):
+    class_attr = getattr(target_class, attr_name)
     if isinstance(class_attr, AssociationProxy):
-      return self.publish_association_proxy(
-          obj, attr_name, class_attr, inclusions, include)
+      return self._make_association_proxy_publisher(attr_name, class_attr)
     elif isinstance(class_attr, InstrumentedAttribute) and \
          isinstance(class_attr.property, RelationshipProperty):
-      return self.publish_relationship(
-          obj, attr_name, class_attr, inclusions, include)
+      return self._make_relationship_publisher(attr_name, class_attr)
     elif class_attr.__class__.__name__ == 'property':
-      if not inclusions or include:
-        return self.generate_link_object_for_foreign_key(
-            getattr(obj, '{0}_id'.format(attr_name)),
-            getattr(obj, '{0}_type'.format(attr_name)))
-      else:
-        return self.publish_link(obj, attr_name, inclusions, include)
-    else:
-      return getattr(obj, attr_name)
+      # This only happens when it's a polymorphic link
+      # FIXME: Move into _make_relationship_publisher
+      id_attr = attr_name + '_id'
+      type_attr = attr_name + '_type'
+      link_publisher =\
+          self._make_polymorphic_link_publisher(id_attr, type_attr)
+      return lambda obj, inclusions, include:\
+          link_publisher(obj)
+      #return self._make_link_publisher(attr_name, class_attr)
 
-  def _publish_attrs_for(
-      self,
-      obj,
-      attrs,
-      json_obj,
-      inclusions=[],
-      ):
-    for attr in attrs:
-      if hasattr(attr, '__call__'):
+    def publish_attr(obj, inclusions, include):
+      # Ignore `include` and `inclusions` on simple attrs
+      return getattr(obj, attr_name)
+    return publish_attr
+
+  def _make_attr_publishers(self):
+    attr_publishers = []
+    for attr in self._publish_attrs:
+      if hasattr(attr, '__call__'):  # ? callable(attr):
         attr_name = attr.attr_name
       else:
         attr_name = attr
-      local_inclusion = ()
-      for inclusion in inclusions:
-        if inclusion[0] == attr_name:
-          local_inclusion = inclusion
-          break
-      json_obj[attr_name] = self.publish_attr(
-          obj, attr_name, local_inclusion[1:], len(local_inclusion) > 0)
+
+      attr_publishers.append((
+          attr_name,
+          self._make_attr_publisher(self._target_class, attr_name)))
+
+    return attr_publishers
 
   def publish_attrs(self, obj, json_obj, inclusions):
     """Translate the state represented by ``obj`` into the JSON dictionary
@@ -401,8 +477,17 @@ class Builder(AttributeInfo):
       [('directives'),('cycles')]
       [('directives', ('audit_frequency','organization')),('cycles')]
     """
-    return self._publish_attrs_for(
-        obj, self._publish_attrs, json_obj, inclusions)
+    if not hasattr(self, '_attr_publishers'):
+      self._attr_publishers = self._make_attr_publishers()
+
+    for (attr_name, attr_publisher) in self._attr_publishers:
+      local_inclusion = ()
+      for inclusion in inclusions:
+        if inclusion[0] == attr_name:
+          local_inclusion = inclusion
+          break
+      json_obj[attr_name] = attr_publisher(
+          obj, local_inclusion[1:], len(local_inclusion) > 0)
 
   @classmethod
   def do_update_attrs(cls, obj, json_obj, attrs):
@@ -431,13 +516,13 @@ class Builder(AttributeInfo):
     self.publish_attrs(obj, json_obj, inclusions)
     return json_obj
 
-  def publish_stubs(self, obj):
-    """Translate the state represented by ``obj`` into a JSON dictionary
-    containing an abbreviated representation.
-    """
-    json_obj = {}
-    self._publish_attrs_for(obj, self._stub_attrs, json_obj)
-    return json_obj
+  #def publish_stubs(self, obj):
+  #  """Translate the state represented by ``obj`` into a JSON dictionary
+  #  containing an abbreviated representation.
+  #  """
+  #  json_obj = {}
+  #  self._publish_attrs_for(obj, self._stub_attrs, json_obj)
+  #  return json_obj
 
   def update(self, obj, json_obj):
     """Update the state represented by ``obj`` to be equivalent to the state

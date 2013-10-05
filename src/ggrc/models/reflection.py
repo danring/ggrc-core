@@ -47,6 +47,7 @@ class AttributeInfo(object):
   class inheritance tree.
   """
   def __init__(self, tgt_class):
+    self._target_class = tgt_class
     self._publish_attrs = AttributeInfo.gather_publish_attrs(tgt_class)
     self._stub_attrs = AttributeInfo.gather_stub_attrs(tgt_class)
     self._update_attrs = AttributeInfo.gather_update_attrs(tgt_class)
