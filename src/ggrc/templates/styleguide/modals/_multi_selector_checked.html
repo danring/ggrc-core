@@ -1,4 +1,4 @@
-<div id="multiSelector" class="modal modal-selector multi-selector hide fade" tabindex="-1">
+<div id="multiSelectorChecked" class="modal modal-selector multi-selector hide fade" tabindex="-1">
   
   <div class="modal-header">
     <div class="pull-right">
@@ -55,7 +55,7 @@
           <ul class="tree-structure new-tree">
             <li class="tree-item orggroup">
               <div class="item-main">
-                <a href="javascript://" class="openclose active">
+                <a href="javascript://" class="openclose">
                   <div class="row-fluid">
                     <div class="span12">
                       <div class="item-data">
@@ -67,7 +67,7 @@
                             </div>
                           </div>
                           <div class="span1">
-                            <input type="checkbox" class="selector-check">
+                            <input type="checkbox" class="selector-check" checked="checked">
                           </div>
                         </div>
                       </div>
@@ -75,7 +75,7 @@
                   </div>
                 </a>
               </div>
-              <div class="tier-2-info item-content open content-open" style="display:block;">
+              <div class="tier-2-info item-content">
                 <div class="tier-2-info-content">
                   <div class="row-fluid">
                     <div class="span12">
@@ -136,7 +136,7 @@
                             </div>
                           </div>
                           <div class="span1">
-                            <input type="checkbox" class="selector-check">
+                            <input type="checkbox" class="selector-check" checked="checked">
                           </div>
                         </div>
                       </div>
@@ -159,7 +159,7 @@
                             </div>
                           </div>
                           <div class="span1">
-                            <input type="checkbox" class="selector-check">
+                            <input type="checkbox" class="selector-check" checked="checked">
                           </div>
                         </div>
                       </div>
@@ -182,7 +182,7 @@
                             </div>
                           </div>
                           <div class="span1">
-                            <input type="checkbox" class="selector-check">
+                            <input type="checkbox" class="selector-check" checked="checked">
                           </div>
                         </div>
                       </div>
@@ -231,14 +231,84 @@
         </div>
       </div>
       <div class="span3 selector-custom">
-        <div class="selected-none">
-          <div class="selector-title">
-            <strong>Selected Objects to be mapped (0)</strong>
-          </div>
-          <div class="selector-info">
-            <h4><i class="grciconlarge-arrow-left"></i> No Objects Selected</h4>
-            <p>Use checkboxes on the left to select objects you want to Map to <strong>Service Cloud</strong> Data Asset</p>
-          </div>
+        <div class="selector-title">
+          <strong>Selected Objects to be mapped (4)</strong>
+        </div>
+        <div class="selector-list">
+          <ul class="tree-structure new-tree">
+            <li class="tree-item orggroup">
+              <div class="item-main">
+                <div class="row-fluid">
+                  <div class="span12">
+                    <div class="item-data">
+                      <div class="row-fluid">
+                        <div class="span12">
+                          <div class="tree-title-area">
+                            <i class="grcicon-orggroup-color" rel="tooltip" data-placement="left" data-original-title="Org Group"></i>
+                            Control Sample Lorem ipsum dolor sit amet ipsum dolor sit amet ipsum dolor sit amet
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="tree-item contract">
+              <div class="item-main">
+                <div class="row-fluid">
+                  <div class="span12">
+                    <div class="item-data">
+                      <div class="row-fluid">
+                        <div class="span12">
+                          <div class="tree-title-area">
+                            <i class="grcicon-contract-color" rel="tooltip" data-placement="left" data-original-title="Contract"></i>
+                            General Management Control
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="tree-item control">
+              <div class="item-main">
+                <div class="row-fluid">
+                  <div class="span12">
+                    <div class="item-data">
+                      <div class="row-fluid">
+                        <div class="span12">
+                          <div class="tree-title-area">
+                            <i class="grcicon-control-color" rel="tooltip" data-placement="left" data-original-title="Control"></i>
+                            PDD's Required
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="tree-item program">
+              <div class="item-main">
+                <div class="row-fluid">
+                  <div class="span12">
+                    <div class="item-data">
+                      <div class="row-fluid">
+                        <div class="span12">
+                          <div class="tree-title-area">
+                            <i class="grcicon-program-color" rel="tooltip" data-placement="left" data-original-title="Program"></i>
+                            Funding Control
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
       <div class="span3 selector-custom">
@@ -287,6 +357,7 @@
       </div>
       <div class="span6">
         <div class="confirm-buttons">
+          <span class="confirm-text">Map <strong>4</strong> objects to <strong>Service Cloud</strong> Data Asset <i class="grcicon-left--carot-arrow"></i></span>
           <a class="btn btn-primary preventdoubleclick" href="#" data-toggle="modal-submit">Map</a>
         </div>
       </div>

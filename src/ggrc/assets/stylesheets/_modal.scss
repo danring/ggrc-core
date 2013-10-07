@@ -300,6 +300,7 @@
       }
       .selector-list {
         border-right:1px solid #ccc;
+        border-left: none;
         background:#f3f3f3;
         height: 360px;
         ul {
@@ -370,6 +371,17 @@
         .spinner {
           top: 13px !important;
           left: 465px !important;
+        }
+      }
+      .modal-footer {
+        .confirm-text {
+          line-height: 28px;
+          display: inline-block;
+          margin-right: 9px;
+          i {
+            margin-top: 7px;
+            margin-left: -4px;
+          }
         }
       }
     }
