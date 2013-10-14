@@ -1277,7 +1277,10 @@ Mustache.registerHelper("visibility_delay", function(delay, options) {
 // Example: "This may also delete 3 Sections, 2 Controls, and 4 object mappings."
 Mustache.registerHelper("delete_counts", function(instance, options) {
   instance = resolve_computed(instance)
+
+  // Create an observe to listen to
   var root = options.contexts[0];
+  root = (root.__delete_counts = root.__delete_counts || new can.Observe());
 
   // Retrieve the orphan stats
   if (!root.attr('orphaned_status')) {

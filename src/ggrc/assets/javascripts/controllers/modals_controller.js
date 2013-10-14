@@ -52,10 +52,6 @@ can.Control("GGRC.Controllers.Modals", {
   }
 }, {
   init : function() {
-    if (!(this.options instanceof can.Observe)) {
-      this.options = new can.Observe(this.options);
-    }
-
     if(!this.element.find(".modal-body").length) {
       can.view(this.options.preload_view, {}, this.proxy("after_preload"));
     } else {
@@ -68,9 +64,9 @@ can.Control("GGRC.Controllers.Modals", {
     if (content) {
       this.element.html(content);
     }
-    this.options.attr("$header", this.element.find(".modal-header"));
-    this.options.attr("$content", this.element.find(".modal-body"));
-    this.options.attr("$footer", this.element.find(".modal-footer"));
+    this.options.$header = this.element.find(".modal-header");
+    this.options.$content = this.element.find(".modal-body");
+    this.options.$footer = this.element.find(".modal-footer");
     this.on();
     this.fetch_all()
       .then(this.proxy("apply_object_params"))
@@ -156,20 +152,20 @@ can.Control("GGRC.Controllers.Modals", {
       dfd = this.options.instance.refresh();
     } else if (this.options.model) {
       dfd = this.options.new_object_form
-          ? $.when(this.options.attr("instance", new this.options.model(params)))
+          ? $.when(this.options.instance = new this.options.model(params))
           : this.options.model.findAll(params).then(function(data) {
             var h;
             if(data.length) {
-              that.options.attr("instance", data[0]);
+              that.options.instance = data[0];
               return data[0].refresh(); //have to refresh (get ETag) to be editable.
             } else {
-              that.options.attr("new_object_form", true);
-              that.options.attr("instance", new that.options.model(params));
+              that.options.new_object_form = true;
+              that.options.instance = new that.options.model(params);
               return that.options.instance;
             }
           });
     } else {
-      this.options.attr("instance", new can.Observe(params));
+      this.options.instance = new can.Observe(params);
       dfd = new $.Deferred().resolve(this.options.instance);
     }
     
