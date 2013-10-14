@@ -78,7 +78,7 @@ can.Control("GGRC.Controllers.Modals", {
     var self = this;
 
     if (this.options.object_params)
-      this.options.object_params.each(function(value, key) {
+      can.each(this.options.object_params, function(value, key) {
         self.set_value({ name: key, value: value });
       });
   }
