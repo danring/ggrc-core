@@ -57,6 +57,15 @@ def generate_query_chunks(query):
   for offset in range(0, count, CHUNK_SIZE):
     yield query.order_by('id').limit(CHUNK_SIZE).offset(offset).all()
 
+@app.route("/admin/seedrandom", methods=["GET"])
+@login_required
+def seed_program():
+  from ggrc.seed.random_prog import seed_random
+  from flask import redirect
+  seed_random()
+  return redirect("/dashboard")
+
+
 @app.route("/admin/reindex", methods=["POST"])
 @login_required
 def admin_reindex():
