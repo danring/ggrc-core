@@ -4,6 +4,7 @@
 # Maintained By: silas@reciprocitylabs.com
 
 from copy import deepcopy
+from operator import add
 import random
 
 from ggrc.app import app, db
@@ -70,12 +71,15 @@ def display(obj):
       output.append(getattr(obj, attr))
   return output
 
+def identifier(obj):
+  """returns the helpful label to distinguish the object from others of its type; usually the slug but some objects may not have one"""
+  return getattr(obj, "slug", None) or obj.name
+
 def create_n_of_each(type_list, num, program):
   print program.__repr__()
   for obj_type in type_list:
     for j in xrange(num):
       new_obj = set_up_object(obj_type, j)
-      identifier = getattr(new_obj, "slug", None) or new_obj.name
       try:
         db.session.add(new_obj)
         modified_objs = get_modified_objects(db.session)
@@ -84,7 +88,7 @@ def create_n_of_each(type_list, num, program):
       except:
         print "{0}:{1} already in db".format(
             obj_type.__name__,
-            identifier
+            identifier(new_obj),
         )
         db.session.rollback()
       # connect to program if a gov
@@ -95,12 +99,46 @@ def create_n_of_each(type_list, num, program):
           modified_objs = get_modified_objects(db.session)
           update_index(db.session, modified_objs)
           db.session.commit()
-          print program.objectives
         except Exception as inst:
           print "could not join a/n {0} to the program".format(identifier)
           print inst.__class__, inst.args
           db.session.rollback()
 
+def map_n_from_each(source_type_list, target_type_list, num_mappings):
+  # get all objects whose type is in source type list,
+  # repeate for target type list
+  source_obj_dict = {source_type: source_type.query.all() for source_type in source_type_list}
+  all_source_objs = reduce(
+      add,
+      [value for key, value in source_obj_dict.iteritems()]
+  )
+  target_obj_dict = {target_type: target_type.query.all() for target_type in target_type_list}
+  all_target_objs = reduce(
+      add,
+      [value for key, value in target_obj_dict.iteritems()]
+  )
+  print [identifier(x) for x in all_source_objs]
+  for source_obj in all_source_objs[:2]:
+    # map each to num_mappings target objects if possible
+    print source_obj.slug
+    remaining_target_objs = [x for x in all_target_objs if type(x) != type(source_obj)]
+    left_to_assign = num_mappings
+    while left_to_assign > 0:
+      obj_ind = random.randint(0, len(remaining_target_objs) - 1)
+      try:
+        target_obj = remaining_target_objs[obj_ind]
+        join_obj = get_join_object(source_obj, target_obj)
+        print "Attempting to assign {0} to {1}".format(
+          identifier(source_obj),
+          identifier(target_obj),
+        )
+        # if it gets to this point, decrement and remove
+        left_to_assign -= 1
+        del remaining_target_objs[obj_ind]
+        db.session.add(join_obj)
+        db.session.commit()
+      except TypeError as inst:
+        print inst.args
 
 def seed_random():
   prog = Program(title="RandomGenProg", slug="RGP-123")
@@ -116,35 +154,8 @@ def seed_random():
   create_n_of_each(GOV_OBJECTS, 9, ex_prog)
   create_n_of_each(BIS_OBJECTS, 15, ex_prog)
   
-  GOV_OBJ_DICT = {gov_type: gov_type.query.all() for gov_type in GOV_OBJECTS}
-  
-  # gov to gov map
-  from operator import add
-  all_gov_objects = reduce(
-      add,
-      [value for key, value in GOV_OBJ_DICT.iteritems()]
-  )
-  for gov_obj in all_gov_objects[:2]:
-    # map each to 5 other governance objects if possible
-    print gov_obj.slug
-    remaining_gov_objs = [x for x in all_gov_objects if type(x) != type(gov_obj)]
-    left_to_assign = 5
-    while left_to_assign > 0:
-      obj_ind = random.randint(0, len(remaining_gov_objs) - 1)
-      try:
-        target_obj = remaining_gov_objs[obj_ind]
-        join_obj = get_join_object(gov_obj, target_obj)
-        print "Attempting to assign {0} to {1}".format(
-          gov_obj.slug,
-          target_obj.slug,
-        )
-        # if it gets to this point, decrement and remove
-        left_to_assign -= 1
-        del remaining_gov_objs[obj_ind]
-        db.session.add(join_obj)
-        db.session.commit()
-      except TypeError as inst:
-        print inst.args
+  map_n_from_each(GOV_OBJECTS, GOV_OBJECTS, 5)
+  map_n_from_each(GOV_OBJECTS, BIS_OBJECTS, 7)
 
 
 if __name__ == "__main__":
