@@ -6,6 +6,7 @@
 from copy import deepcopy
 from operator import add
 import random
+from sys import argv
 
 from ggrc.app import app, db
 from ggrc.models.all_models import *
@@ -118,7 +119,7 @@ def map_n_from_each(source_type_list, target_type_list, num_mappings):
       [value for key, value in target_obj_dict.iteritems()]
   )
   print [identifier(x) for x in all_source_objs]
-  for source_obj in all_source_objs[:2]:
+  for source_obj in all_source_objs:
     # map each to num_mappings target objects if possible
     print source_obj.slug
     remaining_target_objs = [x for x in all_target_objs if type(x) != type(source_obj)]
@@ -137,10 +138,14 @@ def map_n_from_each(source_type_list, target_type_list, num_mappings):
         del remaining_target_objs[obj_ind]
         db.session.add(join_obj)
         db.session.commit()
-      except TypeError as inst:
-        print inst.args
+      except Exception as inst:
+        print "got an exception trying to map!"
+        print inst.__class__, inst.args
+        db.session.rollback()
 
-def seed_random():
+def seed_random(prefix):
+  global PREFIX
+  PREFIX = prefix
   prog = Program(title="RandomGenProg", slug="RGP-123")
   try:
     db.session.add(prog)
