@@ -84,8 +84,8 @@ def create_n_of_each(type_list, num, program):
       try:
         db.session.add(new_obj)
         modified_objs = get_modified_objects(db.session)
-        update_index(db.session, modified_objs)
         db.session.commit()
+        update_index(db.session, modified_objs)
       except:
         print "{0}:{1} already in db".format(
             obj_type.__name__,
@@ -98,8 +98,8 @@ def create_n_of_each(type_list, num, program):
           join_obj = get_join_object(program, new_obj)
           db.session.add(join_obj)
           modified_objs = get_modified_objects(db.session)
-          update_index(db.session, modified_objs)
           db.session.commit()
+          update_index(db.session, modified_objs)
         except Exception as inst:
           print "could not join a/n {0} to the program".format(identifier)
           print inst.__class__, inst.args
@@ -150,15 +150,15 @@ def seed_random(prefix):
   try:
     db.session.add(prog)
     modified_objs = get_modified_objects(db.session)
-    update_index(db.session, modified_objs)
     db.session.commit()
+    update_index(db.session, modified_objs)
   except:
     db.session.rollback()
-  
+
   ex_prog = Program.query.filter(Program.slug=="RGP-123")[0]
   create_n_of_each(GOV_OBJECTS, 9, ex_prog)
   create_n_of_each(BIS_OBJECTS, 15, ex_prog)
-  
+
   map_n_from_each(GOV_OBJECTS, GOV_OBJECTS, 5)
   map_n_from_each(GOV_OBJECTS, BIS_OBJECTS, 7)
 
@@ -182,7 +182,6 @@ if __name__ == "__main__":
 #    Event,
 #    ObjectiveControl,
 #    ProgramDirective,
-#    Option,
 #    SectionObjective,
 #    ControlAssessment,
 #    Help,
