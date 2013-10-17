@@ -63,6 +63,8 @@ def seed_program(prefix):
   """set up an example program with objects, whose names, titles, and slugs are all prefixed with prefix"""
   from ggrc.seed.random_prog import seed_random
   from flask import redirect
+  if not permissions.is_allowed_read("/admin", 1):
+    raise Forbidden()
   seed_random(prefix)
   return redirect("/dashboard")
 
