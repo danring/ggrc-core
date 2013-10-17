@@ -13,7 +13,7 @@ can.Model.Cacheable("CMS.Models.Program", {
   root_object : "program"
   , root_collection : "programs"
   , category : "programs"
-  , findAll : "/api/programs?kind=Directive"
+  , findAll : "/api/programs"
   , findOne : "/api/programs/{id}"
   , create : "POST /api/programs"
   , update : "PUT /api/programs/{id}"
