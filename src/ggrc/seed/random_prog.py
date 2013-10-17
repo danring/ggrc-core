@@ -181,4 +181,4 @@ def seed_random(prefix):
 
 
 if __name__ == "__main__":
-  seed_random()
+  seed_random("EXAMPLE")
