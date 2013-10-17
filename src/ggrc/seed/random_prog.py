@@ -13,25 +13,28 @@ from ggrc.models.all_models import *
 from ggrc.seed.mappings import get_join_object
 from ggrc.services.common import get_modified_objects, update_index
 
-BIS_OBJECTS = [
-    Project,
-    Product,
-    Process,
-    DataAsset,
-    System,
-    Market,
-    OrgGroup,
-    Facility,
-    Risk,
-    Person,
+BIS_TYPES = [
+  Project,
+  Product,
+  Process,
+  DataAsset,
+  System,
+  Market,
+  OrgGroup,
+  Facility,
+  Risk,
+  Person,
 ]
-GOV_OBJECTS = [
-    Control,
-    Objective,
-    Policy,
-    Contract,
-    Regulation,
+HEAD_GOV_TYPES = [
+  Control,
+  Objective,
+  Policy,
+  Contract,
+  Regulation,
 ]
+SECTION_TYPES = [Section]
+ALL_GOV_TYPES = HEAD_GOV_TYPES + SECTION_TYPES
+DIRECTIVE_TYPE_LIST = [Policy, Contract, Regulation]
 
 def add_to_site_db(obj, session):
   try:
@@ -43,25 +46,43 @@ def add_to_site_db(obj, session):
     session.rollback()
 
 
-PREFIX = "EXAMPLE_"
-
 def pick_random(obj_type, num_items=1):
   all_objs = obj_type.query.all()
   num_return = min(len(all_objs), num_items)
   return random.sample(all_objs, num_return)
 
-def set_up_object(obj_type, num):
+def set_up_object(obj_type, num, prefix):
   num_str = str(num).zfill(3)
   if obj_type == Person:
-    print PREFIX + num_str + "@example.com"
+    print prefix + num_str + "@example.com"
     return Person(
-        name=PREFIX + obj_type.__name__ + num_str,
-        email=(PREFIX + num_str + "@example.com").lower(),
+        name=prefix + obj_type.__name__ + num_str,
+        email=(prefix + num_str + "@example.com").lower(),
+    )
+  elif obj_type == Section:
+    # pick a random directive to assign it to
+    directive_obj_dict = {dir_type: dir_type.query.all() for dir_type in DIRECTIVE_TYPE_LIST}
+    print directive_obj_dict
+    all_directive_objects = reduce(
+        add,
+        [value for key, value in directive_obj_dict.iteritems()]
+    )
+    print "Found directives {0}".format(
+        [x.slug for x in all_directive_objects]
+    )
+    parent_directive = random.sample(all_directive_objects, 1)[0]
+    print "Creating a section attached to {0}.".format(
+        parent_directive.slug
+    )
+    return obj_type(
+        title=prefix + obj_type.__name__ + num_str,
+        slug=prefix + obj_type.__name__.upper() + "-" + num_str,
+        directive=parent_directive
     )
   else:
     return obj_type(
-        title=PREFIX + obj_type.__name__ + num_str,
-        slug=PREFIX + obj_type.__name__.upper() + "-" + num_str,
+        title=prefix + obj_type.__name__ + num_str,
+        slug=prefix + obj_type.__name__.upper() + "-" + num_str,
     )
 
 def display(obj):
@@ -76,34 +97,32 @@ def identifier(obj):
   """returns the helpful label to distinguish the object from others of its type; usually the slug but some objects may not have one"""
   return getattr(obj, "slug", None) or obj.name
 
-def create_n_of_each(type_list, num, program):
-  print program.__repr__()
+def create_n_of_each(type_list, num, program, prefix):
+  new_objects = {}
   for obj_type in type_list:
+    print "Creating the {0}s".format(obj_type.__name__)
+    new_objects[obj_type] = []
     for j in xrange(num):
-      new_obj = set_up_object(obj_type, j)
-      try:
-        db.session.add(new_obj)
-        modified_objs = get_modified_objects(db.session)
-        db.session.commit()
-        update_index(db.session, modified_objs)
-      except:
-        print "{0}:{1} already in db".format(
-            obj_type.__name__,
-            identifier(new_obj),
-        )
-        db.session.rollback()
-      # connect to program if a gov
-      if obj_type in GOV_OBJECTS:
-        try:
-          join_obj = get_join_object(program, new_obj)
-          db.session.add(join_obj)
-          modified_objs = get_modified_objects(db.session)
-          db.session.commit()
-          update_index(db.session, modified_objs)
-        except Exception as inst:
-          print "could not join a/n {0} to the program".format(identifier)
-          print inst.__class__, inst.args
-          db.session.rollback()
+      new_obj = set_up_object(obj_type, j, prefix)
+      new_objects[obj_type].append(new_obj)
+      db.session.add(new_obj)
+
+  modified_objs = get_modified_objects(db.session)
+  db.session.flush()
+  update_index(db.session, modified_objs)
+
+  for obj_type, objs in new_objects.items():
+    if obj_type in HEAD_GOV_TYPES:
+      for new_obj in objs:
+        join_obj = get_join_object(program, new_obj)
+        db.session.add(join_obj)
+
+  modified_objs = get_modified_objects(db.session)
+  update_index(db.session, modified_objs)
+  db.session.commit()
+
+  return new_objects
+
 
 def map_n_from_each(source_type_list, target_type_list, num_mappings):
   # get all objects whose type is in source type list,
@@ -118,7 +137,6 @@ def map_n_from_each(source_type_list, target_type_list, num_mappings):
       add,
       [value for key, value in target_obj_dict.iteritems()]
   )
-  print [identifier(x) for x in all_source_objs]
   for source_obj in all_source_objs:
     # map each to num_mappings target objects if possible
     print source_obj.slug
@@ -144,9 +162,7 @@ def map_n_from_each(source_type_list, target_type_list, num_mappings):
         db.session.rollback()
 
 def seed_random(prefix):
-  global PREFIX
-  PREFIX = prefix
-  prog = Program(title="RandomGenProg", slug="RGP-123")
+  prog = Program(title="RandomGenProg", slug=prefix + "RGP-123")
   try:
     db.session.add(prog)
     modified_objs = get_modified_objects(db.session)
@@ -155,53 +171,14 @@ def seed_random(prefix):
   except:
     db.session.rollback()
 
-  ex_prog = Program.query.filter(Program.slug=="RGP-123")[0]
-  create_n_of_each(GOV_OBJECTS, 9, ex_prog)
-  create_n_of_each(BIS_OBJECTS, 15, ex_prog)
+  ex_prog = Program.query.filter(Program.slug==prefix + "RGP-123")[0]
+  gov_objects = create_n_of_each(HEAD_GOV_TYPES, 9, ex_prog, prefix)
+  sec_objects = create_n_of_each(SECTION_TYPES, 9, ex_prog, prefix)
+  bis_objects = create_n_of_each(BIS_TYPES, 15, ex_prog, prefix)
 
-  map_n_from_each(GOV_OBJECTS, GOV_OBJECTS, 5)
-  map_n_from_each(GOV_OBJECTS, BIS_OBJECTS, 7)
+  map_n_from_each(ALL_GOV_TYPES, ALL_GOV_TYPES, 5)
+  map_n_from_each(ALL_GOV_TYPES, BIS_TYPES, 7)
 
 
 if __name__ == "__main__":
   seed_random()
-
-
-
-#    Directive,
-#    Categorization,
-#    ObjectPerson,
-#    Category,
-#    DirectiveControl,
-#    ObjectSection,
-#    RiskRiskyAttribute,
-#    Context,
-#    Document,
-#    ProgramControl,
-#    RiskyAttribute,
-#    Event,
-#    ObjectiveControl,
-#    ProgramDirective,
-#    SectionObjective,
-#    ControlAssessment,
-#    Help,
-#    ControlControl,
-#    PbcList,
-#    Relationship,
-#    SystemControl,
-#    ControlRisk,
-#    Meeting,
-#    RelationshipType,
-#    SystemOrProcess,
-#    ControlSection,
-#    ObjectControl,
-#    Request,
-#    SystemSystem,
-#    Cycle,
-#    ObjectDocument,
-#    PopulationSample,
-#    Response,
-#    all_models,
-#    ObjectObjective,
-#    Revision,
-#    Section,
