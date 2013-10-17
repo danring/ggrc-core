@@ -139,7 +139,7 @@ def map_n_from_each(source_type_list, target_type_list, num_mappings):
   )
   for source_obj in all_source_objs:
     # map each to num_mappings target objects if possible
-    print source_obj.slug
+    print identifier(source_obj)
     remaining_target_objs = [x for x in all_target_objs if type(x) != type(source_obj)]
     left_to_assign = num_mappings
     while left_to_assign > 0:
@@ -178,7 +178,7 @@ def seed_random(prefix):
 
   map_n_from_each(ALL_GOV_TYPES, ALL_GOV_TYPES, 5)
   map_n_from_each(ALL_GOV_TYPES, BIS_TYPES, 7)
-
+  map_n_from_each(BIS_TYPES, BIS_TYPES, 5)
 
 if __name__ == "__main__":
   seed_random("EXAMPLE")
