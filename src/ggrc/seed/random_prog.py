@@ -25,13 +25,16 @@ BIS_TYPES = [
   Risk,
   Person,
 ]
-HEAD_GOV_TYPES = [
-  Control,
-  Objective,
+DIRECTIVE_TYPES = [
   Policy,
   Contract,
   Regulation,
 ]
+MISC_GOV_TYPES = [
+  Control,
+  Objective,
+]
+HEAD_GOV_TYPES = DIRECTIVE_TYPES + MISC_GOV_TYPES
 SECTION_TYPES = [Section]
 ALL_GOV_TYPES = HEAD_GOV_TYPES + SECTION_TYPES
 DIRECTIVE_TYPE_LIST = [Policy, Contract, Regulation]
@@ -51,6 +54,27 @@ def pick_random(obj_type, num_items=1):
   num_return = min(len(all_objs), num_items)
   return random.sample(all_objs, num_return)
 
+def create_n_sections(num_sections, prefix, directives):
+  new_sections = []
+  for i in xrange(num_sections):
+    num_str = str(i).zfill(3)
+    # pick a random directive to assign it to
+    parent_directive = random.sample(directives, 1)[0]
+    print "Creating a section attached to {0}.".format(
+        parent_directive.slug
+    )
+    new_section = Section(
+        title=prefix + Section.__name__ + num_str,
+        slug=prefix + Section.__name__.upper() + "-" + num_str,
+        directive=parent_directive
+    )
+    new_sections.append(new_section)
+    db.session.add(new_section)
+  modified_objs = get_modified_objects(db.session)
+  db.session.commit()
+  update_index(db.session, modified_objs)
+  return new_sections
+
 def set_up_object(obj_type, num, prefix):
   num_str = str(num).zfill(3)
   if obj_type == Person:
@@ -58,26 +82,6 @@ def set_up_object(obj_type, num, prefix):
     return Person(
         name=prefix + obj_type.__name__ + num_str,
         email=(prefix + num_str + "@example.com").lower(),
-    )
-  elif obj_type == Section:
-    # pick a random directive to assign it to
-    directive_obj_dict = {dir_type: dir_type.query.all() for dir_type in DIRECTIVE_TYPE_LIST}
-    print directive_obj_dict
-    all_directive_objects = reduce(
-        add,
-        [value for key, value in directive_obj_dict.iteritems()]
-    )
-    print "Found directives {0}".format(
-        [x.slug for x in all_directive_objects]
-    )
-    parent_directive = random.sample(all_directive_objects, 1)[0]
-    print "Creating a section attached to {0}.".format(
-        parent_directive.slug
-    )
-    return obj_type(
-        title=prefix + obj_type.__name__ + num_str,
-        slug=prefix + obj_type.__name__.upper() + "-" + num_str,
-        directive=parent_directive
     )
   else:
     return obj_type(
@@ -118,29 +122,17 @@ def create_n_of_each(type_list, num, program, prefix):
         db.session.add(join_obj)
 
   modified_objs = get_modified_objects(db.session)
-  update_index(db.session, modified_objs)
   db.session.commit()
+  update_index(db.session, modified_objs)
+  created_objs = reduce(add, new_objects.values())
+  print "created {0} objects".format(len(created_objs))
+  return created_objs
 
-  return new_objects
 
-
-def map_n_from_each(source_type_list, target_type_list, num_mappings):
-  # get all objects whose type is in source type list,
-  # repeate for target type list
-  source_obj_dict = {source_type: source_type.query.all() for source_type in source_type_list}
-  all_source_objs = reduce(
-      add,
-      [value for key, value in source_obj_dict.iteritems()]
-  )
-  target_obj_dict = {target_type: target_type.query.all() for target_type in target_type_list}
-  all_target_objs = reduce(
-      add,
-      [value for key, value in target_obj_dict.iteritems()]
-  )
-  for source_obj in all_source_objs:
+def map_n_from_each(source_obj_list, target_obj_list, num_mappings):
+  for source_obj in source_obj_list:
     # map each to num_mappings target objects if possible
-    print identifier(source_obj)
-    remaining_target_objs = [x for x in all_target_objs if type(x) != type(source_obj)]
+    remaining_target_objs = [x for x in target_obj_list if type(x) != type(source_obj)]
     left_to_assign = num_mappings
     while left_to_assign > 0:
       obj_ind = random.randint(0, len(remaining_target_objs) - 1)
@@ -172,13 +164,15 @@ def seed_random(prefix):
     db.session.rollback()
 
   ex_prog = Program.query.filter(Program.slug==prefix + "RGP-123")[0]
-  gov_objects = create_n_of_each(HEAD_GOV_TYPES, 9, ex_prog, prefix)
-  sec_objects = create_n_of_each(SECTION_TYPES, 9, ex_prog, prefix)
+  dir_objects = create_n_of_each(DIRECTIVE_TYPES, 9, ex_prog, prefix)
+  misc_objects = create_n_of_each(MISC_GOV_TYPES, 9, ex_prog, prefix)
+  sec_objects = create_n_sections(9, prefix, dir_objects)
   bis_objects = create_n_of_each(BIS_TYPES, 15, ex_prog, prefix)
 
-  map_n_from_each(ALL_GOV_TYPES, ALL_GOV_TYPES, 5)
-  map_n_from_each(ALL_GOV_TYPES, BIS_TYPES, 7)
-  map_n_from_each(BIS_TYPES, BIS_TYPES, 5)
+  all_gov_objects = dir_objects + misc_objects + sec_objects
+  map_n_from_each(all_gov_objects, all_gov_objects, 5)
+  map_n_from_each(all_gov_objects, bis_objects, 7)
+  map_n_from_each(bis_objects, bis_objects, 5)
 
 if __name__ == "__main__":
   seed_random("EXAMPLE")
