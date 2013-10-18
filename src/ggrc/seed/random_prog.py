@@ -13,6 +13,10 @@ from ggrc.models.all_models import *
 from ggrc.seed.mappings import get_join_object
 from ggrc.services.common import get_modified_objects, update_index
 
+NUM_GOV_OBJS = 100
+NUM_BIS_OBJS = 150
+NUM_MAPPINGS = 20
+
 BIS_TYPES = [
   Project,
   Product,
@@ -164,15 +168,21 @@ def seed_random(prefix):
     db.session.rollback()
 
   ex_prog = Program.query.filter(Program.slug==prefix + "RGP-123")[0]
-  dir_objects = create_n_of_each(DIRECTIVE_TYPES, 9, ex_prog, prefix)
-  misc_objects = create_n_of_each(MISC_GOV_TYPES, 9, ex_prog, prefix)
-  sec_objects = create_n_sections(9, prefix, dir_objects)
-  bis_objects = create_n_of_each(BIS_TYPES, 15, ex_prog, prefix)
+  dir_objects = create_n_of_each(DIRECTIVE_TYPES, NUM_GOV_OBJS, ex_prog, prefix)
+  misc_objects = create_n_of_each(MISC_GOV_TYPES, NUM_GOV_OBJS, ex_prog, prefix)
+  sec_objects = create_n_sections(NUM_GOV_OBJS, prefix, dir_objects)
+  bis_objects = create_n_of_each(BIS_TYPES, NUM_BIS_OBJS, ex_prog, prefix)
 
   all_gov_objects = dir_objects + misc_objects + sec_objects
-  map_n_from_each(all_gov_objects, all_gov_objects, 5)
-  map_n_from_each(all_gov_objects, bis_objects, 7)
-  map_n_from_each(bis_objects, bis_objects, 5)
+  map_n_from_each(all_gov_objects, all_gov_objects, NUM_MAPPINGS)
+  map_n_from_each(all_gov_objects, bis_objects, NUM_MAPPINGS)
+  map_n_from_each(bis_objects, bis_objects, NUM_MAPPINGS)
 
 if __name__ == "__main__":
-  seed_random("EXAMPLE")
+  print len(argv)
+  if len(argv) >= 2:
+    print "yeah you tossed me an argument"
+    seed_random(argv[1])
+  else:
+    print "no argument received"
+    seed_random("EXAMPLE")
