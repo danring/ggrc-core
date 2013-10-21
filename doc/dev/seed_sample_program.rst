@@ -19,7 +19,9 @@ Run by making a GET request to the path ``/admin/seedrandom`` while an administr
 
 To use a prefix of your choice, use the path ``/admin/seedrandom/<prefix>``, where ``prefix`` is the prefix you would like to prepend to the names, titles, and slugs of the example objects.
 
-To set the numbert of objects, use the path ``/admin/seedrandom/custom/<prefix>/<num_gov>/<num_bis>/<num_map>`` where ``num_gov`` is the number of governance objects, ``num_bis`` the number of business objects, and ``num_map`` the number of mappings from each object to others.  (For governance objects, there will be that many for governance-to-governance *and* that many for governance-to-business.)
+To set the numbert of objects, use the path ``/admin/seedrandom/custom/<prefix>/<num_gov>/<num_bis>/<num_map>`` where ``num_gov`` is the number of governance objects, ``num_bis`` the number of business objects, and ``num_map`` the number of mappings from each object to others. Defaults are 10/15/10. (For governance objects, there will be that many for governance-to-governance *and* that many for governance-to-business.)
+
+Sections are treated differently from other governance objects in that ``num_gov`` will mean how many sections are placed under *each* directive object.
 
 Gotchas
 -------------------

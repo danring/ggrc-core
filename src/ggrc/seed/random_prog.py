@@ -54,19 +54,19 @@ def pick_random(obj_type, num_items=1):
   num_return = min(len(all_objs), num_items)
   return random.sample(all_objs, num_return)
 
-def create_n_sections(num_sections, prefix, directives):
+def create_n_sections(num_sections, prefix, directive, offset):
+  """create num_sections under a given directive"""
   new_sections = []
   for i in xrange(num_sections):
-    num_str = str(i).zfill(3)
+    num_str = str(offset + i).zfill(3)
     # pick a random directive to assign it to
-    parent_directive = random.sample(directives, 1)[0]
     print "Creating a section attached to {0}.".format(
-        parent_directive.slug
+        directive.slug
     )
     new_section = Section(
         title=prefix + Section.__name__ + num_str,
         slug=prefix + Section.__name__.upper() + "-" + num_str,
-        directive=parent_directive
+        directive=directive
     )
     new_sections.append(new_section)
     db.session.add(new_section)
@@ -165,8 +165,15 @@ def seed_random(prefix, num_gov_objs=10, num_bis_objs=15, num_mappings=10):
 
   ex_prog = Program.query.filter(Program.slug==prefix + "RGP-123")[0]
   dir_objects = create_n_of_each(DIRECTIVE_TYPES, num_gov_objs, ex_prog, prefix)
+  sec_objects = []
+  offset = 0  # to keep section IDs unique
+  # create a number of sections on each directive equal to num_gov_objs
+  # parameter
+  for dir_obj in dir_objects:
+    sec_set = create_n_sections(num_gov_objs, prefix, dir_obj, offset)
+    sec_objects += sec_set
+    offset += num_gov_objs
   misc_objects = create_n_of_each(MISC_GOV_TYPES, num_gov_objs, ex_prog, prefix)
-  sec_objects = create_n_sections(num_gov_objs, prefix, dir_objects)
   bis_objects = create_n_of_each(BIS_TYPES, num_bis_objs, ex_prog, prefix)
 
   all_gov_objects = dir_objects + misc_objects + sec_objects
@@ -175,10 +182,7 @@ def seed_random(prefix, num_gov_objs=10, num_bis_objs=15, num_mappings=10):
   map_n_from_each(bis_objects, bis_objects, num_mappings)
 
 if __name__ == "__main__":
-  print len(argv)
   if len(argv) >= 2:
-    print "yeah you tossed me an argument"
     seed_random(argv[1])
   else:
-    print "no argument received"
     seed_random("EXAMPLE")
