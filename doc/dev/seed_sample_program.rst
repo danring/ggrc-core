@@ -15,7 +15,11 @@ Overview
 
 The file ``src/ggrc/seed/random_prog.py`` calls the function ``seed_random`` which makes a number of governance objects (now, 9 of each) and business objects (now, 15 of each).  It then randomly maps each governance object to 5 other governance objects and to 7 business objects.  Each business object is also mapped in 5 business objects.
 
-Run by making a GET request to the path ``/admin/seedrandom`` while an administrator (see below).
+Run by making a GET request to the path ``/admin/seedrandom`` while an administrator.
+
+To use a prefix of your choice, use the path ``/admin/seedrandom/<prefix>``, where ``prefix`` is the prefix you would like to prepend to the names, titles, and slugs of the example objects.
+
+To set the numbert of objects, use the path ``/admin/seedrandom/custom/<prefix>/<num_gov>/<num_bis>/<num_map>`` where ``num_gov`` is the number of governance objects, ``num_bis`` the number of business objects, and ``num_map`` the number of mappings from each object to others.  (For governance objects, there will be that many for governance-to-governance *and* that many for governance-to-business.)
 
 Gotchas
 -------------------

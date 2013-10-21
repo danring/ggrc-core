@@ -13,10 +13,6 @@ from ggrc.models.all_models import *
 from ggrc.seed.mappings import get_join_object
 from ggrc.services.common import get_modified_objects, update_index
 
-NUM_GOV_OBJS = 100
-NUM_BIS_OBJS = 150
-NUM_MAPPINGS = 20
-
 BIS_TYPES = [
   Project,
   Product,
@@ -157,7 +153,7 @@ def map_n_from_each(source_obj_list, target_obj_list, num_mappings):
         print inst.__class__, inst.args
         db.session.rollback()
 
-def seed_random(prefix):
+def seed_random(prefix, num_gov_objs=10, num_bis_objs=15, num_mappings=10):
   prog = Program(title="RandomGenProg", slug=prefix + "RGP-123")
   try:
     db.session.add(prog)
@@ -168,15 +164,15 @@ def seed_random(prefix):
     db.session.rollback()
 
   ex_prog = Program.query.filter(Program.slug==prefix + "RGP-123")[0]
-  dir_objects = create_n_of_each(DIRECTIVE_TYPES, NUM_GOV_OBJS, ex_prog, prefix)
-  misc_objects = create_n_of_each(MISC_GOV_TYPES, NUM_GOV_OBJS, ex_prog, prefix)
-  sec_objects = create_n_sections(NUM_GOV_OBJS, prefix, dir_objects)
-  bis_objects = create_n_of_each(BIS_TYPES, NUM_BIS_OBJS, ex_prog, prefix)
+  dir_objects = create_n_of_each(DIRECTIVE_TYPES, num_gov_objs, ex_prog, prefix)
+  misc_objects = create_n_of_each(MISC_GOV_TYPES, num_gov_objs, ex_prog, prefix)
+  sec_objects = create_n_sections(num_gov_objs, prefix, dir_objects)
+  bis_objects = create_n_of_each(BIS_TYPES, num_bis_objs, ex_prog, prefix)
 
   all_gov_objects = dir_objects + misc_objects + sec_objects
-  map_n_from_each(all_gov_objects, all_gov_objects, NUM_MAPPINGS)
-  map_n_from_each(all_gov_objects, bis_objects, NUM_MAPPINGS)
-  map_n_from_each(bis_objects, bis_objects, NUM_MAPPINGS)
+  map_n_from_each(all_gov_objects, all_gov_objects, num_mappings)
+  map_n_from_each(all_gov_objects, bis_objects, num_mappings)
+  map_n_from_each(bis_objects, bis_objects, num_mappings)
 
 if __name__ == "__main__":
   print len(argv)

@@ -57,9 +57,9 @@ def generate_query_chunks(query):
   for offset in range(0, count, CHUNK_SIZE):
     yield query.order_by('id').limit(CHUNK_SIZE).offset(offset).all()
 
-@app.route("/admin/seedrandom/withprefix/<prefix>", methods=["GET"])
+@app.route("/admin/seedrandom/withprefix/<prefix>", methods=["GET", "POST"])
 @login_required
-def seed_program(prefix):
+def seed_program_custom(prefix):
   """set up an example program with objects, whose names, titles, and slugs are all prefixed with prefix"""
   from ggrc.seed.random_prog import seed_random
   from flask import redirect
@@ -68,10 +68,21 @@ def seed_program(prefix):
   seed_random(prefix)
   return redirect("/dashboard")
 
+@app.route("/admin/seedrandom/custom/<prefix>/<num_gov>/<num_bis>/<num_map>", methods=["GET"])
+@login_required
+def seed_program_detail(prefix, num_gov, num_bis, num_map):
+  """set up an example program with objects, whose names, titles, and slugs are all prefixed with prefix"""
+  from ggrc.seed.random_prog import seed_random
+  from flask import redirect
+  if not permissions.is_allowed_read("/admin", 1):
+    raise Forbidden()
+  seed_random(prefix, int(num_gov), int(num_bis), int(num_map))
+  return redirect("/dashboard")
+
 @app.route("/admin/seedrandom", methods=["GET"])
 @login_required
 def seed_program_default():
-  return seed_program("EXAMPLE")
+  return seed_program_custom("EXAMPLE")
 
 @app.route("/admin/reindex", methods=["POST"])
 @login_required
