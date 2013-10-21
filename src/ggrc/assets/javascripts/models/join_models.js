@@ -148,6 +148,7 @@ can.Model.Join("CMS.Models.Relationship", {
   }
   , findAll: "GET /api/relationships"
   , create: "POST /api/relationships"
+  , update: "PUT /api/relationships/{id}"
   , destroy: "DELETE /api/relationships/{id}"
 }, {
   reinit: function() {
@@ -187,6 +188,7 @@ can.Model.Join("CMS.Models.ObjectSection", {
   }
   , findAll: "GET /api/object_sections"
   , create: "POST /api/object_sections"
+  , update: "PUT /api/object_sections/{id}"
   , destroy: "DELETE /api/object_sections/{id}"
 }, {
 /*    init: function() {
@@ -208,6 +210,7 @@ can.Model.Join("CMS.Models.ObjectControl", {
   }
   , findAll: "GET /api/object_controls"
   , create: "POST /api/object_controls"
+  , update: "PUT /api/object_controls/{id}"
   , destroy: "DELETE /api/object_controls/{id}"
 }, {
 /*    init: function() {
@@ -229,6 +232,7 @@ can.Model.Join("CMS.Models.ObjectObjective", {
   }
   , findAll: "GET /api/object_objectives"
   , create: "POST /api/object_objectives"
+  , update: "PUT /api/object_objectives/{id}"
   , destroy: "DELETE /api/object_objectives/{id}"
 }, {
 /*    init: function() {
@@ -250,6 +254,7 @@ can.Model.Join("CMS.Models.ProgramDirective", {
   }
   , findAll: "GET /api/program_directives"
   , create: "POST /api/program_directives"
+  , update: "PUT /api/program_directives/{id}"
   , destroy : "DELETE /api/program_directives/{id}"
 }, {
 });
@@ -268,6 +273,7 @@ can.Model.Join("CMS.Models.ObjectiveControl", {
     }
   , findAll: "GET /api/objective_controls"
   , create: "POST /api/objective_controls"
+  , update: "PUT /api/objective_controls/{id}"
   , destroy : "DELETE /api/objective_controls/{id}"
 }, {
 });
@@ -297,6 +303,7 @@ can.Model.Join("CMS.Models.ControlSection", {
   , root_object : "control_section"
   , findAll : "GET /api/control_sections"
   , create : "POST /api/control_sections"
+  , update: "PUT /api/control_sections/{id}"
   , destroy : "DELETE /api/control_sections/{id}"
   , join_keys : {
       section : CMS.Models.Section
@@ -315,6 +322,7 @@ can.Model.Join("CMS.Models.SectionObjective", {
   , root_object : "section_objective"
   , findAll : "GET /api/section_objectives"
   , create : "POST /api/section_objectives"
+  , update: "PUT /api/section_objectives/{id}"
   , destroy : "DELETE /api/section_objectives/{id}"
   , join_keys : {
       section : CMS.Models.Section
@@ -333,6 +341,7 @@ can.Model.Join("CMS.Models.DirectiveControl", {
   , root_object : "directive_control"
   , findAll : "GET /api/directive_controls"
   , create : "POST /api/directive_controls"
+  , update: "PUT /api/directive_controls/{id}"
   , destroy : "DELETE /api/directive_controls/{id}"
   , join_keys : {
       directive : CMS.Models.Directive
@@ -360,6 +369,7 @@ can.Model.Join("CMS.Models.ProgramControl", {
   }
   , findAll : "GET /api/program_controls"
   , create : "POST /api/program_controls"
+  , update: "PUT /api/program_controls/{id}"
   , destroy : "DELETE /api/program_controls/{id}"
 }, {
 
@@ -379,6 +389,7 @@ can.Model.Join("CMS.Models.ControlControl", {
   }
   , findAll : "GET /api/control_controls"
   , create : "POST /api/control_controls"
+  , update : "PUT /api/control_controls/{id}"
   , destroy : "DELETE /api/control_controls/{id}"
 }, {
 
@@ -398,6 +409,7 @@ can.Model.Join("CMS.Models.ControlRisk", {
   }
   , findAll : "GET /api/control_risks"
   , create : "POST /api/control_risks"
+  , update: "PUT /api/control_risks/{id}"
   , destroy : "DELETE /api/control_risks/{id}"
 }, {
 
@@ -408,7 +420,7 @@ can.Model.Join("CMS.Models.ObjectPerson", {
   , root_collection : "object_people"
   , findAll: "GET /api/object_people?__include=person"
   , create : "POST /api/object_people"
-  , update : "PUT /api/object_people/{id}"
+  , update: "PUT /api/object_people/{id}"
   , destroy : "DELETE /api/object_people/{id}"
   , join_keys : {
     personable : can.Model.Cacheable
@@ -427,6 +439,7 @@ can.Model.Join("CMS.Models.ObjectDocument", {
   , root_collection : "object_documents"
   , findAll: "GET /api/object_documents?__include=document"
   , create: "POST /api/object_documents"
+  , update: "PUT /api/object_documents/{id}"
   , destroy : "DELETE /api/object_documents/{id}"
   , join_keys : {
     documentable : can.Model.Cacheable

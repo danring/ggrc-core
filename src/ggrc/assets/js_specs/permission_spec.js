@@ -36,9 +36,12 @@ describe("Permission", function() {
     , role_can = function(role, action, model) {
         return !!role.__GGRC_ADMIN__ || (role[action] && role[action].indexOf(model) > -1);
       }
+    , reset
     , success
     , error
-    , reset
+    , success_or_error = function() {
+        return success.callCount || error.callCount;
+      }
     , response
     , created
     , unique_id
@@ -47,6 +50,7 @@ describe("Permission", function() {
     ; 
 
   beforeEach(function() {
+    // FIXME for efficiency?
     // Create child objects for joins
     // // Create a test object for each type
     // if (before_first) {
@@ -261,6 +265,7 @@ describe("Permission", function() {
       });
 
       return function() {
+        result.permissions && reset();
         return !!result.permissions;
       };
     });
@@ -272,40 +277,20 @@ describe("Permission", function() {
   
   // Remove every new object that was saved on teardown
   afterEach(function() {
-    // set_permissions("Admin");
+    waitsFor(set_permissions("Admin"));
+    runs(function() {
+      // Remove joins first
+      created.sort(function(a, b) {
+        if (a instanceof can.Model.Join && !(b instanceof can.Model.Join)) return -1;
+        else if (!(a instanceof can.Model.Join) && b instanceof can.Model.Join) return 1;
+        return 0;
+      });
 
-    // // Remove joins first
-    // created.sort(function(a, b) {
-    //   if (a instanceof can.Model.Join && !(b instanceof can.Model.Join)) return -1;
-    //   else if (!(a instanceof can.Model.Join) && b instanceof can.Model.Join) return 1;
-    //   return 0;
-    // });
-
-    // can.each(created, function(instance) {
-    //   instance.id && instance.destroy();
-    // });
+      can.each(created, function(instance) {
+        instance.id && instance.destroy();
+      });
+    });
   });
-
-  // describe("beep", function() {
-
-  //   it("beep", function() {
-  //     var def;
-  //     waitsFor(set_permissions("Admin"));
-  //     waitsFor(make_model("Control", def = new $.Deferred()));
-
-  //     runs(function() {
-  //       def.done(function(instance) {
-  //         console.log(instance)
-  //       });
-  //       console.log(JSON.stringify(GGRC.permissions))
-  //       waitsFor(set_permissions("Reader"));
-  //     })
-
-  //     runs(function() {
-  //       console.log(JSON.stringify(GGRC.permissions))
-  //     })
-  //   })
-  // })
 
   // Verify CRUD abilities for each role
   describe("System Roles", function() {
@@ -314,9 +299,6 @@ describe("Permission", function() {
         describe(role, function() {
           beforeEach(function() {
             waitsFor(set_permissions(role));
-            runs(function() {
-              reset();
-            });
           });
 
           describe("create", function() {
@@ -328,10 +310,9 @@ describe("Permission", function() {
                     waitsFor(make_model(model, def = new $.Deferred()));
                     runs(function() {
                       def.done(function(instance) {
+                        reset();
                         instance.save(success, error);
-                        waitsFor(function() {
-                          return success.callCount || error.callCount;
-                        });
+                        waitsFor(success_or_error);
                       });
                     })
                     runs(function() {
@@ -343,64 +324,117 @@ describe("Permission", function() {
             });
           });
 
-      //     describe("read", function() {
-      //       read_models.forEach(function(model) {
-      //         it((role_can(roles.System[role], "read", model) ? "can" : "can't") + " read " + model, function() {
-      //           runs(function() {
-      //             if (CMS.Models[model] && CMS.Models[model].findAll) {
-      //               CMS.Models[model].findAll({ __stubs_only: true }).done(function(list) {
-      //                 if (role_can(roles.System[role], "read", model))
-      //                   expect(list.length).toBeGreaterThan(0);
-      //                 else
-      //                   expect(list.length).toEqual(0);
-      //               });
-      //             }
-      //           });
-      //         });
-      //       });
-      //     });
+          describe("read", function() {
+            read_models.forEach(function(model) {
+              it((role_can(roles.System[role], "read", model) ? "can" : "can't") + " read " + model, function() {
+                runs(function() {
+                  if (CMS.Models[model] && CMS.Models[model].findAll) {
+                    var list;
+                    CMS.Models[model].findAll({ __stubs_only: true }).done(function() {
+                      list = arguments[0];
+                    });
 
-      //     describe("update", function() {
-      //       update_models.forEach(function(model) {
-      //         it((role_can(roles.System[role], "update", model) ? "can" : "can't") + " update " + model, function() {
-      //           if (CMS.Models[model]) {
-      //             // Create as an admin first
-      //             set_permissions("Admin");
-      //             reset();
-      //             var instance = make_model(model);
-      //             instance.save(success, error);
-      //             expect(success).toHaveBeenCalled();
+                    waitsFor(function() {
+                      return list;
+                    });
 
-      //             // Try to update
-      //             set_permissions(role);
-      //             reset();
-      //             instance.save(success, error);
-      //             expect(role_can(roles.System[role], "update", model) ? success : error).toHaveBeenCalled();
-      //           }
-      //         });
-      //       });
-      //     });
+                    runs(function() {
+                      if (role_can(roles.System[role], "read", model))
+                        expect(list.length).toBeGreaterThan(0);
+                      else
+                        expect(list.length).toEqual(0);
+                    });
+                  }
+                });
+              });
+            });
+          });
 
-      //     describe("delete", function() {
-      //       delete_models.forEach(function(model) {
-      //         it((role_can(roles.System[role], "delete", model) ? "can" : "can't") + " delete " + model, function() {
-      //           if (CMS.Models[model]) {
-      //             // Create as an admin first
-      //             set_permissions("Admin");
-      //             reset();
-      //             var instance = make_model(model);
-      //             instance.save(success, error);
-      //             expect(success).toHaveBeenCalled();
+          describe("update", function() {
+            update_models.forEach(function(model) {
+              it((role_can(roles.System[role], "update", model) ? "can" : "can't") + " update " + model, function() {
+                runs(function() {
+                  if (CMS.Models[model]) {
+                    var instance;
 
-      //             // Try to delete
-      //             set_permissions(role);
-      //             reset();
-      //             instance.destroy(success, error);
-      //             expect(role_can(roles.System[role], "delete", model) ? success : error).toHaveBeenCalled();
-      //           }
-      //         });
-          //   });
-          // });
+                    // Create as an admin first
+                    waitsFor(set_permissions("Admin"));
+                    runs(function() {
+                      var def = new $.Deferred();
+                      waitsFor(make_model(model, def));
+                      runs(function() {
+                        def.done(function(inst) {
+                          instance = inst;
+                          reset();
+                          instance.save(success, error);
+                          waitsFor(success_or_error);
+                          runs(function() {
+                            expect(success).toHaveBeenCalled();
+                          });
+                        })
+                      });
+                    });
+
+                    // Try to update
+                    runs(function() {
+                      waitsFor(set_permissions(role));
+                      runs(function() {
+                        reset();
+                        instance.save(success, error);
+                        waitsFor(success_or_error);
+                        runs(function() {
+                          expect(role_can(roles.System[role], "update", model) ? success : error).toHaveBeenCalled();
+                        });
+                      });
+                    });
+                  }
+                });
+              });
+            });
+          });
+
+          describe("delete", function() {
+            delete_models.forEach(function(model) {
+              it((role_can(roles.System[role], "delete", model) ? "can" : "can't") + " delete " + model, function() {
+                runs(function() {
+                  if (CMS.Models[model]) {
+                    var instance;
+
+                    // Create as an admin first
+                    waitsFor(set_permissions("Admin"));
+                    runs(function() {
+                      var def = new $.Deferred();
+                      waitsFor(make_model(model, def));
+                      runs(function() {
+                        def.done(function(inst) {
+                          instance = inst;
+                          reset();
+                          instance.save(success, error);
+                          waitsFor(success_or_error);
+                          runs(function() {
+                            expect(success).toHaveBeenCalled();
+                          });
+                        })
+                      });
+                    });
+
+                    // Try to update
+                    runs(function() {
+                      waitsFor(set_permissions(role));
+                      runs(function() {
+                        reset();
+                        instance.save(success, error);
+                        waitsFor(success_or_error);
+                        runs(function() {
+                          expect(role_can(roles.System[role], "delete", model) ? success : error).toHaveBeenCalled();
+                        });
+                      });
+                    });
+                  }
+                });
+              });
+            });
+          });
         });
       }(role);
     }
