@@ -440,59 +440,6 @@
 
         join_object: get_page_object(),
         join_list: get_page_object().object_people
-      },
-
-      /*system_systems: {
-        option_column_view: GGRC.mustache_path + "/selectors/option_column.mustache",
-        active_column_view: GGRC.mustache_path + "/selectors/active_column.mustache",
-        option_detail_view: GGRC.mustache_path + "/selectors/option_detail.mustache",
-
-        new_object_title: "System",
-        modal_title: "Select Systems",
-
-        related_model_singular: "System",
-        related_table_plural: "systems",
-        related_title_singular: "System",
-        related_title_plural: "Systems",
-
-        option_model: CMS.Models.System,
-
-        join_model: CMS.Models.SystemSystem,
-        option_attr: 'child',
-        join_attr: 'parent',
-        option_id_field: 'child_id',
-        option_type_field: null,
-        join_id_field: 'parent_id',
-        join_type_field: null,
-
-        join_object: CMS.Models.System.findInCacheById(data.join_object_id)
-      },*/
-
-      system_controls: {
-        option_column_view: GGRC.mustache_path + "/selectors/option_column.mustache",
-        active_column_view: GGRC.mustache_path + "/selectors/active_column.mustache",
-        option_detail_view: GGRC.mustache_path + "/selectors/option_detail.mustache",
-
-        new_object_title: "Control",
-        modal_title: "Select Controls",
-
-        related_model_singular: "Control",
-        related_table_plural: "controls",
-        related_table_singular: "control",
-        related_title_singular: "Control",
-        related_title_plural: "Controls",
-
-        option_model: CMS.Models.Control,
-
-        join_model: CMS.Models.SystemControl,
-        option_attr: 'control',
-        join_attr: 'system',
-        option_id_field: 'control_id',
-        option_type_field: null,
-        join_id_field: 'system_id',
-        join_type_field: null,
-
-        join_object: CMS.Models.System.findInCacheById(data.join_object_id)
       }
 
       , program_directives : {
@@ -1183,6 +1130,7 @@
       , option_set = {
             object_model: object_model_name
         }
+      , exclude_option_types = data.exclude_option_types ? data.exclude_option_types.split(",") : []
       ;
 
     if (!option_model_name) {
@@ -1198,13 +1146,15 @@
         , extra_options = modal_descriptor_view_options[option_model_name]
         ;
 
-      if (!option_set.default_option_descriptor)
-        option_set.default_option_descriptor = option_model_name;
-
       //  If we have duplicate options, we want to use the first, so return
       //    early.
-      if (option_descriptors[option_model_name])
+      //  Also return now if the descriptor is explicitly excluded from the 
+      //    set of descriptors for this modal.
+      if (option_descriptors[option_model_name] || ~can.inArray(option_model_name, exclude_option_types))
         return;
+
+      if (!option_set.default_option_descriptor)
+        option_set.default_option_descriptor = option_model_name;
 
       if (!extra_options)
         extra_options = {

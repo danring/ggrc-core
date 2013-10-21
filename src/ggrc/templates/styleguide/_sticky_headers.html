@@ -1,0 +1,931 @@
+<section id="sticky_headers" class="widget">
+  <section class="header">
+    <h2>Sticky Headers</h2>
+  </section>
+
+  <section class="content" style="padding:10px 20px; box-shadow: inset 0 0 3px 0 #bbbbbb">
+    <p>
+      Sticky headers are used to implement headers that stick to the top of the scrollable 
+      area when a section's content is scrolled past the top. These headers support stacking when 
+      the headers are in nested content.
+    </p>
+    <p>
+      To initialize, use the <strong>sticky_header()</strong> jQuery plugin. Each instance will handle 
+      an entire nested section of content and is easily configurable using just three CSS selectors.
+    </p>
+    <p>
+      <strong>Example:</strong>
+    </p>
+    <textarea style="width: 95%" rows="18" cols="110">
+$(".widget").sticky_header({
+    // A selector for the scrollable area ancestor
+    scroll_area_selector: ".object-area"
+    // A selector for all sticky-able headers
+  , header_selector: ".header"
+                  +", .tree-open > .item-open > .item-main"
+                  +", .tree-open > .item-open > .item-content > .inner-tree > h6"
+                  +", .advanced-filters"
+    // A selector for all sticky-able footers
+  , footer_selector: ".tree-footer"
+    // A selector for counting the depth
+    // Generally this should be header_selector with the final element in each selector removed
+  , depth_selector: ".tree-open > .item-open"
+                  +", .tree-open > .item-open > .item-content > .inner-tree"
+    // The amount of space at the bottom of the content when the header should start scrolling away
+  , margin: 30
+});
+    </textarea>
+  </section>
+
+  <section class="content">
+    <ul class="tree-structure new-tree event-tree new-event-tree">
+      <li class="tree-item">
+        <div class="item-main">
+          <a href="javascript://" class="openclose">
+            <div class="row-fluid">
+              <div class="span12">
+                <div class="item-data">
+                  <div class="tree-title-area">
+                    <ul>
+                      <li class="event-icon">
+                        <i class="grcicon-mapped" rel="tooltip" title="Mapped"></i>
+                      </li>
+                      <li class="orggroup">
+                        <i class="grcicon-orggroup-color" rel="tooltip" title="Org Group"></i>
+                        <strong>Engineering Core Team</strong>
+                      </li>
+                      <li>
+                        <span class="event-action">
+                          mapped to
+                        </span>
+                      </li>
+                      <li class="program">
+                        <i class="grcicon-program-color" rel="tooltip" data-original-title="Program"></i>
+                        <strong>SOX Compliance Program</strong>
+                      </li>
+                      <li>
+                        <span class="event-owner">
+                          by Dan Ring
+                        </span>
+                        <span class="event-time">
+                          on 09/10/2013 12:57:37am PDT
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                  <span class="event-more">more...</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="tier-2-info item-content content-open events-content">
+          <div class="tier-2-info-content">
+            <p>
+              <a class="info-action" href="#">View Engineering Core Team <i class="grcicon-goto"></i></a>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <a class="info-action" href="#">View SOX Compliance Program <i class="grcicon-goto"></i></a>
+            </p>
+          </div>
+        </div>
+      </li>
+      <li class="tree-item">
+        <div class="item-main">
+          <a href="javascript://" class="openclose">
+            <div class="row-fluid">
+              <div class="span12">
+                <div class="item-data">
+                  <div class="tree-title-area">
+                    <ul>
+                      <li class="event-icon">
+                        <i class="grcicon-unmapped" rel="tooltip" title="Unmapped"></i>
+                      </li>
+                      <li class="orggroup">
+                        <i class="grcicon-orggroup-color" rel="tooltip" title="Org Group"></i>
+                        <strong>Engineering Core Team</strong>
+                      </li>
+                      <li>
+                        <span class="event-action">
+                          unmapped from
+                        </span>
+                      </li>
+                      <li class="program">
+                        <i class="grcicon-program-color" rel="tooltip" data-original-title="Program"></i>
+                        <strong>SOX Compliance Program</strong>
+                      </li>
+                      <li>
+                        <span class="event-owner">
+                          by Dan Ring
+                        </span>
+                        <span class="event-time">
+                          on 09/13/2013 12:57:37am PDT
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                  <span class="event-more">more...</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="tier-2-info item-content content-open events-content">
+          <div class="tier-2-info-content">
+            <p>
+              <a class="info-action" href="#">View Engineering Core Team <i class="grcicon-goto"></i></a>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <a class="info-action" href="#">View SOX Compliance Program <i class="grcicon-goto"></i></a>
+            </p>
+          </div>
+          
+          <div class="inner-tree">
+            <h6>Affected Mappings (3) <span class="event-action">Org Group is also unmapped from following object</span></h6>
+            <ul class="tree-structure new-tree">
+              <li class="tree-item program">
+                <div class="item-main">
+                  <a href="javascript://" class="openclose">
+                    <div class="row-fluid">
+                      <div class="span12">
+                        <div class="item-data">
+                          <div class="tree-title-area">
+                            <i class="grcicon-audit-color"></i>
+                            SOX Compliance Audit 2013
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+                
+                <div class="tier-2-info item-content content-open events-content">
+                  <div class="tier-2-info-content">
+                    <a href="#" class="info-action">
+                      <strong>View SOX Compliance Audit 2013</strong>
+                      <i class="grcicon-goto"></i>
+                    </a>
+                  </div>
+                  
+                  <div class="inner-tree">
+                    <h6>Affected Requests (3) <span class="event-action">Org Group is also unmapped from following requests</span></h6>
+                    <ul class="tree-structure new-tree">
+                      <li class="tree-item program">
+                        <div class="item-main">
+                          <a href="javascript://" class="openclose">
+                            <div class="row-fluid">
+                              <div class="span12">
+                                <div class="item-data">
+                                  <div class="tree-title-area">
+                                    <i class="grcicon-directive-black"></i>
+                                    Documentation Request
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+
+                        <div class="tier-2-info item-content content-open events-content">
+                          <div class="tier-2-info-content">&nbsp;</div>
+                          
+                          <div class="inner-tree">
+                            <h6>Affected Responses (2) <span class="event-action">Org Group is also unmapped from following responses</span></h6>
+                            <ul class="tree-structure new-tree">
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 1
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 2
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                          
+                        </div>
+                      </li>
+                      <li class="tree-item program">
+                        <div class="item-main">
+                          <a href="javascript://" class="openclose">
+                            <div class="row-fluid">
+                              <div class="span12">
+                                <div class="item-data">
+                                  <div class="tree-title-area">
+                                    <i class="grcicon-calendar"></i>
+                                    Interview Request
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+                        
+                        <div class="tier-2-info item-content content-open events-content">
+                          <div class="tier-2-info-content">&nbsp;</div>
+                          
+                          <div class="inner-tree">
+                            <h6>Affected Responses (3) <span class="event-action">Org Group is also unmapped from following responses</span></h6>
+                            <ul class="tree-structure new-tree">
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 1
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 2
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 3
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                          
+                        </div>
+                        
+                      </li>
+                      <li class="tree-item program">
+                        <div class="item-main">
+                          <a href="javascript://" class="openclose">
+                            <div class="row-fluid">
+                              <div class="span12">
+                                <div class="item-data">
+                                  <div class="tree-title-area">
+                                    <i class="grcicon-pie-chart"></i>
+                                    Population Sample Request
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+                        
+                        <div class="tier-2-info item-content content-open events-content">
+                          <div class="tier-2-info-content">&nbsp;</div>
+                          
+                          <div class="inner-tree">
+                            <h6>Affected Responses (1) <span class="event-action">Org Group is also unmapped from following responses</span></h6>
+                            <ul class="tree-structure new-tree">
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 1
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                          
+                        </div>
+                        
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+              </li>
+              <li class="tree-item program">
+                <div class="item-main">
+                  <a href="javascript://" class="openclose">
+                    <div class="row-fluid">
+                      <div class="span12">
+                        <div class="item-data">
+                          <div class="tree-title-area">
+                            <i class="grcicon-logout-color"></i>
+                            Google Fiber Assessment
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </li>
+              <li class="tree-item policy">
+                <div class="item-main">
+                  <a href="javascript://" class="openclose">
+                    <div class="row-fluid">
+                      <div class="span12">
+                        <div class="item-data">
+                          <div class="tree-title-area">
+                            <i class="grcicon-policy-color"></i>
+                            PCI User Agreement
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </div>
+    
+        </div>
+      </li>
+      <li class="tree-item">
+        <div class="item-main">
+          <a href="javascript://" class="openclose">
+            <div class="row-fluid">
+              <div class="span12">
+                <div class="item-data">
+                  <div class="tree-title-area">
+                    <ul>
+                      <li class="event-icon">
+                        <i class="grcicon-deleted" rel="tooltip" title="Deleted"></i>
+                      </li>
+                      <li class="program">
+                        <i class="grcicon-program-color" rel="tooltip" title="Program"></i>
+                        <strong>
+                          SOX Compliance Program
+                        </strong>
+                      </li>
+                      <li>
+                        <span class="event-action">
+                          deleted
+                        </span>
+                      </li>
+                      <li>
+                        <span class="event-owner">
+                          by Dan Ring
+                        </span>
+                      </li>
+                      <li>
+                        <span class="event-time">
+                          on 09/13/2013 12:57:37am PDT
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                  <span class="event-more">more...</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="tier-2-info item-content content-open events-content">
+          <div class="tier-2-info-content">&nbsp;</div>
+          
+          <div class="inner-tree">
+            <h6>Deleted Objects (1)</h6>
+            <ul class="tree-structure new-tree">
+              <li class="tree-item program">
+                <div class="item-main">
+                  <a href="javascript://" class="openclose">
+                    <div class="row-fluid">
+                      <div class="span12">
+                        <div class="item-data">
+                          <div class="tree-title-area">
+                            <i class="grcicon-audit-color"></i>
+                            SOX Compliance Audit 2013
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+                
+                <div class="tier-2-info item-content content-open events-content">
+                  <div class="tier-2-info-content">&nbsp;</div>
+                  
+                  <div class="inner-tree">
+                    <h6>Deleted Requests (3)</h6>
+                    <ul class="tree-structure new-tree">
+                      <li class="tree-item program">
+                        <div class="item-main">
+                          <a href="javascript://" class="openclose">
+                            <div class="row-fluid">
+                              <div class="span12">
+                                <div class="item-data">
+                                  <div class="tree-title-area">
+                                    <i class="grcicon-directive-black"></i>
+                                    Documentation Request
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+
+                        <div class="tier-2-info item-content content-open events-content">
+                          <div class="tier-2-info-content">&nbsp;</div>
+                          
+                          <div class="inner-tree">
+                            <h6>Deleted Responses (2) <span class="event-action">Org Group is also unmapped from following responses</span></h6>
+                            <ul class="tree-structure new-tree">
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 1
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 2
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                          
+                        </div>
+                      </li>
+                      
+                      <li class="tree-item program">
+                        <div class="item-main">
+                          <a href="javascript://" class="openclose">
+                            <div class="row-fluid">
+                              <div class="span12">
+                                <div class="item-data">
+                                  <div class="tree-title-area">
+                                    <i class="grcicon-calendar"></i>
+                                    Interview Request
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+                        
+                        <div class="tier-2-info item-content content-open events-content">
+                          <div class="tier-2-info-content">&nbsp;</div>
+                          
+                          <div class="inner-tree">
+                            <h6>Deleted Responses (3) <span class="event-action">Org Group is also unmapped from following responses</span></h6>
+                            <ul class="tree-structure new-tree">
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 1
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 2
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 3
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+
+                              <li class="tree-footer tree-item tree-item-add">
+                                <div class="row-fluid">
+                                  <div class="span12 section-expandable">
+                                    <a
+                                      class="section-add section-sticky"
+                                      href="javascript://"
+                                      rel="tooltip"
+                                      data-placement="left">
+                                      + Object
+                                    </a>
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                          
+                        </div>
+                        
+                      </li>
+                      
+                      <li class="tree-item program">
+                        <div class="item-main">
+                          <a href="javascript://" class="openclose">
+                            <div class="row-fluid">
+                              <div class="span12">
+                                <div class="item-data">
+                                  <div class="tree-title-area">
+                                    <i class="grcicon-pie-chart"></i>
+                                    Population Sample Request
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+                        
+                        <div class="tier-2-info item-content content-open events-content">
+                          <div class="tier-2-info-content">&nbsp;</div>
+                          
+                          <div class="inner-tree">
+                            <h6>Deleted Responses (1) <span class="event-action">Org Group is also unmapped from following responses</span></h6>
+                            <ul class="tree-structure new-tree">
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 1
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                          
+                        </div>
+                        
+                      </li>
+                      
+                    </ul>
+                  </div>
+                </div>
+                
+              </li>
+
+              <li class="tree-footer tree-item tree-item-add">
+                <div class="row-fluid">
+                  <div class="span12 section-expandable">
+                    <a
+                      class="section-add section-sticky"
+                      href="javascript://"
+                      rel="tooltip"
+                      data-placement="left">
+                      + Object
+                    </a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="inner-tree">
+            <h6>Affected Mappings (3) <span class="event-action">Org Group is also unmapped from following object</span></h6>
+            <ul class="tree-structure new-tree">
+              <li class="tree-item program">
+                <div class="item-main">
+                  <a href="javascript://" class="openclose">
+                    <div class="row-fluid">
+                      <div class="span12">
+                        <div class="item-data">
+                          <div class="tree-title-area">
+                            <i class="grcicon-audit-color"></i>
+                            SOX Compliance Audit 2013
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+                
+                <div class="tier-2-info item-content content-open events-content">
+                  <div class="tier-2-info-content">&nbsp;</div>
+                  
+                  <div class="inner-tree">
+                    <h6>Affected Requests (3) <span class="event-action">Org Group is also unmapped from following requests</span></h6>
+                    <ul class="tree-structure new-tree">
+                      <li class="tree-item program">
+                        <div class="item-main">
+                          <a href="javascript://" class="openclose">
+                            <div class="row-fluid">
+                              <div class="span12">
+                                <div class="item-data">
+                                  <div class="tree-title-area">
+                                    <i class="grcicon-directive-black"></i>
+                                    Documentation Request
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+
+                        <div class="tier-2-info item-content content-open events-content">
+                          <div class="tier-2-info-content">&nbsp;</div>
+                          
+                          <div class="inner-tree">
+                            <h6>Affected Responses (2) <span class="event-action">Org Group is also unmapped from following responses</span></h6>
+                            <ul class="tree-structure new-tree">
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 1
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 2
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                          
+                        </div>
+                      </li>
+                      <li class="tree-item program">
+                        <div class="item-main">
+                          <a href="javascript://" class="openclose">
+                            <div class="row-fluid">
+                              <div class="span12">
+                                <div class="item-data">
+                                  <div class="tree-title-area">
+                                    <i class="grcicon-calendar"></i>
+                                    Interview Request
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+                        
+                        <div class="tier-2-info item-content content-open events-content">
+                          <div class="tier-2-info-content">&nbsp;</div>
+                          
+                          <div class="inner-tree">
+                            <h6>Affected Responses (3) <span class="event-action">Org Group is also unmapped from following responses</span></h6>
+                            <ul class="tree-structure new-tree">
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 1
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 2
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 3
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                          
+                        </div>
+                        
+                      </li>
+                      <li class="tree-item program">
+                        <div class="item-main">
+                          <a href="javascript://" class="openclose">
+                            <div class="row-fluid">
+                              <div class="span12">
+                                <div class="item-data">
+                                  <div class="tree-title-area">
+                                    <i class="grcicon-pie-chart"></i>
+                                    Population Sample Request
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+                        
+                        <div class="tier-2-info item-content content-open events-content">
+                          <div class="tier-2-info-content">&nbsp;</div>
+                          
+                          <div class="inner-tree">
+                            <h6>Affected Responses (1) <span class="event-action">Org Group is also unmapped from following responses</span></h6>
+                            <ul class="tree-structure new-tree">
+                              <li class="tree-item program">
+                                <div class="item-main">
+                                  <a href="javascript://" class="openclose">
+                                    <div class="row-fluid">
+                                      <div class="span12">
+                                        <div class="item-data">
+                                          <div class="tree-title-area">
+                                            Response 1
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                          
+                        </div>
+                        
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+              </li>
+              <li class="tree-item program">
+                <div class="item-main">
+                  <a href="javascript://" class="openclose">
+                    <div class="row-fluid">
+                      <div class="span12">
+                        <div class="item-data">
+                          <div class="tree-title-area">
+                            <i class="grcicon-logout-color"></i>
+                            Google Fiber Assessment
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </li>
+              <li class="tree-item policy">
+                <div class="item-main">
+                  <a href="javascript://" class="openclose">
+                    <div class="row-fluid">
+                      <div class="span12">
+                        <div class="item-data">
+                          <div class="tree-title-area">
+                            <i class="grcicon-policy-color"></i>
+                            PCI User Agreement
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </li>
+
+      <li class="tree-footer tree-item tree-item-add">
+        <div class="row-fluid">
+          <div class="span12 section-expandable">
+            <a
+              class="section-add section-sticky"
+              href="javascript://"
+              rel="tooltip"
+              data-placement="left">
+              + Object
+            </a>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </section>
+</section>
+
+<script>
+  // Toggle all content
+  $(document).ready(function() {
+    $('#sticky_headers ul.tree-structure .item-main .openclose').trigger('click');
+  });
+</script>

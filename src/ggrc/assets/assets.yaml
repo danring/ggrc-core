@@ -40,6 +40,7 @@ dashboard-js-files:
   - spin.min.js
   - tmpl.js
   - mustache_helper.js
+  - sticky_header.js
   - models/mappers.js
   - models/mappings.js
   - models/cacheable.js
@@ -66,6 +67,7 @@ dashboard-js-files:
   - controls/control.js
   - controls/controls_controller.js
   - controllers/dashboard_controller.js
+  - controllers/quick_form_controller.js
   - apps/controls.js
   - sections/section.js
   - pbc/system.js
@@ -75,11 +77,11 @@ dashboard-js-files:
   - mapping/mapping_controller.js
   - sections/sections_controller.js
   - apps/mapping.js
-  - pbc/population_sample.js
   - pbc/meeting.js
   - pbc/response.js
   - pbc/responses_controller.js
   - pbc/modals_controller.js
+  - pbc/workflow_controller.js
   - apps/pbc.js
   - products/routes_controller.js
   - apps/products.js
@@ -187,6 +189,24 @@ dashboard-js-template-files:
   - sections/tree_footer.mustache
   - people/tree_footer.mustache
   - documents/tree_footer.mustache
+  - audits/modal_content.mustache
+  - audits/tree.mustache
+  - audits/tree_footer.mustache
+  - audits/search_result.mustache
+  - audits/extended_info.mustache
+  - requests/tree.mustache
+  - requests/tree_footer.mustache
+  - requests/modal_content.mustache
+  - people/autocomplete_result.mustache
+  - objectives/autocomplete_result.mustache
+  - responses/tree.mustache
+  - responses/tree_footer.mustache
+  - responses/modal_content.mustache
+  - meetings/modal_content.mustache
+  - meetings/tree_footer.mustache
+  - meetings/tree.mustache
+  - documents/autocomplete_result.mustache
+  - documents/pbc_tree.mustache
 
 dashboard-css-files:
   # dashboard.css is generated automatically from `compass watch -c compass.config.rb`

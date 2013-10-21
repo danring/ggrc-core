@@ -19,15 +19,14 @@ def all_collections():
   from ggrc import settings
 
   ret = [
+    service('audits', models.Audit),
     service('categorizations', models.Categorization),
     service('categories', models.Category),
     service('contexts', models.Context),
     service('controls', models.Control),
-    service('control_assessments', models.ControlAssessment),
     service('control_controls', models.ControlControl),
     service('control_risks', models.ControlRisk),
     service('control_sections', models.ControlSection),
-    service('cycles', models.Cycle),
     service('data_assets', models.DataAsset),
     service('directives', models.Directive, ReadOnlyResource),
       service('contracts', models.Contract),
@@ -49,9 +48,7 @@ def all_collections():
     service('objective_controls', models.ObjectiveControl),
     service('options', models.Option),
     service('org_groups', models.OrgGroup),
-    service('pbc_lists', models.PbcList),
     service('people', models.Person),
-    service('population_samples', models.PopulationSample),
     service('products', models.Product),
     service('projects', models.Project),
     service('programs', models.Program),
@@ -60,6 +57,9 @@ def all_collections():
     service('relationships', models.Relationship),
     service('requests', models.Request),
     service('responses', models.Response),
+      service('documentation_responses', models.DocumentationResponse),
+      service('interview_responses', models.InterviewResponse),
+      service('population_sample_responses', models.PopulationSampleResponse),
     service('revisions', models.Revision, ReadOnlyResource),
     service('risks', models.Risk),
     service('risky_attributes', models.RiskyAttribute),
@@ -69,8 +69,6 @@ def all_collections():
     service('systems_or_processes', models.SystemOrProcess, ReadOnlyResource),
       service('systems', models.System),
       service('processes', models.Process),
-    service('system_systems', models.SystemSystem),
-    service('system_controls', models.SystemControl),
     ]
 
   for extension in settings.EXTENSIONS:

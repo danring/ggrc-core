@@ -171,6 +171,12 @@ var model_descriptors = {
     , object_route : "sections"
     , object_category : "governance"
   }
+  , "audit" : {
+    model : CMS.Models.Audit
+    , object_type : "audit"
+    , object_route : "audits"
+    , object_category : "programs"
+  }
   /*
   , "person" : {
     model : CMS.Models.Person

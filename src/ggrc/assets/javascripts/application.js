@@ -93,6 +93,7 @@ jQuery.extend(GGRC, {
   infer_object_type : function(data) {
     var decision_tree = {
       "program" : CMS.Models.Program
+      , "audit" : CMS.Models.Audit
       /*, "directive" : {
         _discriminator: function(data) {
           var model_i, model;
@@ -210,15 +211,26 @@ jQuery.extend(GGRC, {
 //  we are not overwriting more recent data than was viewed by the user.
 var etags = {};
 $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
-  var data;
+  var data = originalOptions.data;
   jqXHR.setRequestHeader("X-Requested-By", "gGRC");
+
+  function attach_provisional_id(prop) {
+    jqXHR.done(function(obj) {
+      obj[prop].provisional_id = data[prop].provisional_id;
+    });
+  }
+
   if ( /^\/api\//.test(options.url) && /PUT|POST|DELETE/.test(options.type.toUpperCase())) {
-    data = originalOptions.data;
     options.dataType = "json";
     options.contentType = "application/json";
     jqXHR.setRequestHeader("If-Match", (etags[originalOptions.url] || [])[0]);
     jqXHR.setRequestHeader("If-Unmodified-Since", (etags[originalOptions.url] || [])[1]);
     options.data = options.type.toUpperCase() === "DELETE" ? "" : JSON.stringify(data);
+    for(var i in data) {
+      if(data.hasOwnProperty(i) && data[i].provisional_id) {
+        attach_provisional_id(i);
+      }
+    }
   }
   if( /^\/api\//.test(options.url) && (options.type.toUpperCase() === "GET")) {
     options.cache = false;
@@ -262,7 +274,7 @@ $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
   //  we have a default failure handler that should only be called if no other one is registered, 
   //  unless it's also explicitly asked for.  If it's registered in a transformed one, though (after
   //  then() or pipe()), then the original one won't normally be notified of failure.
-  can.ajax = $.ajax = function() {
+  can.ajax = $.ajax = function(options) {
     var _ajax = _old_ajax.apply($, arguments);
 
     function setup(_new_ajax, _old_ajax) {
@@ -661,7 +673,8 @@ jQuery(function($) {
         use_slide ? $content.slideUp('fast') : $content.css("display", "none");
         $icon.removeClass('active');
         $li.removeClass('item-open');
-        $parentTree.removeClass('tree-open');
+        // Only remove tree open if there are no open siblings
+        !$li.siblings('.item-open').length && $parentTree.removeClass('tree-open');
         $content.removeClass('content-open');
       } else if(cmd === "open") {
         use_slide ? $content.slideDown('fast') : $content.css("display", "block");
@@ -748,11 +761,6 @@ jQuery(function($){
 can.reduce ||
   (can.reduce = function(a, f, i) { if(a==null) return null; return [].reduce.apply(a, arguments.length < 3 ? [f] : [f, i]) });
 
-
-  $(document.body).on("change", "[id$=_start_date]", function(ev) { 
-    var start_date = $(this).datepicker('getDate');
-    $("[id$=_stop_date]").datepicker().datepicker("option", "minDate", start_date); 
-  });
   $(document.body).on("change", ".rotate_control_assessment", function(ev) { 
     ev.currentTarget.click(function() {
       ev.currentTarget.toggle();

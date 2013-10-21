@@ -145,12 +145,12 @@ Feature: Private Programs
 
   Examples: Resources
       | resource_type    |
+      | Audit            |
       #| Categorization   |
       | Category         |
       | Control          |
       | ControlControl   |
       | ControlSection   |
-      | Cycle            |
       | DataAsset        |
       | Contract         |
       | Policy           |
@@ -176,5 +176,3 @@ Feature: Private Programs
       | SectionObjective |
       | System           |
       | Process          |
-      #| SystemControl    |
-      #| SystemSystem     |

@@ -67,6 +67,9 @@ can.Model.Cacheable("CMS.Models.Person", {
   display_name : function() {
     return this.email;
   }
+  , autocomplete_label : function() {
+    return this.name ? this.name + " <span class=\"url-link\">" + this.email + "</span>" : this.email;
+  }
 });
 
 })(this, can);

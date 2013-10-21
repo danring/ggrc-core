@@ -194,11 +194,13 @@
       }
       if (object_params) {
         object_params = JSON.parse(object_params.replace(/\\n/g, "\\n"));
+      } else {
+        object_params = {};
       }
 
       var modal_title = (instance ? "Edit " : "New ") + ($trigger.attr("data-object-singular-override") || model.title_singular || $trigger.attr("data-object-singular"));
       // If this was initiated via quick join link
-      if (object_params && object_params.section) {
+      if (object_params.section) {
         modal_title = "Map " + modal_title + " to " + object_params.section.title;
       }
       
@@ -210,7 +212,7 @@
         , button_view : GGRC.Controllers.Modals.BUTTON_VIEW_SAVE_CANCEL_DELETE
         , model : model
         , instance : instance
-        , modal_title : modal_title
+        , modal_title : object_params.modal_title || modal_title
         , content_view : GGRC.mustache_path + "/" + $trigger.attr("data-object-plural") + "/modal_content.mustache"
       });
 

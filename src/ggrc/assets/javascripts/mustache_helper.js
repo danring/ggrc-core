@@ -557,11 +557,12 @@ function defer_render(tag_name, func, deferred) {
 
   function hookup(element, parent, view_id) {
     var f = function() {
-      frag_or_html = func.apply(this, arguments);
-      $(element).after(frag_or_html).remove();
+      var frag_or_html = func.apply(this, arguments);
+      $(element).html(frag_or_html);
     };
-    if (deferred)
-      deferred.done(f)
+    if (deferred) {
+      deferred.done(f);
+    }
     else
       setTimeout(f, 13);
   }
@@ -641,14 +642,28 @@ Mustache.registerHelper("all", function(type, options) {
   var model = CMS.Models[type] || GGRC.Models[type]
   , $dummy_content = $(options.fn({}).trim()).first()
   , tag_name = $dummy_content.prop("tagName")
+  , context = this.instance ? this.instance : this instanceof can.Model.Cacheable ? this : null
   , items_dfd, hook;
 
   function hookup(element, parent, view_id) {
     items_dfd.done(function(items){
-      var $el = $(element);
+      var val
+      , $parent = $(element.parentNode)
+      , $el = $(element);
       can.each(items, function(item) {
         $(can.view.frag(options.fn(item), parent)).appendTo(element.parentNode);
       });
+      if($parent.is("select")
+        && $parent.attr("name")
+        && context
+      ) {
+        val = context.attr($parent.attr("name"));
+        if(val) {
+          $parent.find("option[value=" + val + "]").attr("selected", true);
+        } else {
+          context.attr($parent.attr("name").substr(0, $parent.attr("name").lastIndexOf(".")), items[0]);
+        }
+      }
       $el.remove();
     });
     return element.parentNode;
@@ -661,11 +676,7 @@ Mustache.registerHelper("all", function(type, options) {
     $dummy_content.attr.apply($dummy_content, can.map(hook.split('='), function(s) { return s.replace(/'|"| /, "");}));
   }
 
-  if(model.cache) {
-    items_dfd = $.when(can.map(Object.keys(model.cache), function(idx) { return model.cache[idx]; }));
-  } else {
-    items_dfd = model.findAll();
-  }
+  items_dfd = model.findAll();
   return "<" + tag_name + " data-view-id='" + $dummy_content.attr("data-view-id") + "'></" + tag_name + ">";
 });
 
@@ -684,20 +695,22 @@ Mustache.registerHelper("handle_context", function() {
     ].join("\n");
 });
 
-Mustache.registerHelper("with_page_object_as", function(name, options) {
-  if(!options) {
-    options = name;
-    name = "page_object";
-  }
-  var page_object = GGRC.page_instance();
-  if(page_object) {
-    var p = {};
-    p[name] = page_object;
-    options.contexts.push(p);
-    return options.fn(options.contexts);
-  } else {
-    return options.inverse(options.contexts);
-  }
+can.each(["page_object", "current_user"], function(fname) {
+  Mustache.registerHelper("with_" + fname + "_as", function(name, options) {
+    if(!options) {
+      options = name;
+      name = fname;
+    }
+    var page_object = (fname === "current_user" ? CMS.Models.Person.model(GGRC.current_user) : GGRC.page_instance());
+    if(page_object) {
+      var p = {};
+      p[name] = page_object;
+      options.contexts.push(p);
+      return options.fn(options.contexts);
+    } else {
+      return options.inverse(options.contexts);
+    }
+  });
 });
 
 Mustache.registerHelper("role_checkbox", function(role, model, operation) {
@@ -749,11 +762,13 @@ Mustache.registerHelper("can_link_to_page_object", function(context, options) {
 });
 
 Mustache.registerHelper("iterate", function() {
-  var args = can.makeArray(arguments).slice(0, arguments.length - 2)
-  , options = arguments[arguments.length - 1];
+  var args = can.makeArray(arguments).slice(0, arguments.length - 1)
+  , options = arguments[arguments.length - 1]
 
   return can.map(args, function(arg) {
-    return options.fn(options.contexts.concat([{iterator : arg}]));
+    var ctx = $.extend([], options.contexts);
+    ctx.push({iterator : arg});
+    return options.fn(ctx);
   }).join("");
 });
 
@@ -847,6 +862,14 @@ function when_attached_to_dom(el, cb) {
   }();
 }
 
+Mustache.registerHelper("open_on_create", function(style) {
+  return function(el) {
+    when_attached_to_dom(el, function() {
+      $(el).openclose("open");
+    });
+  };
+});
+
 Mustache.registerHelper("trigger_created", function() {
   return function(el) {
     when_attached_to_dom(el, function() {
@@ -871,7 +894,7 @@ Mustache.registerHelper("show_long", function() {
               }
             }
             else {
-              // If there is an open/close toggle, wait until that is triggered
+              // If there is an open/close toggle, wait until "that" is triggered
               var root = el.closest('.tree-item')
                 , toggle;
               if (root.length && !root.hasClass('item-open') && (toggle = root.find('.openclose')) && toggle.length) {
@@ -1210,6 +1233,16 @@ Mustache.registerHelper("json_escape", function(obj, options) {
     .replace(/\n/g, "\\n").replace(/\r/g, "\\r");
 });
 
+can.each({
+  "localize_date" : "MM/DD/YYYY"
+  , "localize_datetime" : "MM/DD/YYYY hh:mm:ss A"
+}, function(tmpl, fn) {
+  Mustache.registerHelper(fn, function(date) {
+    date = resolve_computed(date);
+    return date ? moment(date).format(tmpl) : "";
+  });
+});
+
 Mustache.registerHelper("instance_ids", function(list, options) {
   //  `instance_ids` is used only to extract a comma-separated list of
   //  instance `id` values for use by `Export Controls` link in
@@ -1221,6 +1254,33 @@ Mustache.registerHelper("instance_ids", function(list, options) {
   else
     ids = [];
   return ids.join(",");
+});
+
+Mustache.registerHelper("local_time_range", function(value, start, end, options) {
+  var tokens = [];
+  var sod;
+  value = resolve_computed(value);
+  sod = moment.utc(value).startOf("day");
+  start = moment(value || undefined).startOf("day").add(moment(start, "HH:mm").diff(moment("0", "Y")));
+  end = moment(value || undefined).startOf("day").add(moment(end, "HH:mm").diff(moment("0", "Y")));
+
+  function selected(time) {
+    if(time
+      && value
+      && time.hours() === value.getHours()
+      && time.minutes() === value.getMinutes()
+    ) {
+      return " selected='true'";
+    } else {
+      return "";
+    }
+  }
+
+  while(start.isBefore(end) || start.isSame(end)) {
+    tokens.push("<option value='", start.diff(sod), "'", selected(start), ">", start.format("hh:mm A"), "</option>\n");
+    start.add(1, "hour");
+  }
+  return new String(tokens.join(""));
 });
 
 Mustache.registerHelper("mapping_count", function(instance) {

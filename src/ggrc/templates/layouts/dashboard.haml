@@ -6,8 +6,8 @@
 -#
 -extends 'layouts/base.haml'
 
--macro search_result(type, type_plural, li_class='', tooltip_view='')
-  %li{ 'class': ['{{ li_class }}', 'accordion-group'], 'data-model-name': '={type}', 'data-tooltip-view' : '={tooltip_view}' }
+-macro search_result(type, type_plural, li_class='', tooltip_view='', template_view='')
+  %li{ 'class': ['{{ li_class }}', 'accordion-group'], 'data-model-name': '={type}', 'data-tooltip-view' : '={tooltip_view}', 'data-template' : '={template_view}' }
     %a{ 'href': '#={ type_plural|underscore }_sub_level', 'class': '={li_class}', 'data-parent' : ".top-level", 'data-object-singular' : '={type}' }
       %i{ 'class': 'grcicon-{{ type|lower|nospace }}-color' }
       {{ type_plural|title }}
@@ -19,6 +19,10 @@
       %ul.sub-level{ 'id' : '={ type_plural|underscore }_sub_level' }
       %ul.sub-actions
 -endmacro
+
+-block extra_javascript
+  GGRC.permissions = ={ permissions_json()|safe };
+  GGRC.current_user = ={ current_user_json()|safe };
 
 -block page_help scoped
 
@@ -155,6 +159,7 @@
           .lhs-nav.emphesized
             %ul.top-level
               =search_result('Program', 'programs', 'programs', '/programs/extended_info.mustache')
+              =search_result('Audit', 'audits', 'programs', '/audits/extended_info.mustache', '/static/mustache/audits/search_result.mustache')
           .lhs-nav
             %h2.governance Governance
             %ul.top-level

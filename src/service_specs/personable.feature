@@ -23,7 +23,7 @@ Feature: Some resources can be related to Person resources
   Examples:
       | personable_type |
       | Control         |
-      | Cycle           |
+      | Audit           |
       | DataAsset       |
       #| Directive       |
       | Contract        |
@@ -36,7 +36,7 @@ Feature: Some resources can be related to Person resources
       | Product         |
       | Program         |
       | Project         |
-      | Response        |
+      #| Response        |
       | Risk            |
       | RiskyAttribute  |
       | System          |

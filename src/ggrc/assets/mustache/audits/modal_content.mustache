@@ -1,0 +1,159 @@
+{{!div class="modal-body"}}
+{{#instance}}
+<form action="javascript://">
+  {{{ handle_context }}}
+  
+  {{#if object_params.program}}
+    <div class="row-fluid hidden">
+      <div class="span6">
+        <div class="spacing-bottom">
+          <label>
+            Program
+          </label>
+          <select class="input-block-level" name="program.id">
+            <option value="{{object_params.program.id}}">{{object_params.program.title}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  {{else}}
+    <div class="row-fluid">
+      <div class="span6">
+        <div class="spacing-bottom">
+          <label>
+            Program
+          </label>
+          <select class="input-block-level" name="program.id">
+            {{#all 'Program'}}
+            <option value="{{id}}">{{title}}</option>
+            {{/all}}
+          </select>
+        </div>
+      </div>
+    </div>
+  {{/if}}
+  
+  <div class="row-fluid">
+    <div class="span9">
+      <label>
+        Title
+        <span class="required">*</span>
+        <i class="grcicon-help-black" rel="tooltip" title="Give new {{model.model_plural}} a name that's easy to search for and indicates the main goals of this {{model.model_singular}}."></i>
+      </label> 
+      {{#using program=instance.program}}
+      <input class="input-block-level" placeholder="Enter Title" name="title" type="text" value="2013 {{program.title}} Audit">
+      {{/using}}
+    </div>
+    <div class="span3">
+      <label>
+        Status
+      </label>
+      <select class="input-block-level" name="status" {{#new_object_form}}disabled="true"{{/new_object_form}}>
+        {{#iterate 'Planned' 'In Progress' 'Manager Review' 'Ready for External Review' 'Completed'}}
+        <option {{#if_equals iterator instance.status}}selected="true"{{/if_equals}}>{{iterator}}</option>
+        {{/iterate}}
+      </select>
+    </div>
+  </div>
+  {{#new_object_form}}
+  <div class="row-fluid">
+    <div class="span12">
+      <label class="spacing">
+        <input type="checkbox" name="auto_generate" value="checked">
+        Auto-Generate PBC List based on Objectives <span class="small"><a href="#">({{#using program=instance.program}}{{program.objectives.length}}{{/using}} Objectives Found)</a></span>
+      </label>
+    </div>
+  </div>
+  {{/new_object_form}}
+  <div class="row-fluid">
+    <div class="span3">
+      <label>
+        Planned Start Date 
+      </label>
+      <input class="input-block-level date" name="start_date" data-toggle="datepicker" data-before="end_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date start_date}}">
+    </div>
+    <div class="span3">
+      <label>
+        Planned End Date 
+      </label>
+      <input class="input-block-level date" name="end_date" data-toggle="datepicker" data-after="start_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date end_date}}">
+    </div>
+    <div class="span6">
+      <label>
+        Planned Report Period (from - to):
+      </label>
+      <div class="row-fluid">
+        <div class="span6">
+          <input class="input-block-level date" name="report_start_date" data-toggle="datepicker" data-before="report_end_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date report_start_date}}">
+        </div>
+        <div class="span6">
+          <input class="input-block-level date" name="report_end_date" data-toggle="datepicker" data-after="report_start_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date report_end_date}}">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="expand-link">
+        <a class="show-hidden-fields" href="javascript://">
+          <span class="out">
+            <i class="grcicon-show"></i>
+            Show 
+          </span>
+          <span class="in">
+            <i class="grcicon-hide"></i>
+            Hide
+          </span>
+          Advanced
+          <span class="hidden-fields out">
+            Description, Audit Lead, Audit Firm, gDrive Evidence Folder
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="hidden-fields-area" style="display:none">
+    <div class="row-fluid">
+      <div class="span6">
+        <label>
+          Description
+          <i class="grcicon-help-black" rel="tooltip" title="The gGRC application will automatically provide codes for new objects.  If you would like to override this feature you may manually enter a code of your choosing.  You should have a specific reason for doing this."></i>
+        </label>
+        <div class="wysiwyg-area">
+          <textarea id="program_description" class="span12 double wysihtml5" name="description" placeholder="Enter Description">{{{description}}}</textarea>
+        </div>
+      </div>
+      <div class="span6">
+        <label>
+          Audit Lead
+        </label>
+        <i class="grcicon-person-green pull-left icon-field"></i>
+        <div class="objective-selector">
+          {{#using owner=instance.owner}}
+          <input type="text" name="owner.email" data-lookup="Person" class="span8 audit-selector" value="{{firstnonempty owner.email ''}}">
+          {{/using}}
+        </div>
+        
+        <label>
+          Audit Firm
+        </label>
+        <i class="grcicon-orggroup-color pull-left icon-field"></i>
+        <div class="objective-selector">
+          <input type="text" name="audit_firm" class="span8" value="{{audit_firm}}">
+        </div>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span12">
+        <label>
+          Evidence Folder Path
+        </label>
+        <span class="large">/{{object_params.program_title}}/{{title}}</span>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" name="slug" value="{{slug}}">
+  <input type="hidden" name="modified_by_id" value="{{#with_current_user_as 'current_user'}}{{current_user.id}}{{/with_current_user_as}}">
+</form>
+{{/instance}}
+{{!/div}}

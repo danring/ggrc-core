@@ -4,21 +4,28 @@
 # Maintained By: vraj@reciprocitylabs.com
 
 from ggrc import db
-from .mixins import deferred, Base
+from .mixins import deferred, Described, Hyperlinked, Base
+from .object_person import Personable
 
-class Meeting(Base, db.Model):
+
+class Meeting(Personable, Described, Base, db.Model):
   __tablename__ = 'meetings'
 
   response_id = deferred(
       db.Column(db.Integer, db.ForeignKey('responses.id'), nullable=False),
       'Meeting')
-  start_at = deferred(db.Column(db.DateTime), 'Meeting')
-  calendar_url = deferred(db.Column(db.String), 'Meeting')
+  #response = db.relationship('Response')
+  start_at = db.Column(db.DateTime, nullable=False)
+  end_at = db.Column(db.DateTime, nullable=False)
+  title = db.Column(db.String, nullable=False)
 
   _publish_attrs = [
       'response',
       'start_at',
-      'calendar_url',
+      'end_at',
+      'title'
+      ]
+  _sanitize_html = [
       ]
 
   @classmethod

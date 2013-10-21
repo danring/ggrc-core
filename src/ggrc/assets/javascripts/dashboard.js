@@ -848,8 +848,11 @@ jQuery(function($) {
     ,   $widgetID = $this.attr("href") 
     ,   $targetWidget = $($widgetID)
     ;
-    
-    if( $targetWidget.hasClass("widget-active") && $(".object-area").data('scrollspy').activeTarget !== $widgetID ) {
+
+    if( $targetWidget.hasClass("widget-active")
+      && $(".object-area").data('scrollspy')
+      && $(".object-area").data('scrollspy').activeTarget !== $widgetID
+    ) {
       $targetWidget.removeClass("widget-active");
     }
   });  
@@ -881,7 +884,19 @@ jQuery(function($) {
     if( $this.hasClass("widget-active") ) {
       $this.removeClass("widget-active");
     }
-  });    
+  });
+  
+  // show/hide audit lead and firm
+  $('body').on('mouseover', '.ui-autocomplete li a', function(e) {
+    var $this = $(this);
+    $this.addClass("active");
+    $this.closest('li').addClass("active");
+  });
+  $('body').on('mouseleave', '.ui-autocomplete li a', function(e) {
+    var $this = $(this);
+    $this.removeClass("active");
+    $this.closest('li').removeClass("active");
+  });
   
 });
 

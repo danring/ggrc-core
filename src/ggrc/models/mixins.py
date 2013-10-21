@@ -208,7 +208,10 @@ class Base(ChangeTracked, ContextRBAC, Identifiable):
   def to_json(self):
     d = {}
     for column in self.__table__.columns:
-      d[column.name] = getattr(self, column.name)
+      try:
+        d[column.name] = getattr(self, column.name)
+      except AttributeError:
+        pass
     d['display_name'] = self.display_name
     return d
 

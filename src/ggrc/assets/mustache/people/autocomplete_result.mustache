@@ -1,0 +1,24 @@
+{{#this}}
+<li {{data 'ui-autocomplete-item'}} class="ui-menu-item">
+  <a href="javascript://">
+    {{name}} <span class="small">{{email}}</span>
+  </a>
+  <div class="extended-content">
+    <div class="row-fluid">
+      <div class="span12">
+        {{name}}
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span12">
+        {{email}}
+      </div>
+    </div>
+  </div>
+</li>
+{{/this}}
+<li class="add-new">
+  <a data-object-plural="people" data-modal-class="modal-wide" href="javascript://" data-object-singular="Person" data-toggle="modal-ajax-form" data-modal-reset="reset" >
+    + Create New
+  </a>
+</li>

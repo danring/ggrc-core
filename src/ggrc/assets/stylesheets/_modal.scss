@@ -220,6 +220,11 @@
     .btn-add {
       margin-top:4px;
       margin-right:4px;
+      &.btn-add-small {
+        margin-right: 0;
+        padding-left: 2px;
+        padding-right: 2px;
+      }
     }
   }
   .modal-search {
@@ -280,9 +285,48 @@
   }
   .modal-body {
     max-height:none;
+    .grc-path {
+      @include oneline();
+      font-size: 13px;
+      color: #777;
+    }
+    .small {
+      font-size:$f-small;
+      display: inline-block;
+      margin-left: 6px;
+    }
+    .large {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .icon-field {
+      margin-right: 4px;
+      margin-top: 6px;
+    }
     input,
     textarea {
       @include placeholder($footerBorder);
+    }
+    .objective-selector {
+      .input-wide {
+        width: 418px;
+      }
+    }
+    .option-word {
+      float: left;
+      margin-right: 13px;
+      margin-left: -8px;
+      line-height: 27px;
+      padding-top: 1px;
+      text-transform: uppercase;
+    }
+    .btn {
+      &.btn-add {
+        &.btn-add-small {
+          padding-left: 1px;
+          padding-right: 3px;
+        }
+      }
     }
     label {
       font-weight: normal;
@@ -297,6 +341,17 @@
         cursor:pointer;
         &:hover {
           @include opacity(0.7);
+        }
+      }
+      &.vertical-align-label {
+        margin-bottom: 0;
+        line-height: 28px;
+        font-size: 13px;
+        input[type="checkbox"] {
+          margin-top: 0;
+        }
+        i {
+          margin-top: 6px;
         }
       }
     }
@@ -632,4 +687,59 @@ p.modal-value {
   font-weight:bold;
   color:$governance;
   line-height:28px;
+}
+
+.ui-autocomplete {
+  width: 300px;
+  position: absolute;
+  overflow: visible;
+  top: 28px;
+  left: 24px;
+  z-index: 100;
+  @include reset-list();
+  &.in {
+    border: 1px solid $tabTitle;
+    overflow: visible;
+  }
+  li {
+    border-bottom: 1px solid $dropPlaceholder;
+    line-height: 28px;
+    a {
+      display: block;
+      color: $subTitle;
+      text-decoration: none;
+      padding-left: 4px;
+      background: $white;
+      &:hover {
+        background: $lightGray;
+      }
+    }
+    &.active {
+      position: relative;
+      z-index: 1000;
+      .extended-content {
+        position:absolute;
+        top:-1px;
+        right:-301px;
+        width:278px;
+        padding:2px 10px;
+        background:#fff;
+        border:1px solid #ddd;
+        display: block;
+        z-index: 1500;
+      }
+    }
+    .extended-content {
+      display: none;
+    }
+    &:last-child {
+      border-bottom: none;
+    }
+    &.add-new {
+      a {
+        background: $dropPlaceholder;
+        color: $text;
+      }
+    }
+  }
 }

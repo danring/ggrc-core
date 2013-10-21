@@ -1,0 +1,186 @@
+{{!tree node mustache}}
+<li class="tree-item programs" data-object-id="{{instance.id}}" data-object-type="{{instance.constructor.table_singular}}">
+  <div class="item-main" data-model="true" {{data 'model'}}>
+    <a href="javascript://" class="openclose">
+      <div class="row-fluid">
+        <div class="span11">
+          <div class="item-data">
+            <div class="tree-title-area">
+              <i class="grcicon-{{instance.constructor.table_singular}}-color"></i>
+              {{instance.title}}
+              <span class="small gray">Planned</span>
+            </div>
+          </div>
+        </div>
+        <div class="span1">
+          <div class="counter">
+            {{^instance.owner}}
+              <i class="grcicon-people-warning"></i>
+            {{/instance.owner}}
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  
+  {{#if expanded}}
+  <div class="tier-2-info item-content">
+    <div class="tier-2-info-content">
+    
+      <!--
+      <div class="row-fluid">
+
+        <div class="span6">
+        {{#if instance.viewLink}}
+          <a href="{{instance.viewLink}}" class="info-action">
+            View {{instance.constructor.title_singular}}
+            <i class="grcicon-goto"></i>
+          </a>
+        {{/if}}
+        </div>
+
+        <div class="span6">
+        {{#if mappings}}
+        {{#is_allowed_all 'delete' mappings}}
+          <a href="javascript://" class="info-action unmap pull-right" data-toggle="unmap">
+            {{#mappings}}<span class="mapping" {{data 'mapping'}}></span>{{/mappings}}
+            <i class="grcicon-remove"></i>
+            Unmap
+          </a>
+        {{/is_allowed_all}}
+        {{/if}}
+        </div>
+
+      </div>
+      -->
+      
+      {{#instance.description}}
+        <div class="show-description">
+          <div class="row-fluid">
+            <div class="span12">
+              <div class="tree-description short">
+                {{{instance.description}}}
+              </div>
+              {{{show_long}}}
+            </div>
+          </div>
+        </div>
+      {{/instance.description}}
+      
+      <div class="row-fluid">
+        <div class="span5">
+          <div class="tree-info">
+            <ul class="tree-info-list">
+              <li>
+                <strong>Planned Start date: </strong>
+                  {{#if instance.start_date}}
+                    {{localize_date instance.start_date}}
+                  {{else}}
+                    Not set
+                  {{/if}}
+              </li>
+              <li>
+                <strong>Planned End date: </strong>
+                  {{#if instance.end_date}}
+                    {{localize_date instance.end_date}}
+                  {{else}}
+                    Not set
+                  {{/if}}
+              </li>
+              <li>
+                <strong>Planned Report period: </strong>
+                {{#if instance.report_start_date}}
+                  {{#if instance.report_end_date}}
+                    {{localize_date instance.report_start_date}} - {{localize_date instance.report_end_date}}
+                  {{else}}
+                    Starts {{localize_date instance.report_start_date}}
+                  {{/if}}
+                {{else}}
+                  {{#if instance.report_end_date}}
+                    Ends {{localize_date instance.report_end_date}}
+                  {{else}}
+                    Not set
+                  {{/if}}
+                {{/if}}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="span5">
+          <div class="tree-info">
+            <ul class="tree-info-list">
+              <li>
+                {{#instance.url}}
+                  <strong>URL:</strong>
+                  <a class="url" href="{{schemed_url instance.url}}" target="_blank">
+                    {{instance.url}}
+                  </a>
+                {{/instance.url}}
+              </li>
+              <li>
+                <strong>Audit Lead: </strong>
+                {{#if instance.owner}}
+                  {{#using owner=instance.owner}}
+                  {{owner.name}}
+                  {{/using}}
+                {{else}}
+                  None
+                {{/if}}
+              </li>
+              <li>
+                <strong>Audit Firm: </strong>
+                {{{firstnonempty instance.audit_firm 'None'}}}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="span2" {{#instance}}{{data 'model'}}{{/instance}} {{ (el) -> el.ggrc_controllers_quick_form({instance : el.data("model") }) }}>
+          <select class="input-block-level top-space" name="status">
+            {{#iterate 'Planned' 'In Progress' 'Manager Review' 'Ready for External Review' 'Completed'}}
+            <option {{#if_equals iterator instance.status}}selected="true"{{/if_equals}}>{{iterator}}</option>
+            {{/iterate}}
+          </select>
+        </div>
+      </div>
+      
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="tree-info">
+            <strong>gDrive Evidence Folder: </strong>
+            /{{parent_instance.title}}/{{instance.title}}
+          </div>
+        </div>
+      </div>
+      
+      <ul class="info-audit">
+        <li>
+          <a href="javascript://" data-toggle="modal-ajax-form" data-modal-reset="reset" data-modal-class="modal-wide" data-object-singular="Audit" data-object-plural="audits" data-object-id="{{instance.id}}" data-object-params='{ "{{parent_instance.constructor.table_singular}}": { "id" : {{parent_instance.id}}, "title" : "{{parent_instance.title}}" } }'>
+            <i class="grcicon-edit"></i>
+            Edit {{model.title_singular}}
+          </a>
+        </li>
+        <li>
+          <a href="#"><i class="grcicon-edit"></i> {{model.title_singular}} Log</a>
+        </li>
+        <li>
+          <a href="#"><i class="grcicon-export"></i> Export PBC List</a>
+        </li>
+      </ul>
+      
+    </div>
+
+    {{#if draw_children}}
+      {{^if_null 'z'}} {{! this line is just chopping the context stack down to one element}}
+        <div class="inner-tree">
+          <h6>PBC Requests ({{child_count}})</h6>
+          {{#child_options}}
+            <ul class="tree-structure new-tree" {{data 'options'}} {{ (el) -> el.cms_controllers_tree_view(el.data("options")) }}></ul>
+          {{/child_options}}
+        </div>
+      {{/if_null}}
+    {{/if}}
+
+  </div>
+  {{/if}}
+  
+</li>

@@ -20,21 +20,6 @@ class Document(Base, db.Model):
   language_id = deferred(db.Column(db.Integer), 'Document')
 
   object_documents = db.relationship('ObjectDocument', backref='document', cascade='all, delete-orphan')
-  population_worksheets_documented = db.relationship(
-      'PopulationSample',
-      foreign_keys='PopulationSample.population_document_id',
-      backref='population_document',
-      )
-  sample_worksheets_documented = db.relationship(
-      'PopulationSample',
-      foreign_keys='PopulationSample.sample_worksheet_document_id',
-      backref='sample_worksheet_document',
-      )
-  sample_evidences_documented = db.relationship(
-      'PopulationSample',
-      foreign_keys='PopulationSample.sample_evidence_document_id',
-      backref='sample_evidence_document',
-      )
   type = db.relationship(
       'Option',
       primaryjoin='and_(foreign(Document.type_id) == Option.id, '\
@@ -70,9 +55,6 @@ class Document(Base, db.Model):
       'link',
       'description',
       'object_documents',
-      'population_worksheets_documented',
-      'sample_worksheets_documented',
-      'sample_evidences_documented',
       'type',
       'kind',
       'year',
@@ -103,7 +85,4 @@ class Document(Base, db.Model):
         orm.joinedload('kind'),
         orm.joinedload('year'),
         orm.joinedload('language'),
-        orm.subqueryload('object_documents'),
-        orm.subqueryload('population_worksheets_documented'),
-        orm.subqueryload('sample_worksheets_documented'),
-        orm.subqueryload('sample_evidences_documented'));
+        orm.subqueryload('object_documents'))

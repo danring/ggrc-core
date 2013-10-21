@@ -7,5 +7,11 @@
 SCRIPTPATH=$( cd "$(dirname "$0")" ; pwd -P )
 
 cd "${SCRIPTPATH}/../src"
-GGRC_SETTINGS_MODULE="testing" \
-  python -m unittest discover
+if [ ! -z "$1" ]  # if first argument given
+then
+    unittest_arg="python -m unittest $1"
+else  # otherwise run all tests
+    unittest_arg="python -m unittest discover"
+fi
+    GGRC_SETTINGS_MODULE="testing" \
+    $unittest_arg

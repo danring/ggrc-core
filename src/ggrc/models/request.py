@@ -4,57 +4,55 @@
 # Maintained By: vraj@reciprocitylabs.com
 
 from ggrc import db
-from .mixins import deferred, Base
+from .mixins import deferred, Base, Described
 
-class Request(Base, db.Model):
+class Request(Described, Base, db.Model):
   __tablename__ = 'requests'
 
-  pbc_list_id = deferred(
-      db.Column(db.Integer, db.ForeignKey('pbc_lists.id'), nullable=False),
-      'Request')
-  type_id = deferred(db.Column(db.Integer), 'Request')
-  pbc_control_code = deferred(db.Column(db.String), 'Request')
-  pbc_control_desc = deferred(db.Column(db.Text), 'Request')
-  request = deferred(db.Column(db.Text), 'Request')
-  test = deferred(db.Column(db.Text), 'Request')
-  notes = deferred(db.Column(db.Text), 'Request')
-  company_responsible = deferred(db.Column(db.String), 'Request')
-  auditor_responsible = deferred(db.Column(db.String), 'Request')
-  date_requested = deferred(db.Column(db.DateTime), 'Request')
-  status = deferred(db.Column(db.String), 'Request')
-  control_assessment_id = deferred(
-      db.Column(db.Integer, db.ForeignKey('control_assessments.id')),
-      'Request')
-  response_due_at = deferred(db.Column(db.Date), 'Request')
+  VALID_TYPES = (u'documentation', u'interview', u'population sample')
+  VALID_STATES = (u'Draft', u'Requested', u'Responded', u'Amended Request',
+    u'Updated Response', u'Accepted')
+  assignee_id = db.Column(db.Integer, db.ForeignKey('people.id'),
+    nullable=False)
+  assignee = db.relationship('Person')
+  request_type = deferred(db.Column(db.Enum(*VALID_TYPES), nullable=False),
+    'Request')
+  status = deferred(db.Column(db.Enum(*VALID_STATES), nullable=False),
+    'Request')
+  requested_on = deferred(db.Column(db.Date, nullable=False), 'Request')
+  due_on = deferred(db.Column(db.Date, nullable=False), 'Request')
+  audit_id = db.Column(db.Integer, db.ForeignKey('audits.id'), nullable=False)
+  objective_id = db.Column(db.Integer, db.ForeignKey('objectives.id'),
+    nullable=False)
+  gdrive_upload_path = deferred(db.Column(db.String, nullable=True),
+    'Request')
+  test = deferred(db.Column(db.Text, nullable=True), 'Request')
+  notes = deferred(db.Column(db.Text, nullable=True), 'Request')
+  auditor_contact = deferred(db.Column(db.String, nullable=True), 'Request')
 
-  responses = db.relationship('Response', backref='request', cascade='all, delete-orphan')
+  responses = db.relationship('Response', backref='request',
+    cascade='all, delete-orphan')
 
   _publish_attrs = [
-      'pbc_list',
-      'type_id',
-      'pbc_control_code',
-      'pbc_control_desc',
-      'request',
-      'test',
-      'notes',
-      'company_responsible',
-      'auditor_responsible',
-      'date_requested',
-      'status',
-      'control_assessment',
-      'response_due_at',
-      'responses',
-      ]
+    'assignee',
+    'request_type',
+    'gdrive_upload_path',
+    'requested_on',
+    'due_on',
+    'status',
+    'audit',
+    'objective',
+    'responses',
+    'test',
+    'notes',
+    'auditor_contact',
+  ]
   _sanitize_html = [
-      'pbc_control_desc',
-      'company_responsible',
-      'auditor_responsible',
-      'test',
-      'status', 
-      'notes',
-      'request',
-      'pbc_control_code',
-      ]
+    'gdrive_upload_path',
+    'test',
+    'notes',
+    'auditor_contact',
+  ]
 
   @classmethod
   def eager_query(cls):
@@ -62,6 +60,6 @@ class Request(Base, db.Model):
 
     query = super(Request, cls).eager_query()
     return query.options(
-        orm.joinedload('pbc_list'),
-        orm.joinedload('control_assessment'),
-        orm.subqueryload('responses'))
+      orm.joinedload('audit'),
+      orm.joinedload('objective'),
+      orm.subqueryload('responses'))

@@ -18,11 +18,10 @@ Feature: Basic RESTful CRUD Support
 
   Examples: Resources
       | resource_type      |
+      | Audit              |
       | Category           |
       | Control            |
-      | ControlAssessment  |
       | ControlRisk        |
-      | Cycle              |
       | DataAsset          |
       #| Directive          |
       | DirectiveControl   |
@@ -33,23 +32,24 @@ Feature: Basic RESTful CRUD Support
       | Facility           |
       | Help               |
       | Market             |
-      | Meeting            |
+      #| Meeting            |
       #| ObjectDocument     |
       #| ObjectPerson       |
       | Objective          |
       | ObjectiveControl   |
       | Option             |
       | OrgGroup           |
-      | PbcList            |
       | Person             |
-      | PopulationSample   |
       | Product            |
       | Project            |
       | Program            |
       | ProgramDirective   |
       #| Relationship       |
       | Request            |
-      | Response           |
+      #| Response           |
+      | DocumentationResponse   |
+      | InterviewResponse  |
+      | PopulationSampleResponse   |
       | Risk               |
       | RiskyAttribute     |
       | RiskRiskyAttribute |

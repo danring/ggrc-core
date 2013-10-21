@@ -34,7 +34,7 @@
         Owner/Person of Contact
         <i class="grcicon-help-black" rel="tooltip" title="This is the person in charge of this {{model.model_singular}}."></i>
       </label>
-      <input class="input-block-level" name="owner.email" placeholder="Enter email address" type="text" value="{{firstexist owner.email ''}}" />
+      <input class="input-block-level" name="owner.email" data-lookup="Person" placeholder="Enter email address" type="text" value="{{firstexist owner.email ''}}" />
       {{/using}}
       <label>
         Project URL

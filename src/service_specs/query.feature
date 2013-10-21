@@ -43,7 +43,7 @@ Feature: Collection filtering via query parameters
       | Category      | scope_id      | 3                   | 2                   | 1                   | 5                   |
       | Help          | slug          | foo                 | bar                 | baz                 | never               |
       | Program       | start_date    | 2013-06-03T00:00:00 | 2013-06-02T00:00:00 | 2013-06-01T00:00:00 | 2013-05-31T00:00:00 |
-      | Cycle         | start_at      | 2013-06-03          | 2013-06-02          | 2013-06-01          | 2013-05-31          |
+      | Audit         | start_date    | 2013-06-03T00:00:00 | 2013-06-02T00:00:00 | 2013-06-01T00:00:00 | 2013-05-31T00:00:00 |
 
   Scenario: A single boolean query parameter supplied to a collection finds matching resources
     Given a new "Category" named "resource1"

@@ -87,50 +87,83 @@ can.Control("GGRC.Controllers.Modals", {
       });
   }
 
-  , autocomplete : function() {
+  , "input[data-lookup] focus" : function(el, ev) {
+    this.autocomplete(el);
+  }
+
+  , autocomplete : function(el) {
+    var ctl = this;
     // Add autocomplete to the owner field
-    var ac = this.element.find('input[name="owner.email"]').autocomplete({
-      // Ensure that the input.change event still occurs
-      change : function(event, ui) {
-        $(event.target).trigger("change");
-      }
+    var acs = ($(el) || this.element.find('input[data-lookup]')).map(function() {
+      var $that = $(this);
+      var prop = $that.attr("name").substr($that.attr("name").lastIndexOf(".") + 1);
+      return $that.autocomplete({
+        // Ensure that the input.change event still occurs
+        change : function(event, ui) {
+          if(!$(event.target).parents(document.body).length)
+            console.log("FOO!");
+          $(event.target).trigger("change");
+        }
 
-      // Search for the people based on the term
-      , source : function(request, response) {
-        var query = request.term;
+        // Search for the people based on the term
+        , source : function(request, response) {
+          var query = request.term
+          , that = this;
 
-        GGRC.Models.Search
-        .search_for_types(
-            request.term || '',
-            ["Person"],
-            {
-              __permission_type: 'create'
-              , __permission_model: 'ObjectPerson'
-            })
-        .then(function(search_result) {
-          var people = search_result.getResultsForType('Person')
-            , queue = new RefreshQueue()
-            ;
+          GGRC.Models.Search
+          .search_for_types(
+              request.term || '',
+              [$that.data("lookup")],
+              {
+                __permission_type: 'create'
+                , __permission_model: 'Object' + $that.data("lookup")
+              })
+          .then(function(search_result) {
+            var objects = search_result.getResultsForType($that.data("lookup"))
+              , queue = new RefreshQueue()
+              ;
 
-          // Retrieve full people data
-          can.each(people, function(person) {
-            queue.enqueue(person);
+            // Retrieve full people data
+            can.each(objects, function(object) {
+              queue.enqueue(object);
+            });
+            queue.trigger().then(function(objs) {
+              if(objs.length) {
+                response(objs);
+              } else {
+                that._suggest( [] );
+                that._trigger( "open" );
+              }
+            });
           });
-          queue.trigger().then(function(people) {
-            response(can.map(people, function(person) { 
-              return {
-                label: person.name ? person.name + " <span class=\"url-link\">" + person.email + "</span>" : person.email,
-                value: person.email
-              };
-            }));
-          });
+        }
+        , select : ctl.proxy("autocomplete_select", $that)
+        , close : function() {
+          //$that.val($that.attr("value"));
+        }
+      }).data('ui-autocomplete');
+    });
+    acs.each(function(i, ac) {
+      ac._renderMenu = function(ul, items) {
+        var model = CMS.Models[ac.element.data("lookup")] || GGRC.Models[ac.element.data("lookup")]
+        can.view.render(GGRC.mustache_path + '/' + model.table_plural + '/autocomplete_result.mustache', items, function(frag) {
+          $(ul).html(frag);
         });
-      }
-    }).data('ui-autocomplete');
-    if(ac) {
-      ac._renderItem = function(ul, item) {
-        return $('<li>').append('<a>' + item.label + '</a>').appendTo(ul);
       };
+    });
+  }
+
+  , autocomplete_select : function(el, event, ui) {
+    if(ui.item) {
+      var path = el.attr("name").split(".");
+      path.pop();
+      path = path.join(".");
+      this.options.instance.attr(path, ui.item.stub());
+    } else {
+      $(event.currentTarget).one("modal:success", function(ev, new_obj) {
+        el.data("ui-autocomplete").options.select(event, {item : new_obj});
+      });
+      return false;
     }
   }
 
@@ -210,9 +243,8 @@ can.Control("GGRC.Controllers.Modals", {
       this.set_value_from_element(el);
   }
 
-  , "input, textarea, select keyup" : function(el, ev) {
-      if ($(el).is(':not([name="owner.email"])') || !$(el).val())
-        this.set_value_from_element(el);
+  , "input:not([data-lookup]), textarea, select keyup" : function(el, ev) {
+    this.set_value_from_element(el);
   }
 
   , serialize_form : function() {
@@ -227,12 +259,19 @@ can.Control("GGRC.Controllers.Modals", {
       var $el = $(el)
         , name = $el.attr('name')
         , value = $el.val()
+        , that = this;
         ;
 
       if ($el.is('select[multiple]'))
         value = value || [];
       if (name)
         this.set_value({ name: name, value: value });
+
+      if($el.is("[data-also-set]")) {
+        can.each($el.data("also-set").split(","), function(oname) {
+          that.set_value({ name : oname, value : value});
+        });
+      }
     }
 
   , set_value: function(item) {
@@ -246,7 +285,7 @@ can.Control("GGRC.Controllers.Modals", {
                = new this.options.model(instance && instance.serialize ? instance.serialize() : instance);
     }
     var name = item.name.split(".")
-      , $elem, value, model;
+      , $elem, value, model, $other;
     $elem = this.options.$content.find("[name='" + item.name + "']");
     model = $elem.attr("model");
 
@@ -266,44 +305,56 @@ can.Control("GGRC.Controllers.Modals", {
     if ($elem.is("[null-if-empty]") && (!value || value.length === 0))
       value = null;
 
+    if($elem.is("[data-binding]")) {
+      can.each(can.makeArray($elem[0].options), function(opt) {
+        instance.mark_for_deletion($elem.data("binding"), CMS.Models.get_instance(model, opt.value));
+      });
+      if(value.push) {
+        can.each(value, can.proxy(instance, "mark_for_addition", $elem.data("binding")));
+      } else {
+        instance.mark_for_addition($elem.data("binding"), value);
+      }
+    }
+
     if(name.length > 1) {
       if(can.isArray(value)) {
         value = new can.Observe.List(can.map(value, function(v) { return new can.Observe({}).attr(name.slice(1).join("."), v); }));
       } else {
 
-        if(name[name.length - 1] === "email") {
+        if($elem.is("[data-lookup]")) {
           if(!value) {
             name.pop(); //set the owner to null, not the email
             value = null;
           } else {
-            // Search for the person
-            this._email_check = $.when(
-                CMS.Models.Person.findInCacheByEmail(value) || CMS.Models.Person.findAll({email : value})
-              ).done(function(data) {
-                if(data.length != null)
-                  data = data[0];
-
-                if(data) {
-                  value = name.length > 2 ? new can.Observe({}).attr(name.slice(1, name.length - 1).join("."), data) : data;
-                  instance.attr(name[0], value);
-                } else {
-                  that.element && that.element.trigger("ajax:flash", { warning : "user: " + value + " not found.  Please enter valid email address."});
-                  $elem.val($elem.attr("value"));
-                }
-              });
-
-            // If this is already resolved (cached), there wasn't really an XHR to bind to
-            if (this._email_check.state() !== "resolved") {
-              that.bindXHRToButton(that._email_check, that.options.$footer.find("a.btn[data-toggle='modal-submit']"), undefined, false);
-              return; //don't update the existing owner email if there is one.
+            // Setting a "lookup field is handled in the autocomplete() method"
+            return;
+          }
+        } else if(name[name.length - 1] === "date") {
+          name.pop(); //date is a pseudoproperty of datetime objects
+          if(!value) {
+            value = null;
+          } else {
+            value = this.options.model.convert.date(value);
+            $other = this.options.$content.find("[name='" + name.join(".") + ".time']");
+            if($other.length) {
+              value = moment(value).add(parseInt($other.val(), 10)).toDate();
             }
           }
+        } else if(name[name.length - 1] === "time") {
+          name.pop(); //time is a pseudoproperty of datetime objects
+          value = moment.utc(this.options.instance.attr(name.join("."))).startOf("day").add(parseInt(value, 10)).toDate();
         } else {
           value = new can.Observe({}).attr(name.slice(1).join("."), value);
         }
       }
     }
     instance.attr(name[0], value && value.serialize ? value.serialize() : value);
+  }
+
+  , "[data-before], [data-after] change" : function(el, ev) {
+    var start_date = el.datepicker('getDate');
+    this.element.find("[name=" + el.data("before") + "]").datepicker().datepicker("option", "minDate", start_date);
+    this.element.find("[name=" + el.data("after") + "]").datepicker().datepicker("option", "maxDate", start_date);
   }
 
   , "{$footer} a.btn[data-toggle='modal-submit'] click" : function(el, ev) {

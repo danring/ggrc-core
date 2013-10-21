@@ -197,7 +197,7 @@ $('body').on('click', '.grcicon-more', function(e) {
     }
 
   });
-
+  
   // nicer hover
 
   $('body').on('mouseenter', '.people-list li', function(e) {

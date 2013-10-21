@@ -265,10 +265,10 @@ can.Control("CMS.Controllers.LHN_Search", {
         $ul.slideDown().addClass("in");
 
         // Determine the expandable height
-        $ul.filter(this.options.list_content_selector).css('maxHeight', (maxHeight || (holder[0].offsetHeight
+        $ul.filter(this.options.list_content_selector).css('maxHeight', Math.max(160, (maxHeight || (holder[0].offsetHeight
           - el.closest('#lhs')[0].offsetHeight
           - $ul.filter(this.options.actions_content_selector)[0].scrollHeight
-          - 25)) + 'px');
+          - 25))) + 'px');
 
         this.on_show_list($ul);
       }
@@ -397,7 +397,7 @@ can.Control("CMS.Controllers.LHN_Search", {
             })
         };
 
-        can.view(self.options.list_view, context, function(frag, xhr) {
+        can.view($list.data("template") || self.options.list_view, context, function(frag, xhr) {
           $list.find(self.options.list_content_selector).html(frag);
         });
         can.view(self.options.actions_view, context, function(frag, xhr) {

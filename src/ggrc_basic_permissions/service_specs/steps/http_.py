@@ -119,10 +119,25 @@ def ensure_user_and_role_assignment(context, email, role_name, context_id):
       create_role_assignment(context, role_id, person_id, context_id)
 
 @then('the collection is empty')
-def check_empty_collection(context):
+def assert_collection_empty(context):
+  check_empty_collection(context, expect_empty=True)
+
+@then('the collection is not empty')
+def assert_collection_not_empty(context):
+  check_empty_collection(context, expect_empty=False)
+
+def check_empty_collection(context, expect_empty=True):
   collection = context.collectionresource
   root = collection.keys()[0]
-  from ggrc import models
-  model_class = getattr(models, context.collection_type)
+  if '.' in context.collection_type:
+    import ggrc_basic_permissions.models
+    typename = context.collection_type.split('.')[-1]
+    model_class = getattr(ggrc_basic_permissions.models, typename)
+  else:
+    from ggrc import models
+    model_class = getattr(models, context.collection_type, None)
   entry_list = collection[root][model_class._inflector.table_plural]
-  assert len(entry_list) == 0, entry_list
+  if expect_empty:
+    assert len(entry_list) == 0, entry_list
+  else:
+    assert len(entry_list) > 0, entry_list

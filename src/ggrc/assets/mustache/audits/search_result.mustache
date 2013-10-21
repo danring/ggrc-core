@@ -1,0 +1,38 @@
+{{#list}}
+<li class="{{constructor.category}}" data-model="true" {{data 'model'}}>
+  <a href="{{viewLink}}" class="show-extended">
+    <div class="row-fluid">
+      <div class="span8">
+        <span class="lhs-item">
+          {{title}}
+        </span>
+      </div>
+      <div class="span1">
+        {{#is_private}}
+          <i class="grcicon-private" rel="tooltip" title="Private"></i>
+        {{/is_private}}
+      </div>
+      <div class="span2">
+        &nbsp;
+      </div>
+    </div>
+  </a>
+</li>
+{{/list}}
+{{^list}}
+<li class="spinner">
+</li>
+{{/list}}
+{{^if_equals list.length count}}
+<li class="view-more">
+  <a href="javascript://">
+    view more
+    <i class="grcicon-down"></i>
+  </a>
+</li>
+{{/if_equals}}
+<li class="add-new">
+  <a data-object-plural="{{model.table_plural}}" data-modal-class="modal-wide" href="javascript://" data-object-singular="{{model.model_singular}}" data-toggle="modal-ajax-form" data-modal-reset="reset" >
+    + Create New
+  </a>
+</li>

@@ -40,15 +40,19 @@ class CompletePermissionsProvider(object):
   def handle_admin_user(self, user):
     pass
 
-class UserPermissions(DefaultUserPermissions):
-  def _is_allowed(self, permission):
-    self.check_permissions()
-    return super(UserPermissions, self)._is_allowed(permission)
+class BasicUserPermissions(DefaultUserPermissions):
+  """User permissions that aren't kept in session."""
+  def __init__(self, user):
+    self.user = user
+    self.permissions = load_permissions_for(user)
 
-  def _get_contexts_for(self, action, resource_type):
+  def _permissions(self):
+    return self.permissions
+
+class UserPermissions(DefaultUserPermissions):
+  def _permissions(self):
     self.check_permissions()
-    return super(UserPermissions, self)\
-        ._get_contexts_for(action, resource_type)
+    return session['permissions']
 
   def check_permissions(self):
     if 'permissions' not in session:
@@ -91,57 +95,56 @@ class UserPermissions(DefaultUserPermissions):
     if user is None or user.is_anonymous():
       session['permissions'] = {}
       session['permissions__ts'] = None
-    elif hasattr(settings, 'BOOTSTRAP_ADMIN_USERS') \
-        and email in settings.BOOTSTRAP_ADMIN_USERS:
-      session['permissions'] = {
-          DefaultUserPermissions.ADMIN_PERMISSION.action: {
-            DefaultUserPermissions.ADMIN_PERMISSION.resource_type: [
-              DefaultUserPermissions.ADMIN_PERMISSION.context_id,
-              ],
-            },
-          }
-      session['permissions']['__user'] = email
     else:
-      session['permissions'] = {}
-      session['permissions']['__user'] = email
-      user_roles = db.session.query(UserRole)\
-          .options(
-              sqlalchemy.orm.undefer_group('UserRole_complete'),
-              sqlalchemy.orm.undefer_group('Role_complete'),
-              sqlalchemy.orm.joinedload('role'))\
-          .filter(UserRole.person_id==user.id)\
-          .order_by(UserRole.updated_at.desc())\
-          .all()
-      if len(user_roles) > 0:
-        session['permissions__ts'] = user_roles[0].updated_at
-      else:
-        session['permissions__ts'] = None
-      for user_role in user_roles:
-        if isinstance(user_role.role.permissions, dict):
-          for action, resource_types in user_role.role.permissions.items():
-            for resource_type in resource_types:
-              session['permissions'].setdefault(action, {})\
-                  .setdefault(resource_type, list())\
-                  .append(user_role.context_id)
-      #grab personal context
-      personal_context = db.session.query(Context).filter(
-          Context.related_object_id == user.id,
-          Context.related_object_type == 'Person',
-          ).first()
-      if not personal_context:
-        personal_context = Context(
-            name='Personal Context for {0}'.format(user.id),
-            description='',
-            context_id=1,
-            related_object_id=user.id,
-            related_object_type='Person',
-            )
-        db.session.add(personal_context)
-        db.session.commit()
-      session['permissions']\
-          .setdefault('__GGRC_ADMIN__',{})\
-          .setdefault('__GGRC_ALL__',[])\
-          .append(personal_context.id)
+      session['permissions'] = load_permissions_for(user)
+      session['permissions__ts'] = None
+
+def load_permissions_for(user):
+  if hasattr(settings, 'BOOTSTRAP_ADMIN_USERS') \
+      and user.email in settings.BOOTSTRAP_ADMIN_USERS:
+    permissions = {
+        DefaultUserPermissions.ADMIN_PERMISSION.action: {
+          DefaultUserPermissions.ADMIN_PERMISSION.resource_type: [
+            DefaultUserPermissions.ADMIN_PERMISSION.context_id,
+            ],
+          },
+        }
+  else:
+    permissions = {}
+    user_roles = db.session.query(UserRole)\
+        .options(
+            sqlalchemy.orm.undefer_group('UserRole_complete'),
+            sqlalchemy.orm.undefer_group('Role_complete'),
+            sqlalchemy.orm.joinedload('role'))\
+        .filter(UserRole.person_id==user.id)\
+        .order_by(UserRole.updated_at.desc())\
+        .all()
+    for user_role in user_roles:
+      if isinstance(user_role.role.permissions, dict):
+        for action, resource_types in user_role.role.permissions.items():
+          for resource_type in resource_types:
+            permissions.setdefault(action, {})\
+                .setdefault(resource_type, list())\
+                .append(user_role.context_id)
+    #grab personal context
+    personal_context = db.session.query(Context).filter(
+        Context.related_object_id == user.id,
+        Context.related_object_type == 'Person',
+        ).first()
+    if not personal_context:
+      personal_context = Context(
+          name='Personal Context for {0}'.format(user.id),
+          description='',
+          context_id=1,
+          related_object_id=user.id,
+          related_object_type='Person',
+          )
+      db.session.add(personal_context)
+      db.session.commit()
+    permissions.setdefault('__GGRC_ADMIN__',{})\
+        .setdefault('__GGRC_ALL__',[])\
+        .append(personal_context.id)
+  return permissions
 
 def all_collections():
   """The list of all collections provided by this extension."""
@@ -185,30 +188,23 @@ def handle_program_post(sender, obj=None, src=None, service=None):
 @Resource.model_posted.connect_via(UserRole)
 def handle_program_owner_role_assignment(
     sender, obj=None, src=None, service=None):
-  if obj.role.name == 'ProgramOwner':
+  if 'read' in obj.role.permissions and \
+      'UserRole' in obj.role.permissions['read']:
+    # Make sure that the user can read roles, too
     assign_role_reader(obj.person)
 
 def assign_role_reader(user):
-    # assign the user RoleReader if they don't already have that role
     role_reader_role = db.session.query(Role)\
         .filter(Role.name == 'RoleReader').first()
-    role_reader_for_user = db.session.query(UserRole)\
-        .join(Role, UserRole.role == role_reader_role)\
-        .filter(UserRole.person_id == user.id\
-            and Role.name == 'RoleReader'
-            and UserRole.context_id == 1)\
-        .first()
-    if not role_reader_for_user:
+    user_permissions = BasicUserPermissions(user)
+    if not user_permissions.is_allowed_read('Role', None):
       role_reader_for_user = UserRole(
           person_id=user.id,
           role=role_reader_role,
-          context_id=1,
+          context_id=None,
           )
       db.session.add(role_reader_for_user)
       db.session.flush()
-    
-    # force a reload of permissions
-    #del session['permissions']
 
 # Removed because this is now handled purely client-side, but kept
 # here as a reference for the next one.

@@ -235,7 +235,7 @@
 
     , refresh_list: function() {
         // Returns a list which will *only* ever contain fully loaded instances
-        var loader = new GGRC.ListLoaders.ReifyingListLoader(this.loader)
+        var loader = new GGRC.ListLoaders.ReifyingListLoader(this)
           , binding = loader.attach(this.instance)
           ;
 
@@ -901,7 +901,7 @@
           , object_model = binding.instance.constructor
           ;
 
-        return (mapping.constructor === model
+        return (mapping instanceof model
                 && mapping[this.object_attr]
                 && (mapping[this.object_attr].reify() === binding.instance
                     || (mapping[this.object_attr].reify().constructor == object_model &&
@@ -982,7 +982,12 @@
       init: function(source) {
         this._super();
 
-        this.source = source;
+        if (source instanceof GGRC.ListLoaders.BaseListLoader)
+          this.source = source;
+        else if (source instanceof GGRC.ListLoaders.ListBinding)
+          this.source_binding = source;
+        else
+          throw new Error("Invalid source:", source);
       }
 
     , insert_from_source_binding: function(binding, results, index) {
@@ -1003,7 +1008,11 @@
     , init_listeners: function(binding) {
         var self = this;
 
-        binding.source_binding = binding.instance.get_binding(this.source);
+        if (this.source_binding)
+          binding.source_binding = this.source_binding;
+        else
+          binding.source_binding = binding.instance.get_binding(this.source);
+
         this.insert_from_source_binding(binding, binding.source_binding.list, 0);
 
         binding.source_binding.list.bind("add", function(ev, results, index) {

@@ -35,8 +35,8 @@ class Program(
       'ProgramDirective', backref='program', cascade='all, delete-orphan')
   directives = association_proxy(
       'program_directives', 'directive', 'ProgramDirective')
-  cycles = db.relationship(
-      'Cycle', backref='program', cascade='all, delete-orphan')
+  audits = db.relationship(
+     'Audit', backref='program', cascade='all, delete-orphan')
   scope = deferred(db.Column(db.Text), 'Program')
   organization = deferred(db.Column(db.String), 'Program')
 
@@ -46,7 +46,7 @@ class Program(
       'controls',
       'program_directives',
       'directives',
-      'cycles',
+      'audits',
       'scope',
       'organization',
       ]
@@ -64,4 +64,4 @@ class Program(
     return cls.eager_inclusions(query, Program._include_links).options(
         orm.subqueryload_all('program_directives.directive'),
         #orm.joinedload('program_controls'),
-        orm.subqueryload('cycles'))
+        orm.subqueryload('audits'))

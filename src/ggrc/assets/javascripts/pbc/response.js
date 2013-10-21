@@ -10,99 +10,169 @@
 //= require pbc/population_sample
 //= require pbc/meeting
 
-//Response isn't technically a System, but subclassing makes it much easier to do the binding of 
-// created/destroeyd listeners on ObjectDocuments and ObjectPeople, which both classes use.
-CMS.Models.System("CMS.Models.Response", {
+can.Model.Cacheable("CMS.Models.Response", {
 
-    root_object : "response"
-    , root_collection : "responses"
-    , xable_type : "Response"
-    , init : function() {
-      this._super && this._super.apply(this, arguments);
+  root_object : "response"
+  , root_collection : "responses"
+  , subclasses : []
+  , init : function() {
+    this._super && this._super.apply(this, arguments);
 
-      this.cache = {}; //override System cache
+    this.cache = {};
+    if(this !== CMS.Models.Response) {
+      CMS.Models.Response.subclasses.push(this);
+    }
+  }
+  , create : "POST /api/responses"
+  , update : "PUT /api/responses/{id}"
 
-      CMS.Models.Meeting.bind("destroyed", function(ev, mtg){
-        can.each(CMS.Models.Response.cache, function(response) {
-          response.removeElementFromChildList("meetings", mtg);
-        });
+  , findAll : "GET /api/responses"
+  , destroy : "DELETE /api/responses/{id}"
+  , model : function(params) {
+    var found = false;
+    if (this.shortName !== 'Response')
+      return this._super(params);
+    if (!params)
+      return params;
+    params = this.object_from_resource(params);
+    if (!params.selfLink) {
+      if (params.type && params.type !== 'Response')
+        return CMS.Models[params.type].model(params);
+    } else {
+      can.each(this.subclasses, function(m) {
+        if(m.root_object === params.response_type + "_response") {
+          params = m.model(params);
+          found = true;
+          return false;
+        } else if(m.root_object in params) {
+          params = m.model(m.object_from_resource(params));
+          found = true;
+          return false;
+        }
       });
     }
-    , create : function(params) {
-        var _params = { response : {
-            system_id : params.system_id
-            , request_id : params.request_id
-        }};
-        return $.ajax({
-                type : "POST"
-                , url : "/api/responses"
-                , dataType : "json"
-                , data : _params
-            });
+    if(found) {
+      return params;
+    } else {
+      console.debug("Invalid Response:", params);
     }
-    , update : function(id, params) {
-      var that = this;
-      var _params = this.process_args(
-        params
-        , { not : ["created_at"
-                  , "id"
-                  , "modified_by_id"
-                  , "updated_at"
-                  , "documents"
-                  , "object_documents"
-                  , "people"
-                  , "object_people"
-                  , "system"
-                  , "population_sample"
-                  , "meetings"]
-        });
-      return $.ajax({
-              type : "PUT"
-              , url : "/responses/" + id + ".json"
-              , dataType : "json"
-              , data : _params
-          }).done(function(d) {
-            var resp = that.findInCacheById(id);
-            if(resp.system == null && d.system != null) {
-              resp.attr("system", new CMS.Models.System(d.system));
-            }
-          });
-    }
-
-    , findAll : "GET /responses.json"
-    , destroy : "DELETE /responses/{id}.json"
-    , model : function(params) {
-      var m = this._super(params);
-      m.reinit();
-      return m;
-    }
+  }
+  , attributes : {
+    owner : "CMS.Models.Person.model"
+    , object_documents : "CMS.Models.ObjectDocument.stubs"
+    , documents : "CMS.Models.Document.stubs"
+    , population_worksheet : "CMS.Models.Document.stub"
+    , sample_worksheet : "CMS.Models.Document.stub"
+    , sample_evidence : "CMS.Models.Document.stub"
+    , object_people : "CMS.Models.ObjectPerson.stubs"
+    , people : "CMS.Models.Person.stubs"
+    , meetings : "CMS.Models.Meeting.stubs"
+    , request : "CMS.Models.Request.stub"
+    , assignee : "CMS.Models.Person.stub"
+    , related_sources : "CMS.Models.Relationship.stubs"
+    , related_destinations : "CMS.Models.Relationship.stubs"
+    , object_controls : "CMS.Models.ObjectControl.stubs"
+    , controls : "CMS.Models.Control.stubs"
+  }
+  , defaults : {
+    status : "Assigned"
+  }
+  , tree_view_options : {
+    show_view : GGRC.mustache_path + "/responses/tree.mustache"
+    , footer_view : GGRC.mustache_path + "/responses/tree_footer.mustache"
+    , draw_children : true
+    , child_options : [{
+      //0: mapped objects
+      mapping : "business_objects"
+      , model : can.Model.Cacheable
+      , show_view : GGRC.mustache_path + "/base_objects/tree.mustache"
+      , footer_view : GGRC.mustache_path + "/base_objects/tree_footer.mustache"
+      , allow_mapping : true
+      , exclude_option_types : function() {
+        var types = {
+          "DocumentationResponse" : "Document"
+          , "InterviewResponse" : "Person"
+        };
+        return types[this.parent_instance.constructor.shortName] || "";
+      }
+    }, {
+      //1: Document Evidence
+      model : "Document"
+      , mapping : "documents"
+      , show_view : GGRC.mustache_path + "/documents/pbc_tree.mustache"
+    }, {
+      //2: Meetings
+      model : "Meeting"
+      , mapping : "meetings"
+      , show_view : GGRC.mustache_path + "/meetings/tree.mustache"
+      , footer_view : GGRC.mustache_path + "/meetings/tree_footer.mustache"
+    }, {
+      //3: Meeting participants
+      model : "Person"
+      , mapping : "people"
+      , show_view : GGRC.mustache_path + "/people/tree.mustache"
+      , footer_view : GGRC.mustache_path + "/people/tree_footer.mustache"
+    }]
+  }
 }, {
-
-    init : function() {
-        this._super();
-    }
-
-    , reinit : function() {
-      this._super();
-      this.system != null && !(this.system instanceof CMS.Models.System) && this.attr("system", new CMS.Models.System(this.system.serialize ? this.system.serialize() : this.system));
-        this.attr(
-          "population_sample"
-          , new CMS.Models.PopulationSample(
-              this.population_sample && this.population_sample.serialize 
-              ? this.population_sample.serialize() 
-              : this.population_sample
-        ));
-        var mtgs = new can.Model.List();
-        can.each(this.attr("meetings"), function(val) {
-          mtgs.push(new CMS.Models.Meeting(val.serialize ? val.serialize() : val));
-        });
-        this.attr("meetings", mtgs);
-    }
-
-    , system_or_process : function( ) {
-      return null;
-    }
-    , system_or_process_capitalized : function() {
-      return null;
-    }
 });
+
+CMS.Models.Response("CMS.Models.DocumentationResponse", {
+  root_object : "documentation_response"
+  , root_collection : "documentation_responses"
+  , create : "POST /api/documentation_responses"
+  , update : "PUT /api/documentation_responses/{id}"
+  , findAll : "GET /api/documentation_responses"
+  , destroy : "DELETE /api/documentation_responses/{id}"
+  , attributes : {}
+  , init : function() {
+    this._super && this._super.apply(this, arguments);
+    can.extend(this.attributes, CMS.Models.Response.attributes);
+    this.cache = CMS.Models.Response.cache;
+  }
+  , process_args : function(args, names) {
+    var params = this._super(args, names);
+    params[this.root_object].response_type = "documentation";
+    return params;
+  }
+}, {});
+
+CMS.Models.Response("CMS.Models.InterviewResponse", {
+  root_object : "interview_response"
+  , root_collection : "interview_responses"
+  , create : "POST /api/interview_responses"
+  , update : "PUT /api/interview_responses/{id}"
+  , findAll : "GET /api/interview_responses"
+  , destroy : "DELETE /api/interview_responses/{id}"
+  , attributes : {}
+  , init : function() {
+    this._super && this._super.apply(this, arguments);
+    can.extend(this.attributes, CMS.Models.Response.attributes);
+    this.cache = CMS.Models.Response.cache;
+  }
+  , process_args : function(args, names) {
+    var params = this._super(args, names);
+    params[this.root_object].response_type = "interview";
+    return params;
+  }
+}, {});
+
+CMS.Models.Response("CMS.Models.PopulationSampleResponse", {
+  root_object : "population_sample_response"
+  , root_collection : "population_sample_responses"
+  , create : "POST /api/population_sample_responses"
+  , update : "PUT /api/population_sample_responses/{id}"
+  , findAll : "GET /api/population_sample_responses"
+  , destroy : "DELETE /api/population_sample_responses/{id}"
+  , attributes : {}
+  , init : function() {
+    this._super && this._super.apply(this, arguments);
+    can.extend(this.attributes, CMS.Models.Response.attributes);
+    this.cache = CMS.Models.Response.cache;
+  }
+  , process_args : function(args, names) {
+    var params = this._super(args, names);
+    params[this.root_object].response_type = "population sample";
+    return params;
+  }
+}, {});

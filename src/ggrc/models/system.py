@@ -39,8 +39,6 @@ class SystemOrProcess(
   notes = deferred(db.Column(db.Text), 'SystemOrProcess')
   # TODO: handle option
   network_zone_id = deferred(db.Column(db.Integer), 'SystemOrProcess')
-
-  responses = db.relationship('Response', backref='system', cascade='all, delete-orphan')
   type = db.relationship(
       'Option',
       primaryjoin='and_(foreign(SystemOrProcess.type_id) == Option.id, '\
@@ -66,7 +64,6 @@ class SystemOrProcess(
       'version',
       'notes',
       'network_zone',
-      'responses',
       'owner',
       ]
   _update_attrs = [
@@ -76,7 +73,6 @@ class SystemOrProcess(
       'version',
       'notes',
       'network_zone',
-      'responses',
       'owner',
       ]
   _sanitize_html = [
@@ -96,11 +92,9 @@ class SystemOrProcess(
     query = super(SystemOrProcess, cls).eager_query()
     return query.options(
         orm.joinedload('type'),
-        orm.joinedload('network_zone'),
-        orm.joinedload('responses'))
+        orm.joinedload('network_zone'))
 
 
-# Not 'Controllable', since system_controls is used instead
 class System(
     Documentable, Personable, Objectiveable, Controllable, Sectionable,
     Relatable, SystemOrProcess):

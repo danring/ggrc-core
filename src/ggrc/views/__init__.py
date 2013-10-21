@@ -9,6 +9,9 @@ from flask import request, flash, session
 from flask.views import View
 from ggrc.app import app
 from ggrc.rbac import permissions
+from ggrc.login import get_current_user
+from ggrc.utils import as_json
+from ggrc.builder.json import publish
 from werkzeug.exceptions import Forbidden
 from . import filters
 from .common import BaseObjectView, RedirectedPolymorphView
@@ -22,13 +25,18 @@ def get_permissions_json():
   permissions.permissions_for(permissions.get_user())
   return json.dumps(session['permissions'])
 
+def get_current_user_json():
+  current_user = get_current_user()
+  return as_json(current_user.to_json())
+
 @app.context_processor
 def base_context():
   from ggrc.models import get_model
   return dict(
       get_model=get_model,
       permissions_json=get_permissions_json,
-      permissions=permissions
+      permissions=permissions,
+      current_user_json=get_current_user_json,
       )
 
 from flask import render_template
@@ -515,17 +523,18 @@ def tooltip_view(model_class, base_service_class=TooltipView):
 def all_object_views():
   from ggrc import models
   return [
+      object_view(models.Audit),
       object_view(models.Program),
       object_view(models.Directive, RedirectedPolymorphView),
       object_view(models.Contract),
       object_view(models.Policy),
       object_view(models.Regulation),
-      object_view(models.Cycle),
       object_view(models.Control),
       object_view(models.Objective),
       object_view(models.System),
       object_view(models.Process),
       object_view(models.Product),
+      object_view(models.Request),
       object_view(models.OrgGroup),
       object_view(models.Facility),
       object_view(models.Market),
@@ -534,22 +543,22 @@ def all_object_views():
       object_view(models.RiskyAttribute),
       object_view(models.Risk),
       object_view(models.Person),
-      object_view(models.PbcList),
       ]
 
 def all_tooltip_views():
   from ggrc import models
   return [
+      tooltip_view(models.Audit),
       tooltip_view(models.Program),
       tooltip_view(models.Contract),
       tooltip_view(models.Policy),
       tooltip_view(models.Regulation),
-      tooltip_view(models.Cycle),
       tooltip_view(models.Control),
       tooltip_view(models.Objective),
       tooltip_view(models.System),
       tooltip_view(models.Process),
       tooltip_view(models.Product),
+      tooltip_view(models.Request),
       tooltip_view(models.OrgGroup),
       tooltip_view(models.Facility),
       tooltip_view(models.Market),

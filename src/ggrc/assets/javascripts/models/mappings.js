@@ -257,6 +257,7 @@
       , contracts: TypeFilter("directives", "Contract")
       , policies: TypeFilter("directives", "Policy")
       , regulations: TypeFilter("directives", "Regulation")
+      , audits: Direct("Audit", "program")
 
       , sections_via_directives: Cross("directives", "sections")
       , controls_via_directives: Cross("directives", "controls")
@@ -447,5 +448,36 @@
     , Process: {
         _mixins: ["business_object"]
       }
+
+    , Audit : {
+      requests: Direct("Request", "audit")
+    }
+    , Request : {
+      responses: Direct("Response", "request")
+      , documentation_responses : TypeFilter("responses", "DocumentationResponse")
+      , interview_responses : TypeFilter("responses", "InterviewResponse")
+      , population_sample_responses : TypeFilter("responses", "PopulationSampleResponse")
+      //, responses : Multi(["documentation_responses", "interview_responses", "population_sample_responses"])
+    }
+    , Response : {
+      _mixins : ["business_object"]
+    }
+    , DocumentationResponse : {
+      _mixins : ["business_object"]
+      , business_objects : Multi(["related_objects", "controls", "people"])
+    }
+    , InterviewResponse : {
+      _mixins : ["business_object"]
+      , meetings: Direct("Meeting", "response")
+      , business_objects : Multi(["related_objects", "controls", "documents"])
+    }
+    , PopulationSampleResponse : {
+      _mixins : ["business_object"]
+      , business_objects : Multi(["related_objects", "controls", "people", "documents"])
+      , population_samples : Direct("PopulationSample", "response")
+    }
+    , Meeting : {
+      _mixins : ["personable"]
+    }
   });
 })(GGRC, can);

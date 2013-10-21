@@ -35,7 +35,7 @@ can.Model.Cacheable("CMS.Models.Program", {
     , directives : "CMS.Models.Directive.stubs"
     , program_controls : "CMS.Models.ProgramControl.stubs"
     , controls : "CMS.Models.Control.stubs"
-    , cycles : "CMS.Models.Cycle.stubs"
+    , audits : "CMS.Models.Audit.stubs"
   }
   , links_to : {
     "Regulation" : "ProgramDirective"
@@ -952,6 +952,83 @@ can.Model.Cacheable("CMS.Models.Role", {
     return this.name;
   }
 
+});
+
+can.Model.Cacheable("CMS.Models.Audit", {
+  root_object : "audit"
+  , root_collection : "audits"
+  , findOne : "GET /api/audits/{id}"
+  , update : "PUT /api/audits/{id}"
+  , destroy : "DELETE /api/audits/{id}"
+  , create : "POST /api/audits"
+  , attributes : {
+    program: "CMS.Models.Program.stub"
+    , requests : "CMS.Models.Request.stubs"
+    , modified_by : "CMS.Models.Person.stub"
+    , start_date : "datetime"
+    , end_date : "datetime"
+    , report_start_date : "date"
+    , report_end_date : "date"
+    , object_people : "CMS.Models.ObjectPerson.stubs"
+    , people : "CMS.Models.Person.stubs"
+    , owner : "CMS.Models.Person.stub"
+  }
+  , defaults : {
+    status : "Draft"
+    , owner: {id : null}
+  }
+  , tree_view_options : {
+    draw_children : true
+    , child_options : [{
+      model : "Request"
+      , mapping: "requests"
+      , allow_creating : true
+      , parent_find_param : "audit.id"
+    }]
+  }
+}, {
+
+});
+
+can.Model.Cacheable("CMS.Models.Request", {
+  root_object : "request"
+  , root_collection : "requests"
+  , create : "POST /api/requests"
+  , update : "PUT /api/requests/{id}"
+  , destroy : "DELETE /api/requests/{id}"
+  , attributes : {
+    audit : "CMS.Models.Audit.stub"
+    , responses : "CMS.Models.Response.stubs"
+    , assignee : "CMS.Models.Person.stub"
+    , objective : "CMS.Models.Objective.stub"
+    , requested_on : "date"
+    , due_on : "date"
+  }
+  , defaults : {
+    status : "Draft"
+    , requested_on : new Date()
+    , due_on : new Date()
+  }
+  , tree_view_options : {
+    show_view : GGRC.mustache_path + "/requests/tree.mustache"
+    , footer_view : GGRC.mustache_path + "/requests/tree_footer.mustache"
+    , draw_children : true
+    , child_options : [{
+      model : "Response"
+      , mapping : "responses"
+      , allow_creating : true
+    }]
+  }
+  , init : function() {
+    this._super.apply(this, arguments);
+    this.validatePresenceOf("due_on");
+    this.validatePresenceOf("assignee");
+    this.validatePresenceOf("objective");
+  }
+}, {
+  response_model_class : function() {
+    return can.capitalize(this.request_type.replace(/ [a-z]/g, function(a) { return a.slice(1).toUpperCase(); })) + "Response";
+  }
 });
 
 CMS.Models.get_instance = function(object_type, object_id, params_or_object) {

@@ -17,8 +17,8 @@
   =model_name
 
 -block extra_javascript
+  =super()
   GGRC.page_object = ={ instance_json()|safe };
-  GGRC.permissions = ={ permissions_json()|safe };
 
 -block header
   %h1{ 'class': "={ model_display_class }" }

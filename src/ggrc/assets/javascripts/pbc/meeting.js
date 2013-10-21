@@ -9,10 +9,21 @@
 //= require models/cacheable
 
 can.Model.Cacheable("CMS.Models.Meeting", {
-  destroy : "DELETE /meetings/{id}.json"
+  root_collection : "meetings"
+  , root_object : "meeting"
+  , findAll : "GET /api/meetings"
+  , create : "POST /api/meetings"
+  , update : "PUT /api/meetings/{id}"
+  , destroy : "DELETE /api/meetings/{id}"
+  , attributes : {
+    response : "CMS.Models.Response.stub"
+    , people : "CMS.Models.Person.stubs"
+    , start_at : "datetime"
+    , end_at : "datetime"
+  }
 }, {
   init : function () {
-      this._super && this._super();
+      this._super && this._super.apply(this, arguments);
       // this.bind("change", function(ev, attr, how, newVal, oldVal) {
       //     var obj;
       //     if(obj = CMS.Models.ObjectDocument.findInCacheById(this.id) && attr !== "id") {

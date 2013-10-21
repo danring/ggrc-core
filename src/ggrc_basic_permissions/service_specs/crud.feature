@@ -166,3 +166,41 @@ Feature: Role CRUD
     Then GET of "role2" is allowed
     Then DELETE of "role2" is allowed
 
+  Scenario: Users assigned UserRole can see Role resources in the default context
+    Given the current user
+      """
+      { "email": "user.role.reader@example.com" }
+      """
+    When GET of "ggrc_basic_permissions.models.Role" collection
+    Then the collection is empty
+    Given the current user
+      """
+      { "email": "example.admin@example.com", "name": "Jo Admin",
+        "permissions": {
+          "__GGRC_ADMIN__": {"__GGRC_ALL__": [0]}
+        }
+      }
+      """
+    And a new Role named "role" is created from json
+      """
+      {
+        "name": "UserRole Reader",
+        "description": "Allow a user to see UserRole assignments.",
+        "permissions": {
+          "read":   ["UserRole"]
+          },
+        "context": {
+          "id": null,
+          "type": "Context"
+        }
+      }
+      """
+    And "role" is POSTed to its collection
+    Then GET of "role" is allowed
+    Given User "user.role.reader@example.com" has "UserRole Reader" role
+    And the current user
+      """
+      { "email": "user.role.reader@example.com" }
+      """
+    When GET of "ggrc_basic_permissions.models.Role" collection
+    Then the collection is not empty

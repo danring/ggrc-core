@@ -1,0 +1,43 @@
+{{!div class="extended"}}
+  <div class="row-fluid">
+    <div class="span12">
+        {{title}}
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span6">
+      <div class="info">
+        <strong>Owner:</strong>
+        {{^program.owner}}
+        <span class="error">
+          Not Assigned
+        </span>
+        {{/program.owner}}
+        {{#if program.owner}}
+          {{program.owner.name}}
+        {{/if}}
+      </div>
+    </div>
+    <div class="span6">
+      <!--
+      <div class="info">
+        <i class="grcicon-control-color"></i>
+        {{!controls.length}}
+        &nbsp;&nbsp;
+        <i class="grcicon-process-color"></i>
+        {{!processes.length}}
+        &nbsp;&nbsp;
+        <i class="grcicon-system-color"></i>
+        {{!systems.length}}
+      </div>
+      -->
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="code">
+        Code: {{slug}}
+      </div>
+    </div>
+  </div>
+{{!/div}}

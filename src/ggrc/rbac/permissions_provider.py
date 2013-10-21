@@ -56,10 +56,11 @@ class DefaultUserPermissions(UserPermissions):
           .get(permission.action, {})\
           .get(permission.resource_type, [])
 
+  def _permissions(self):
+    return session['permissions']
+
   def _is_allowed(self, permission):
-    if 'permissions' not in session:
-      return True
-    permissions = session['permissions']
+    permissions = self._permissions()
     if permissions is None:
       return True
     if self._permission_match(permission, permissions):

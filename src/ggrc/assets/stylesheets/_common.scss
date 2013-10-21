@@ -91,6 +91,14 @@ blockquote {
   margin-right: 4px;
 }
 
+.spacing {
+  margin: 15px 0 24px 0;
+}
+
+.spacing-bottom {
+  margin-bottom: 20px;
+}
+
 .no-float {
   clear: both;
 }
@@ -200,6 +208,12 @@ blockquote {
         color:$white;
       }
     }
+  }
+  .population-upload & {
+    width: 100%;
+    box-sizing: border-box;
+    padding-left: 1px;
+    padding-right: 3px;
   }
   &.pending-ajax {
     cursor: default;
@@ -602,4 +616,57 @@ select.multiple-selector {
 
 .tooltip-inner {
   text-align: left;
+}
+
+// Input file styling
+.input-file-main {
+  width: 400px;
+  margin-bottom: 15px;
+  .input-file-holder {
+    position: relative;
+    width: 400px;
+    input[type="file"] {
+      position: relative;
+      z-index: 2;
+      @include opacity(0);
+      width: 400px;
+      padding: 0;
+    }
+    .clone {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      width: 400px;
+      padding: 0;
+      margin: 0;
+      z-index: 1;
+      input[type="text"] {
+        width: 300px;
+        float: left;
+      }
+      span {
+        float: left;
+        margin-left: 10px;
+      }
+    }
+  }
+}
+// Sticky headers
+.sticky {
+  background:#fff;
+  border-left: none !important;
+  border-right: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  z-index:9999;
+  &.sticky-header {
+    @include box-shadow(inset 0 0 3px 0 #bbb);
+    border-top: none !important;
+    padding-bottom:1px;
+  }
+  &.sticky-footer {
+    @include box-shadow(inset 0 0 3px 0 #bbb);
+    border-bottom: none !important;
+    padding-top:1px;
+  }
 }

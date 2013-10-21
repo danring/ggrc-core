@@ -87,9 +87,9 @@ can.Model.Cacheable("CMS.Models.SystemOrProcess", {
         });
     }
     , links_to : {
-      "System" : "SystemSystem"
-      , "Process" : "SystemSystem"
-      , "Control" : "SystemControl"
+        "System" : {}
+      , "Process" : {}
+      , "Control" : {}
       , "Product" : {}
       , "Facility" : {}
       , "OrgGroup" : {}
@@ -142,10 +142,6 @@ CMS.Models.SystemOrProcess("CMS.Models.System", {
     , object_sections : "CMS.Models.ObjectSection.stubs"
     , sections : "CMS.Models.Section.stubs"
     , response : "CMS.Models.Response.stub"
-    , sub_system_systems : "CMS.Models.SystemSystem.stubs"
-    , sub_systems : "CMS.Models.get_stubs"
-    , super_system_systems : "CMS.Models.SystemSystem.stubs"
-    , super_systems : "CMS.Models.get_stubs"
     }
   , defaults : {
       title : ""
@@ -196,10 +192,6 @@ CMS.Models.SystemOrProcess("CMS.Models.Process", {
     , sections : "CMS.Models.Section.stubs"
     , network_zone : "CMS.Models.Option.stub"
     , response : "CMS.Models.Response.stub"
-    , sub_system_systems : "CMS.Models.SystemSystem.stubs"
-    , sub_systems : "CMS.Models.get_stubs"
-    , super_system_systems : "CMS.Models.SystemSystem.stubs"
-    , super_systems : "CMS.Models.get_stubs"
     }
   , defaults : {
       title : ""

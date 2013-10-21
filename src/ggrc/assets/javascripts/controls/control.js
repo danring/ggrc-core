@@ -38,8 +38,6 @@ can.Model.Cacheable("CMS.Models.Control", {
     , program_controls : "CMS.Models.ProgramControl.stubs"
     , programs : "CMS.Models.Program.stubs"
     , directive_controls : "CMS.Models.DirectiveControl.stubs"
-    , system_controls : "CMS.Models.SystemControl.stubs"
-    , systems : "CMS.Models.System.stubs"
     , control_risks : "CMS.Models.ControlRisk.stubs"
     , risks : "CMS.Models.Risk.stubs"
     , object_controls : "CMS.Models.ObjectControl.stubs"

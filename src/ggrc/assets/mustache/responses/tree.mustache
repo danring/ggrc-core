@@ -1,0 +1,159 @@
+  <li class="tree-item programs responses-list" data-object-id="{{instance.id}}" data-object-type="{{instance.constructor.table_singular}}">
+    <div class="item-main" data-model="true" {{#instance}}{{data 'model'}}{{/instance}}>
+      <a href="javascript://" class="openclose">
+        <div class="row-fluid">
+          <div class="span6">
+            <div class="item-data">
+              <div class="tree-title-area">
+                {{{firstnonempty instance.description 'Response'}}}
+              </div>
+            </div>
+          </div>
+          
+          <div class="span3" {{ (el) -> el.ggrc_controllers_quick_form({ instance : el.closest('[data-model]').data('model')}); }}>
+            <i class="grcicon-person-green pull-left"></i>
+            <div class="objective-selector">
+              {{#using owner=instance.owner}}
+                <input type="text" name="owner.name" data-lookup="Person" class="span8 short-field" value="{{firstnonempty instance.owner.name instance.owner.email ''}}">
+              {{/using}}
+            </div>
+          </div>
+          
+          <div class="span3" {{ (el) -> el.ggrc_controllers_quick_form({ instance : el.closest('[data-model]').data('model')}); }}>
+            <select name="status" class="span10 short-field">
+              {{#iterate 'Assigned' 'Accepted' 'Completed'}}
+              <option {{#if_equals iterator instance.status}}selected="true"{{/if_equals}}>{{iterator}}</option>
+              {{/iterate}}
+            </select>
+          </div>
+        </div>
+      </a>
+    </div>
+    
+    <div class="tier-2-info item-content">
+      <div class="tier-2-info-content">
+        <div class="row-fluid">
+          <div class="span12">
+            <a class="utility-link" href="javascript://" data-toggle="modal-ajax-form" data-modal-reset="reset" data-modal-class="modal-wide" data-object-singular="Response" data-object-plural="responses" data-object-id="{{instance.id}}">
+              <i class="grcicon-edit"></i>
+              Edit PBC Response
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      {{#child_options.0}}
+      <div class="inner-tree">
+        <h6>Mapped Objects ({{child_options.0.list.length}})</h6>
+        <ul class="tree-structure new-tree" {{data 'options'}} {{ (el) -> el.cms_controllers_tree_view(el.data('options')) }}>
+        </ul>
+      </div>
+      {{/child_options.0}}
+      
+      {{#if_equals instance.response_type 'documentation'}}
+      {{#child_options.1}}
+      <div class="inner-tree">
+        <h6>Evidence ({{child_options.1.list.length}})</h6>
+        <ul class="tree-structure new-tree" {{data 'options'}} {{ (el) -> el.cms_controllers_tree_view(el.data('options')) }}>
+        </ul>
+      </div>
+      {{/child_options.1}}
+      {{/if_equals}}
+      {{#if_equals instance.response_type 'interview'}}
+      {{#child_options.2}}
+      <div class="inner-tree">
+        <h6>Meetings ({{child_options.2.list.length}})</h6>
+        <ul class="tree-structure new-tree" {{data 'options'}} {{ (el) -> el.cms_controllers_tree_view(el.data('options')) }}></ul>
+      </div>
+      {{/child_options.2}}
+      {{#child_options.3}}
+      <div class="inner-tree">
+        <h6>Participants ({{child_options.3.list.length}})</h6>
+        <ul class="tree-structure new-tree" {{data 'options'}} {{ (el) -> el.cms_controllers_tree_view(el.data('options')) }}></ul>
+      </div>
+      {{/child_options.3}}
+      {{/if_equals}}
+      {{#if_equals instance.response_type 'population sample'}}
+      <div class="tier-2-info-content population-content" {{#instance}}{{data 'model'}}{{/instance}} {{ (el) -> el.ggrc_controllers_quick_form({ instance : el.data('model')}); }}>
+        <ul class="population-upload">
+          <li>
+            <div class="row-fluid">
+              <div class="span8">
+                <label>Population worksheet</label>
+                <div class="row-fluid">
+                  {{#using population_worksheet=instance.population_worksheet}}
+                  <div class="span9">
+                    <input type="text" name="population_worksheet.name" data-lookup="Document" class="input-block-level" placeholder="Enter URL" value="{{firstnonempty population_worksheet.name population_worksheet.link ''}}">
+                  </div>
+                  {{/using}}
+                  <!--
+                    <div class="span1">
+                      <span class="choose">OR</span>
+                    </div>
+                    <div class="span2">
+                      <a href="javascript://" data-toggle="modal-ajax-form" data-modal-reset="reset" class="btn btn-add" data-modal-class="modal-wide" data-object-singular="Request" data-object-plural="requests" data-object-params='{ "{{instance.constructor.table_singular}}": {"id" : {{instance.id}}, "type" : "{{instance.constructor.model_singular}}" } }'><i class="grcicon-upload"></i> Upload</a>
+                    </div>
+                  -->
+                </div>
+              </div>
+              <div class="span4">
+                <label>Population #</label>
+                <input type="text" name="population_count" class="input-block-level" placeholder="example: 1000" value="{{firstnonempty instance.population_count ''}}">
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="row-fluid">
+              <div class="span8">
+                <label>Sample worksheet</label>
+                <div class="row-fluid">
+                  {{#using sample_worksheet=instance.sample_worksheet}}
+                  <div class="span9">
+                    <input type="text" name="sample_worksheet.name" data-lookup="Document" class="input-block-level" placeholder="Enter URL" value="{{firstnonempty sample_worksheet.name sample_worksheet.link ''}}">
+                  </div>
+                  {{/using}}
+                  <!--
+                    <div class="span1">
+                      <span class="choose">OR</span>
+                    </div>
+                    <div class="span2">
+                      <a href="#" class="btn btn-add"><i class="grcicon-upload"></i> Upload</a>
+                    </div>
+                  -->
+                </div>
+              </div>
+              <div class="span4">
+                <label>Sample #</label>
+                <input type="text" name="sample_count" class="input-block-level" placeholder="example: 1000" value="{{firstnonempty instance.sample_count ''}}">
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="row-fluid">
+              <div class="span8">
+                <label>Sample evidence</label>
+                <div class="row-fluid">
+                  {{#using sample_evidence=instance.sample_evidence}}
+                  <div class="span9">
+                    <input type="text" name="sample_evidence.name" data-lookup="Document" class="input-block-level" placeholder="Enter URL" value="{{firstnonempty sample_evidence.name sample_evidence.link ''}}">
+                  </div>
+                  {{/using}}
+                  <!--
+                    <div class="span1">
+                      <span class="choose">OR</span>
+                    </div>
+                    <div class="span2">
+                      <span class="btn btn-add"><i class="grcicon-upload"></i> Upload</span>
+                    </div>
+                  -->
+                </div>
+              </div>
+              <div class="span4">&nbsp;</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      {{/if_equals}}
+      
+    </div>
+  </li>

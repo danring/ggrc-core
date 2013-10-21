@@ -58,9 +58,9 @@ Feature: Collections can be paged
 
   Examples:
       | resource_type      |
+      | Audit              |
       | Category           |
       | Control            |
-      | Cycle              |
       | DataAsset          |
       | Contract           |
       | Policy             |
@@ -69,18 +69,18 @@ Feature: Collections can be paged
       | Facility           |
       | Help               |
       | Market             |
-      | Meeting            |
       | Objective          |
       | Option             |
       | OrgGroup           |
-      | PbcList            |
       | Person             |
-      | PopulationSample   |
       | Product            |
       | Project            |
       | Program            |
       | Request            |
-      | Response           |
+      #| Response           |
+      | DocumentationResponse     |
+      | InterviewResponse         |
+      | PopulationSampleResponse  |
       | Risk               |
       | RiskyAttribute     |
       | Section            |

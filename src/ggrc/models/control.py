@@ -101,8 +101,6 @@ class Control(
   control_risks = db.relationship(
       'ControlRisk', backref='control', cascade='all, delete-orphan')
   risks = association_proxy('control_risks', 'risk', 'ControlRisk')
-  control_assessments = db.relationship(
-      'ControlAssessment', backref='control', cascade='all, delete-orphan')
   object_controls = db.relationship(
       'ObjectControl', backref='control', cascade='all, delete-orphan')
   directive_controls = db.relationship(
@@ -117,7 +115,6 @@ class Control(
       #'categories',
       #'assertions',
       'company_control',
-      'control_assessments',
       'directive',
       'documentation_description',
       'fraud_related',
@@ -169,7 +166,6 @@ class Control(
     query = super(Control, cls).eager_query()
     return cls.eager_inclusions(query, Control._include_links).options(
         orm.joinedload('directive'),
-        orm.subqueryload('control_assessments'),
         orm.subqueryload('control_controls'),
         orm.subqueryload('implementing_control_controls'),
         orm.subqueryload('control_risks'),

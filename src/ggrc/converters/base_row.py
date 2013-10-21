@@ -371,7 +371,9 @@ class DateColumnHandler(ColumnHandler):
       elif isinstance(value, basestring) and re.match(r'\d{1,2}\/\d{1,2}\/\d{2}', value):
         date_result = datetime.strptime(value, "%m/%d/%y")
       elif isinstance(value, basestring) and re.match(r'\d{4}\/\d{1,2}\/\d{2}', value):
-        date_result = datetime.strptime(value, "%y/%m/%d")
+        date_result = datetime.strptime(value, "%Y/%m/%d")
+      elif isinstance(value, basestring) and re.match(r'\d{4}-\d{1,2}-\d{1,2}', value):
+        date_result = datetime.strptime(value, "%Y-%m-%d")
       elif value:
         raise ValueError("Error parsing the date string")
 

@@ -23,18 +23,12 @@ Feature: Many resources have links to other resources. This feature will
 
   Examples: n-ary Link Resources
     | parent_type       | child_type        | parent_property           | children_property                |
-    | PbcList           | ControlAssessment | pbc_list                  | control_assessments              |
-    | Control           | ControlAssessment | control                   | control_assessments              |
-    | Program           | Cycle             | program                   | cycles                           |
-    | Cycle             | PbcList           | audit_cycle               | pbc_lists                        |
-    | Response          | Meeting           | response                  | meetings                         |
-    | PbcList           | Request           | pbc_list                  | requests                         |
-    | Document          | PopulationSample  | population_document       | population_worksheets_documented |
-    | Document          | PopulationSample  | sample_worksheet_document | sample_worksheets_documented     |
-    | Document          | PopulationSample  | sample_evidence_document  | sample_evidences_documented      |
-    | ControlAssessment | Request           | control_assessment        | requests                         |
-    | Request           | Response          | request                   | responses                        |
-    | System            | Response          | system                    | responses                        |
+    | Program           | Audit             | program                   | audits                           |
+    #| Response          | Meeting           | response                  | meetings                         |
+    #| Document          | PopulationSample  | population_document       | population_worksheets_documented |
+    #| Document          | PopulationSample  | sample_worksheet_document | sample_worksheets_documented     |
+    #| Document          | PopulationSample  | sample_evidence_document  | sample_evidences_documented      |
+    #| Request           | Response          | request                   | responses                        |
     | Regulation        | Section           | directive                 | sections                         |
 
   Scenario Outline:
@@ -50,4 +44,4 @@ Feature: Many resources have links to other resources. This feature will
 
   Examples: 1-to-1 Link Resources
     | parent_type | child_type        | parent_property | child_property      |
-    | Response    | PopulationSample  | response        | population_sample   |
+    #| Response    | PopulationSample  | response        | population_sample   |

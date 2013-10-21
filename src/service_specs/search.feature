@@ -27,11 +27,11 @@ Feature: Full text search
       | type    | name     | description                                   |
       | Control | control1 | A control that should match because fortytwo. |
       | Control | control2 | A control that shouldn't match.               |
-      | Cycle   | cycle1   | A cycle that should match because fortytwo.   |
+      | Audit   | audit1   | An audit that should match because fortytwo.   |
     When fulltext search grouped by type for "fortytwo" as "results"
     Then "control1" is in the "Control" group of "results"
     And "control2" isn't in the "Control" group of "results"
-    And "cycle1" is in the "Cycle" group of "results"
+    And "audit1" is in the "Audit" group of "results"
 
   Scenario: Search finds a document with a matching description but only in authorized contexts
     Given the current user

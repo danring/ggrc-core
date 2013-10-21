@@ -202,7 +202,7 @@ Mustache.registerHelper("permission_checkbox", function(action, resourcetype, co
   var checked = false;
   if (resourcetype == "__ALL__") {
     var rtypes = [
-      "Program", "Cycle", "ProgramDirective", "ProgramControl",
+      "Program", "Audit", "ProgramDirective", "ProgramControl",
       "ObjectObjective", "ObjectSection", "Relationship", "ObjectDocument",
       "ObjectPerson", "UserRole"];
     if (action == "view") {

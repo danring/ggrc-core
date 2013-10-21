@@ -26,6 +26,8 @@ class Objective(Objectiveable, Documentable, Personable, BusinessObject, db.Mode
       'objective_controls', 'control', 'ObjectiveControl')
   objective_objects = db.relationship(
       'ObjectObjective', backref='objective', cascade='all, delete-orphan')
+  requests = db.relationship(
+     'Request', backref='objective', cascade='all, delete-orphan')
 
   _publish_attrs = [
       'notes',

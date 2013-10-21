@@ -1,0 +1,74 @@
+<div id="meeting" class="modal hide fade" tabindex="-1">
+  <div class="modal-header">
+    <div class="pull-right">
+      <a href="#" class="btn btn-mini" data-dismiss="modal"><i class="grcicon-x-grey"></i></a>
+    </div>
+    <h2>Schedule a meeting</h2>
+  </div>
+  
+  <div class="modal-body">
+    <div class="row-fluid">
+      <div class="span12">
+        <label>Meeting Title <i class="grcicon-help-black" rel="tooltip" title="Title"></i></label>
+        <input type="text" class="input-block-level" placeholder="Enter Title">
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span4">
+        <label>Choose Date</label>
+        <input class="input-block-level date" name="end_date" data-toggle="datepicker" data-after="start_date" placeholder="MM/DD/YYYY" type="text">
+      </div>
+      <div class="span4">
+        <label>Starts at</label>
+        <select class="input-block-level">
+          <option>9:00 AM</option>
+          <option>10:00 AM</option>
+          <option>11:00 AM</option>
+          <option>12:00 AM</option>
+          <option>1:00 PM</option>
+          <option>2:00 PM</option>
+          <option>3:00 PM</option>
+          <option>4:00 PM</option>
+          <option>5:00 PM</option>
+        </select>
+        
+        <label>Ends at</label>
+        <select class="input-block-level">
+          <option>9:00 AM</option>
+          <option>10:00 AM</option>
+          <option>11:00 AM</option>
+          <option>12:00 AM</option>
+          <option>1:00 PM</option>
+          <option>2:00 PM</option>
+          <option>3:00 PM</option>
+          <option>4:00 PM</option>
+          <option>5:00 PM</option>
+        </select>
+      </div>
+      <div class="span4">
+        Participants
+        <select multiple="multiple" class="input-block-level">
+          <option>Person 1</option>
+          <option>Person 2</option>
+          <option>Person 3</option>
+          <option>Person 4</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal-footer">
+    <div class="row-fluid">
+      <div class="span6">
+        <div class="deny-buttons">
+          <a class="btn" data-dismiss="modal-reset" href="#">Cancel</a>
+        </div>
+      </div>
+      <div class="span6">
+        <div class="confirm-buttons">
+          <a href="#" class="btn btn-primary preventdoubleclick" data-toggle="modal-submit">Add Meeting</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

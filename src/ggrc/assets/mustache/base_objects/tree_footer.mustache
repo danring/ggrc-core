@@ -22,6 +22,7 @@
         data-join-option-type="{{model.shortName}}"
         data-join-object-id="{{parent_instance.id}}"
         data-join-object-type="{{parent_instance.constructor.shortName}}"
+        data-exclude-option-types="{{exclude_option_types}}"
         data-original-title="Map {{firstnonempty title_singular model.title_singular 'Object'}} to this {{firstnonempty parent_instance.constructor.title_singular 'Object'}}">
         + {{model.title_singular}}
       </a>
@@ -42,6 +43,7 @@
         data-toggle="multitype-modal-selector"
         data-join-object-id="{{parent_instance.id}}"
         data-join-object-type="{{parent_instance.constructor.shortName}}"
+        data-exclude-option-types="{{exclude_option_types}}"
         data-original-title="Map {{firstnonempty title_singular model.title_singular 'Object'}} to this {{firstnonempty parent_instance.constructor.title_singular 'Object'}}"
         data-object-params='{{#if_equals parent_instance.constructor.shortName "Section"}}{ "section": { "id": {{parent_instance.id}}, "title": "{{json_escape parent_instance.title}}", "description": "{{json_escape parent_instance.description}}" } }{{/if_equals}}'>
         + Object

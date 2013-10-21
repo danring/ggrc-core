@@ -1,0 +1,127 @@
+{{!div class="modal-body"}}
+{{#instance}}
+<form action="javascript://">
+  {{{ handle_context }}}
+  <div class="row-fluid">
+    <div class="span6">
+      <label>
+        PBC Request
+        <span class="required">*</span>
+      </label>
+      <div class="wysiwyg-area">
+        <textarea id="request_description" class="span12 double wysihtml5" name="pbc_request" placeholder="State your request here...">{{{description}}}</textarea>
+      </div>
+    </div>
+    <div class="span3">
+      <label>
+        Request Type
+        <span class="required">*</span>
+      </label>
+      <select name="request_type" class="input-block-level">
+        {{#iterate 'Documentation' 'Interview' 'Population Sample'}}
+        <option {{#if_equals iterator.toLowerCase instance.request_type}}selected="true"{{/if_equals}}>{{iterator}}</option>
+        {{/iterate}}
+      </select>
+      <label>
+        Requested On
+        <span class="required">*</span>
+      </label>
+      <input class="input-block-level date" name="requested_on" data-toggle="datepicker" data-before="due_on" placeholder="MM/DD/YYYY" type="text" value="{{localize_date requested_on}}">
+    </div>
+    <div class="span3">
+      <label>
+        Status
+      </label>
+      <select class="input-block-level" name="status" {{#new_object_form}}disabled="true"{{/new_object_form}}>
+        {{#iterate 'Draft' 'Requested' 'Responded' 'Amended Request' 'Updated Response' 'Accepted'}}
+        <option {{#if_equals iterator instance.status}}selected="true"{{/if_equals}}>{{iterator}}</option>
+        {{/iterate}}
+      </select>
+      <label>
+        Due On
+        <span class="required">*</span>
+      </label>
+      <input class="input-block-level date" name="due_on" data-toggle="datepicker" data-after="requested_on" placeholder="MM/DD/YYYY" type="text" value="{{localize_date due_on}}">
+    </div>
+  </div>
+  
+  <div class="row-fluid">
+    {{#using objective=instance.objective}}
+    <div class="span6">
+      <label>
+        Objective
+        <span class="required">*</span>
+      </label>
+      <i class="grcicon-objective-color pull-left icon-field"></i>
+      <div class="objective-selector">
+        <input type="text" name="objective.title" data-lookup="Objective" class="span10" value="{{firstnonempty objective.title ''}}">
+      </div>
+    </div>
+    {{/using}}
+    {{#using assignee=instance.assignee}}
+    <div class="span6">
+      <label>
+        Assignee
+        <span class="required">*</span>
+      </label>
+      <i class="grcicon-person-green pull-left icon-field"></i>
+      <div class="objective-selector">
+        <input type="text" name="assignee.email" class="span10" data-lookup="Person" value="{{firstnonempty assignee.email ''}}">
+      </div>
+    </div>
+    {{/using}}
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="expand-link">
+        <a class="show-hidden-fields" href="javascript://">
+          <span class="out">
+            <i class="grcicon-show"></i>
+            Show 
+          </span>
+          <span class="in">
+            <i class="grcicon-hide"></i>
+            Hide
+          </span>
+          Advanced
+          <span class="hidden-fields out">
+            Test, Notes, Auditor Contact
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="hidden-fields-area" style="display:none">
+    <div class="row-fluid">
+      <div class="span6">
+        <label>
+          Test
+        </label>
+        <div class="wysiwyg-area">
+          <textarea id="test_description" class="span12 double wysihtml5" name="test" placeholder="Enter Test">{{{description}}}</textarea>
+        </div>
+      </div>
+      <div class="span6">
+        <label>
+          Notes
+        </label>
+        <div class="wysiwyg-area">
+          <textarea id="notes_description" class="span12 double wysihtml5" name="notes" placeholder="Enter Notes">{{{description}}}</textarea>
+        </div>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span12">
+        <label>
+          Audit Contact
+        </label>
+        <input class="span6" name="audit_contact" type="text" placeholder="Enter Auditor's contact email" value="">
+      </div>
+    </div>
+  </div>
+  {{#using audit=instance.audit}}
+  <input type="hidden" name="audit.id" value="{{audit.id}}">
+  {{/using}}
+</form>
+{{/instance}}
+{{!/div}}

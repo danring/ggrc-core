@@ -1,0 +1,83 @@
+<li class="tree-item programs request-list" data-object-id="{{instance.id}}" data-object-type="{{instance.constructor.table_singular}}">
+  <div class="item-main" {{#instance}}{{data 'model'}}{{/instance}} data-model="true">
+    <a href="javascript://" class="openclose">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="item-data">
+            <div class="tree-title-area">
+              <i class="grcicon-objective-color"></i>
+              {{#using objective=instance.objective}}
+                {{objective.title}}
+              {{/using}}
+            </div>
+          </div>
+        </div>
+        <div class="span3" {{ (el) -> el.ggrc_controllers_quick_form({ instance : el.closest('[data-model]').data('model')}); }}>
+          <i class="grcicon-person-green pull-left"></i>
+        {{#using assignee=instance.assignee}}
+          <div class="objective-selector">
+            <input type="text" name="assignee.name" data-lookup="Person" class="span8 short-field" value="{{firstnonempty assignee.name assignee.email ''}}">
+          </div>
+        {{/using}}
+        </div>
+        <div class="span3" {{ (el) -> el.ggrc_controllers_quick_form({ instance : el.closest('[data-model]').data('model')}); }}>
+          <span class="pull-left request-type">type:</span>
+          <select name="request_type" class="span9 short-field">
+            {{#iterate 'Documentation' 'Interview' 'Population Sample'}}
+            <option {{#if_equals iterator.toLowerCase instance.request_type}}selected="true"{{/if_equals}}>{{iterator}}</option>
+            {{/iterate}}
+          </select>
+        </div>
+        <div class="span3" {{ (el) -> el.ggrc_controllers_quick_form({ instance : el.closest('[data-model]').data('model')}); }}>
+          <select name="status" class="span9 short-field">
+            {{#iterate 'Draft' 'Requested' 'Responded' 'Amended Request' 'Updated Response' 'Accepted'}}
+            <option {{#if_equals iterator instance.status}}selected="true"{{/if_equals}}>{{iterator}}</option>
+            {{/iterate}}
+          </select>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  {{#if expanded}}
+  <div class="tier-2-info item-content">
+    <div class="tier-2-info-content">
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="show-description">
+            <div class="row-fluid">
+              <div class="span12">
+                {{{firstnonempty instance.description '<i>State your request here...</i>'}}}
+              </div>
+            </div>
+          </div>
+          
+          {{#if instance.requested_on}}
+            {{#using requested_on=instance.requested_on}}
+            <p><strong>requested on: </strong>{{localize_date requested_on}}</p>
+            {{/using}}
+          {{/if}}
+          <a class="utility-link" href="javascript://" data-toggle="modal-ajax-form" data-modal-reset="reset" data-modal-class="modal-wide" data-object-singular="Request" data-object-plural="requests" data-object-id="{{instance.id}}">
+            <i class="grcicon-edit"></i>
+            Edit PBC {{model.title_singular}}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    {{#if draw_children}}
+      {{^if_null 'z'}} {{! this line is just chopping the context stack down to one element}}
+        {{#child_options}}
+          <div class="inner-tree">
+            <h6>PBC {{firstnonempty title_plural model.title_plural}} ({{child_count}})</h6>
+            <ul class="tree-structure new-tree" {{data 'options'}} {{ (el) -> el.cms_controllers_tree_view(el.data("options")) }}>
+            </ul>
+          </div>
+        {{/child_options}}
+      {{/if_null}}
+    {{/if}}
+    
+  </div>
+  {{/if}}
+
+</li>

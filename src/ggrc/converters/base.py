@@ -173,6 +173,8 @@ class BaseConverter(object):
       self.objects.append(row)
 
     if not dry_run:
+      if self.has_errors():
+        raise ImportException("Attempted import with errors")
       self.save_import()
     return self
 
