@@ -198,6 +198,7 @@ dashboard-js-spec-files:
   - controllers/resize_widgets_spec.js
   - models/local_storage_spec.js
   - models/display_prefs_spec.js
+  - permission_spec.js
 
 dashboard-js-spec-helpers:
   - jasmine-fixture.js
