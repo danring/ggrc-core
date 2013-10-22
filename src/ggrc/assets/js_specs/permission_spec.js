@@ -75,10 +75,15 @@ describe("Permission", function() {
         }
         return result;
       }
-    , set_permissions = function(permissions) {
+    , set_permissions = function(permissions, retry) {
         var result = {};
-        last_permissions = current_permissions;
-        current_permissions = permissions;
+        if (!retry) {
+          last_permissions = current_permissions;
+          current_permissions = permissions;
+        }
+        else {
+          permissions = current_permissions;
+        }
         user = {
             email: "user_permission@example.com"
           , name: "Test User"
@@ -92,8 +97,21 @@ describe("Permission", function() {
             xhr.setRequestHeader('X-ggrc-user', JSON.stringify(user));
           }
         }).pipe(function(response) {
+          // Sometimes the server pukes dude to excessive logins when running lots of tests
+          if (!response) {
+            console.log('failed login');
+            setTimeout(function() {
+              // Retry the login
+              waitsFor(set_permissions(null, true));
+              runs(function() {
+                result.permissions = GGRC.permissions;
+              });
+            }, 250);
+          }
           // Parse permissions from the HTML response
-          return result.permissions = GGRC.permissions = JSON.parse(response.match(/GGRC\.permissions.+/)[0].replace(/^GGRC.permissions\s*=\s*(.+?);$/, '$1'));
+          else {
+            return result.permissions = GGRC.permissions = JSON.parse(response.match(/GGRC\.permissions.+/)[0].replace(/^GGRC.permissions\s*=\s*(.+?);$/, '$1'));
+          }
         });
 
         return function() {
@@ -422,12 +440,12 @@ describe("Permission", function() {
                       });
                     });
 
-                    // Try to update
+                    // Try to delete
                     runs(function() {
                       waitsFor(set_permissions(role));
                       runs(function() {
                         reset();
-                        instance.save(success, error);
+                        instance.destroy(success, error);
                         waitsFor(success_or_error);
                         runs(function() {
                           expect(role_can(roles[scope][role], "delete", model) ? success : error).toHaveBeenCalled();
@@ -632,12 +650,12 @@ describe("Permission", function() {
                       });
                     });
 
-                    // Try to update
+                    // Try to delete
                     runs(function() {
                       waitsFor(set_permissions(permissions));
                       runs(function() {
                         reset();
-                        instance.save(success, error);
+                        instance.destroy(success, error);
                         waitsFor(success_or_error);
                         runs(function() {
                           expect(role_can(roles[scope][role], "delete", model) ? success : error).toHaveBeenCalled();
