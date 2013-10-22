@@ -13,11 +13,10 @@ describe("Permission", function() {
     , read_models = models.slice(0).filter(function(model) { return !model.match(/^(Cycle)$/) })
     , update_models = create_models.slice(0)
     , delete_models = create_models.slice(0)
-    , context_models = create_models.slice(0).filter(function(model) { return !model.match(/^(Program|ObjectDocument)$/) })
       // FIXME: Retrieve directly from /api/roles
     , roles = {
           System: {
-              Admin: {"__GGRC_ADMIN__": ["__GGRC_ALL__"]}
+              Admin: {"__GGRC_ADMIN__": { "__GGRC_ALL__": [0] }}
             , RoleReader: {"read": ["Role"], "create": [], "update": [], "delete": []}
             , Reader: {"read": ["Categorization", "Category", "Control", "ControlControl", "ControlSection", "Cycle", "DataAsset", "Directive", "Contract", "Policy", "Regulation", "DirectiveControl", "Document", "Facility", "Help", "Market", "Objective", "ObjectiveControl", "ObjectControl", "ObjectDocument", "ObjectObjective", "ObjectPerson", "ObjectSection", "Option", "OrgGroup", "PopulationSample", "Product", "ProgramControl", "ProgramDirective", "Project", "Relationship", "RelationshipType", "Section", "SectionObjective", "SystemOrProcess", "System", "Process", "SystemControl", "SystemSystem", "Person", "Program", "Role"]}
             , ObjectEditor: {"read": ["Categorization", "Category", "Control", "ControlControl", "ControlSection", "Cycle", "DataAsset", "Directive", "Contract", "Policy", "Regulation", "DirectiveControl", "Document", "Facility", "Help", "Market", "Objective", "ObjectiveControl", "ObjectControl", "ObjectDocument", "ObjectObjective", "ObjectPerson", "ObjectSection", "Option", "OrgGroup", "PopulationSample", "Product", "ProgramControl", "ProgramDirective", "Project", "Relationship", "RelationshipType", "Section", "SectionObjective", "SystemOrProcess", "System", "Process", "SystemControl", "SystemSystem", "Person", "Program", "Role"], "create": ["Categorization", "Category", "Control", "ControlControl", "ControlSection", "Cycle", "DataAsset", "Directive", "Contract", "Policy", "Regulation", "DirectiveControl", "Document", "Facility", "Help", "Market", "Objective", "ObjectiveControl", "ObjectControl", "ObjectDocument", "ObjectObjective", "ObjectPerson", "ObjectSection", "Option", "OrgGroup", "PopulationSample", "Product", "ProgramControl", "ProgramDirective", "Project", "Relationship", "RelationshipType", "Section", "SectionObjective", "SystemOrProcess", "System", "Process", "SystemControl", "SystemSystem", "Person"], "update": ["Categorization", "Category", "Control", "ControlControl", "ControlSection", "Cycle", "DataAsset", "Directive", "Contract", "Policy", "Regulation", "DirectiveControl", "Document", "Facility", "Help", "Market", "Objective", "ObjectiveControl", "ObjectControl", "ObjectDocument", "ObjectObjective", "ObjectPerson", "ObjectSection", "Option", "OrgGroup", "PopulationSample", "Product", "ProgramControl", "ProgramDirective", "Project", "Relationship", "RelationshipType", "Section", "SectionObjective", "SystemOrProcess", "System", "Process", "SystemControl", "SystemSystem", "Person"], "delete": ["Categorization", "Category", "Control", "ControlControl", "ControlSection", "Cycle", "DataAsset", "Directive", "Contract", "Policy", "Regulation", "DirectiveControl", "Document", "Facility", "Help", "Market", "Objective", "ObjectiveControl", "ObjectControl", "ObjectDocument", "ObjectObjective", "ObjectPerson", "ObjectSection", "Option", "OrgGroup", "PopulationSample", "Product", "ProgramControl", "ProgramDirective", "Project", "Relationship", "RelationshipType", "Section", "SectionObjective", "SystemOrProcess", "System", "Process", "SystemControl", "SystemSystem"]}
@@ -29,6 +28,8 @@ describe("Permission", function() {
             , ProgramReader: {"read": ["Cycle", "ObjectDocument", "ObjectObjective", "ObjectPerson", "ObjectSection", "Program", "ProgramControl", "ProgramDirective", "Relationship"], "create": [], "update": [], "delete": []}  
           }
       }
+      // It isn't actually possible to map a context-specific ObjectSection
+    , private_program_models = roles.PrivateProgram.ProgramOwner.create.slice(0).filter(function(model) { return !model.match(/^(Cycle|ObjectSection)$/) })
     , role_can = function(role, action, model) {
         return !!role.__GGRC_ADMIN__ || (role[action] && role[action].indexOf(model) > -1);
       }
@@ -79,7 +80,9 @@ describe("Permission", function() {
         user = {
             email: "user_permission@example.com"
           , name: "Test User"
-          , permissions: make_permissions(typeof permissions === 'string' ? lookup_permissions(permissions) : permissions)
+          , permissions: permissions === "Admin" 
+              ? roles.System.Admin 
+              : (make_permissions(typeof permissions === 'string' ? lookup_permissions(permissions) : permissions))
         };
 
         $.ajax("/login", {
@@ -210,17 +213,9 @@ describe("Permission", function() {
           }
 
           runs(function() {
-            // Check for cacheable join
-            if (context) {
-              var contextable = true;
-              if (new Model() instanceof can.Model.Join) {
-                can.each(Model.join_keys, function(join, key) {
-                  contextable = contextable /* && attrs[key] !== context */ && join !== can.Model.Cacheable;
-                });
-              }
-              if (contextable) {
-                attrs.context = { id: context.id };
-              }
+            // Check for context
+            if (context && context.context) {
+              attrs.context = context.context;
             }
 
             var instance = new Model(attrs);
@@ -472,13 +467,13 @@ describe("Permission", function() {
             }
 
             runs(function() {
-              permissions[program.id] = lookup_permissions(role);
+              permissions[program.context.id] = lookup_permissions(role);
               waitsFor(set_permissions(permissions));
             });
           });
 
           describe("create", function() {
-            create_models.forEach(function(model) {
+            private_program_models.forEach(function(model) {
               it((role_can(roles[scope][role], "create", model) ? "can" : "can't") + " create " + model, function() {
                 runs(function() {
                   if (CMS.Models[model]) {
@@ -501,24 +496,62 @@ describe("Permission", function() {
           });
 
           describe("read", function() {
-            read_models.forEach(function(model) {
+            private_program_models.forEach(function(model) {
               it((role_can(roles[scope][role], "read", model) ? "can" : "can't") + " read " + model, function() {
                 runs(function() {
                   if (CMS.Models[model] && CMS.Models[model].findAll) {
-                    var list;
-                    CMS.Models[model].findAll({ __stubs_only: true }).done(function() {
-                      list = arguments[0];
-                    });
+                    var instance;
 
-                    waitsFor(function() {
-                      return list;
-                    });
+                    if (model !== "Program") {
+                      // Create as an admin first
+                      waitsFor(set_permissions("Admin"));
+                      runs(function() {
+                        var def = new $.Deferred();
+                        waitsFor(make_model(model, def, null, program));
+                        runs(function() {
+                          def.done(function(inst) {
+                            instance = inst;
+                            reset();
+                            instance.save(success, error);
+                            waitsFor(success_or_error);
+                            runs(function() {
+                              expect(success).toHaveBeenCalled();
+                            });
+                          })
+                        });
+                      });
+                    }
 
+                    // Try to update
                     runs(function() {
-                      if (role_can(roles[scope][role], "read", model))
-                        expect(list.length).toBeGreaterThan(0);
-                      else
-                        expect(list.length).toEqual(0);
+                      waitsFor(set_permissions(permissions));
+                      runs(function() {
+                        reset();
+
+                        var list;
+                        if (model === "Program") {
+                        // console.log('here', CMS.Models[model].findOne)
+                          CMS.Models[model].findOne({ id: program.id }).done(function() {
+                            list = arguments[0] && [arguments[0]];
+                          });
+                        }
+                        else {
+                          CMS.Models[model].findAll({ __stubs_only: true, context_id: program.context.id }).done(function() {
+                            list = arguments[0];
+                          });
+                        }
+
+                        waitsFor(function() {
+                          return list;
+                        });
+
+                        runs(function() {
+                          if (role_can(roles[scope][role], "read", model))
+                            expect(list.length).toBeGreaterThan(0);
+                          else
+                            expect(list.length).toEqual(0);
+                        });
+                      });
                     });
                   }
                 });
@@ -527,7 +560,7 @@ describe("Permission", function() {
           });
 
           describe("update", function() {
-            update_models.forEach(function(model) {
+            private_program_models.forEach(function(model) {
               it((role_can(roles[scope][role], "update", model) ? "can" : "can't") + " update " + model, function() {
                 runs(function() {
                   if (CMS.Models[model]) {
@@ -553,7 +586,7 @@ describe("Permission", function() {
 
                     // Try to update
                     runs(function() {
-                      waitsFor(set_permissions(role));
+                      waitsFor(set_permissions(permissions));
                       runs(function() {
                         reset();
                         instance.save(success, error);
@@ -570,7 +603,7 @@ describe("Permission", function() {
           });
 
           describe("delete", function() {
-            delete_models.forEach(function(model) {
+            private_program_models.forEach(function(model) {
               it((role_can(roles[scope][role], "delete", model) ? "can" : "can't") + " delete " + model, function() {
                 runs(function() {
                   if (CMS.Models[model]) {
@@ -596,7 +629,7 @@ describe("Permission", function() {
 
                     // Try to update
                     runs(function() {
-                      waitsFor(set_permissions(role));
+                      waitsFor(set_permissions(permissions));
                       runs(function() {
                         reset();
                         instance.save(success, error);
