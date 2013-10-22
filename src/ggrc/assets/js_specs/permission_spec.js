@@ -5,6 +5,8 @@
     Maintained By: andy@reciprocitylabs.com
 */
 
+// IMPORTANT: Never run more than one instance of this script simultaneously!
+
 describe("Permission", function() {
       // Models helpers
   var models = ["Categorization", "Category", "Control", "ControlControl", "ControlSection", "Cycle", "DataAsset", "Directive", "Contract", "Policy", "Regulation", "DirectiveControl", "Document", "Facility", "Help", "Market", "Objective", "ObjectiveControl", "ObjectControl", "ObjectDocument", "ObjectObjective", "ObjectPerson", "ObjectSection", "Option", "OrgGroup", "PopulationSample", "Product", "ProgramControl", "ProgramDirective", "Project", "Relationship", "RelationshipType", "Section", "SectionObjective", "SystemOrProcess", "System", "Process", "SystemControl", "SystemSystem", "Person", "Program", "Role"]
@@ -133,8 +135,11 @@ describe("Permission", function() {
                 });
               }
               else {
+                var keyed = false;
                 can.each(Model.join_keys, function(join, key) {
-                  if (context && (join === can.Model.Cacheable || join === context.constructor)) {
+                  // Using the same value for both keys will result in duplicate entry errors during similar tests
+                  if (context && !keyed && (join === can.Model.Cacheable || join === context.constructor)) {
+                    keyed = true;
                     attrs[key] = context;
                   }
                   else {
