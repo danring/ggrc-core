@@ -9,7 +9,8 @@
 
 describe("Permission", function() {
       // Models helpers
-  var models = ["Categorization", "Category", "Control", "ControlControl", "ControlSection", "Cycle", "DataAsset", "Directive", "Contract", "Policy", "Regulation", "DirectiveControl", "Document", "Facility", "Help", "Market", "Objective", "ObjectiveControl", "ObjectControl", "ObjectDocument", "ObjectObjective", "ObjectPerson", "ObjectSection", "Option", "OrgGroup", "PopulationSample", "Product", "ProgramControl", "ProgramDirective", "Project", "Relationship", "RelationshipType", "Section", "SectionObjective", "SystemOrProcess", "System", "Process", "SystemControl", "SystemSystem", "Person", "Program", "Role"]
+  var debug = false
+    , models = ["Categorization", "Category", "Control", "ControlControl", "ControlSection", "Cycle", "DataAsset", "Directive", "Contract", "Policy", "Regulation", "DirectiveControl", "Document", "Facility", "Help", "Market", "Objective", "ObjectiveControl", "ObjectControl", "ObjectDocument", "ObjectObjective", "ObjectPerson", "ObjectSection", "Option", "OrgGroup", "PopulationSample", "Product", "ProgramControl", "ProgramDirective", "Project", "Relationship", "RelationshipType", "Section", "SectionObjective", "SystemOrProcess", "System", "Process", "SystemControl", "SystemSystem", "Person", "Program", "Role"]
     , base_instances = {}
     , create_models = models.slice(0).filter(function(model) { return !model.match(/^(Cycle|Category|SystemSystem|SystemControl|Categorization|PopulationSample|Categorization|RelationshipType|Directive|SystemOrProcess|Option)$/) })
     , read_models = models.slice(0).filter(function(model) { return !model.match(/^(Cycle)$/) })
@@ -691,6 +692,24 @@ describe("Permission", function() {
         }
       , editor
       , reader
+      , objects = [
+          "Regulation"
+        , "Contract"
+        , "Policy"
+        , "Objective"
+        , "Control"
+        , "System"
+        , "Process"
+        , "DataAsset"
+        , "Product"
+        , "Project"
+        , "Facility"
+        , "Market"
+        , "OrgGroup"
+        , "Person"
+        , "Document"
+        , "Audit"
+        ]
       , refresh = function() {
           if (target) {
             $(target).remove();
@@ -698,7 +717,7 @@ describe("Permission", function() {
             $T = null;
           }
           target = document.createElement('iframe');
-          $(target).css({ width: 0, height: 0 })
+          $(target).css(debug ? { width: 1280, height: 720 } : { width: 0, height: 0 })
           document.body.appendChild(target);
           target.onload = function() {
             setTimeout(function() {
@@ -801,7 +820,7 @@ describe("Permission", function() {
     });
 
     afterEach(function() {
-      if (target) {
+      if (!debug && target) {
         $(target).remove();
         target = null;
         $T = null;
@@ -819,17 +838,6 @@ describe("Permission", function() {
 
       it("can map objects", function() {
         runs(function() {
-          var objects = [
-                "Regulation"
-              , "Contract"
-              , "Policy"
-              , "Objective"
-              , "Control"
-              , "System"
-              , "Process"
-              , "DataAsset"
-              , "Product"
-              ];
           objects.forEach(function(obj) {
             var selector = '#'+CMS.Models[obj].table_singular+'_widget'
               , go = false
@@ -841,7 +849,8 @@ describe("Permission", function() {
               return go;
             })
             runs(function() {
-              expect($T(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"]').length).toBeGreaterThan(0);
+              expect($T(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"], '
+                + selector + ' [data-toggle="modal-ajax-form"][data-object-singular="'+obj+'"]').length).toBeGreaterThan(0);
             });
           });
         })
@@ -859,17 +868,6 @@ describe("Permission", function() {
 
       it("can map objects", function() {
         runs(function() {
-          var objects = [
-                "Regulation"
-              , "Contract"
-              , "Policy"
-              , "Objective"
-              , "Control"
-              , "System"
-              , "Process"
-              , "DataAsset"
-              , "Product"
-              ];
           objects.forEach(function(obj) {
             var selector = '#'+CMS.Models[obj].table_singular+'_widget'
               , go = false
@@ -881,7 +879,8 @@ describe("Permission", function() {
               return go;
             })
             runs(function() {
-              expect($T(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"]').length).toBeGreaterThan(0);
+              expect($T(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"], '
+                + selector + ' [data-toggle="modal-ajax-form"][data-object-singular="'+obj+'"]').length).toBeGreaterThan(0);
             });
           });
         })
@@ -899,17 +898,6 @@ describe("Permission", function() {
 
       it("can't map objects", function() {
         runs(function() {
-          var objects = [
-                "Regulation"
-              , "Contract"
-              , "Policy"
-              , "Objective"
-              , "Control"
-              , "System"
-              , "Process"
-              , "DataAsset"
-              , "Product"
-              ];
           objects.forEach(function(obj) {
             var selector = '#'+CMS.Models[obj].table_singular+'_widget'
               , go = false
@@ -921,7 +909,8 @@ describe("Permission", function() {
               return go;
             })
             runs(function() {
-              expect($T(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"]').length).toEqual(0);
+              expect($T(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"], '
+                + selector + ' [data-toggle="modal-ajax-form"][data-object-singular="'+obj+'"]').length).toEqual(0);
             });
           });
         })
