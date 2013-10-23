@@ -75,7 +75,7 @@ describe("Permission", function() {
         }
         return result;
       }
-    , set_permissions = function(permissions, retry) {
+    , set_permissions = function(permissions, retry, override) {
         var result = {};
         if (!retry) {
           last_permissions = current_permissions;
@@ -84,7 +84,7 @@ describe("Permission", function() {
         else {
           permissions = current_permissions;
         }
-        user = {
+        user = override ? permissions : {
             email: "user_permission@example.com"
           , name: "Test User"
           , permissions: permissions === "Admin" 
@@ -126,8 +126,11 @@ describe("Permission", function() {
         deferred = deferred || new $.Deferred();
         var Model = CMS.Models[model];
         if (Model) {
-          attrs = can.extend({ context: null }, attrs);
-          attrs.name = attrs.title = "permission_" + Date.now() + (++unique_id);
+          attrs = can.extend({ context: { id: null } }, attrs);
+          if (!(new Model() instanceof can.Model.Join)) {
+            attrs.name = attrs.title = "permission_" + Date.now() + (++unique_id);
+          }
+
           if (new Model() instanceof can.Model.Join) {
             // Use the admin to create temporary objects used in joins
             runs(function() {
@@ -155,44 +158,46 @@ describe("Permission", function() {
               else {
                 var keyed = false;
                 can.each(Model.join_keys, function(join, key) {
-                  // Using the same value for both keys will result in duplicate entry errors during similar tests
-                  if (context && !keyed && (join === can.Model.Cacheable || join === context.constructor)) {
-                    keyed = true;
-                    attrs[key] = context;
-                  }
-                  else {
-                    var def = new $.Deferred();
-                    if (join === CMS.Models.Directive) {
-                      waitsFor(make_model('Regulation', def));
-                      runs(function() {
-                        def.done(function(regulation) {
-                          attrs[key] = regulation;
-                        });
-                      });
-                    }
-                    else if (join === can.Model.Cacheable) {
-                      waitsFor(make_model('Control', def));
-                      runs(function() {
-                        def.done(function(control) {
-                          attrs[key] = control;
-                        });
-                      });
+                  if (!attrs[key]) {
+                    // Using the same value for both keys will result in duplicate entry errors during similar tests
+                    if (context && !keyed && (join === can.Model.Cacheable || join === context.constructor)) {
+                      keyed = true;
+                      attrs[key] = context;
                     }
                     else {
-                      waitsFor(make_model(join.shortName, def));
+                      var def = new $.Deferred();
+                      if (join === CMS.Models.Directive) {
+                        waitsFor(make_model('Regulation', def));
+                        runs(function() {
+                          def.done(function(regulation) {
+                            attrs[key] = regulation;
+                          });
+                        });
+                      }
+                      else if (join === can.Model.Cacheable) {
+                        waitsFor(make_model('Control', def));
+                        runs(function() {
+                          def.done(function(control) {
+                            attrs[key] = control;
+                          });
+                        });
+                      }
+                      else {
+                        waitsFor(make_model(join.shortName, def));
+                        runs(function() {
+                          def.done(function(inst) {
+                            attrs[key] = inst;
+                          });
+                        });
+                      }
                       runs(function() {
-                        def.done(function(inst) {
-                          attrs[key] = inst;
+                        var save = jasmine.createSpy();
+                        attrs[key].save(save);
+                        waitsFor(function() {
+                          return save.callCount;
                         });
                       });
                     }
-                    runs(function() {
-                      var save = jasmine.createSpy();
-                      attrs[key].save(save);
-                      waitsFor(function() {
-                        return save.callCount;
-                      });
-                    });
                   }
                 });
               }
@@ -229,10 +234,11 @@ describe("Permission", function() {
             });
           }
           else if (model === "Person") {
-            attrs.email = "user_permission_" + Date.now() + (++unique_id) + "@example.com";
+            attrs.email = "user_permission_" + Date.now() + "-" + (++unique_id) + "@example.com";
+            attrs.name = "user_permission_" + Date.now() + "-" + (unique_id);
           }
           else if (model === "Role") {
-            attrs.name = "user_permission_" + Date.now() + (++unique_id);
+            attrs.name = "user_permission_" + Date.now() + "-" + (++unique_id);
           }
 
           runs(function() {
@@ -300,6 +306,9 @@ describe("Permission", function() {
         can.each(created, function(instance) {
           instance.id && instance.destroy();
         });
+
+        // Reset as base admin user
+        set_permissions({ "email" : "user@example.com", "name" : "Test User" });
       });
     }
 
@@ -670,6 +679,254 @@ describe("Permission", function() {
         });
       }(role);
     }
+  });
+
+  describe("Private Program UI", function() {
+    var program
+      , target
+      , $T
+      , private_roles
+      , owner = {
+
+        }
+      , editor
+      , reader
+      , refresh = function() {
+          if (target) {
+            $(target).remove();
+            target = null;
+            $T = null;
+          }
+          target = document.createElement('iframe');
+          $(target).css({ width: 0, height: 0 })
+          document.body.appendChild(target);
+          target.onload = function() {
+            setTimeout(function() {
+              if (target.contentWindow.$) {
+                $T = target.contentWindow.$;
+                target._loaded = true;
+              }
+              else {
+                setTimeout(arguments.callee, 100);
+              }
+            }, 0);
+          };
+          target.src = "/programs/" + program.id;
+          var fn = function() {
+            return target._loaded && $T;
+          };
+          waitsFor(fn);
+          return fn;
+        }
+      ;
+
+    beforeEach(function() {
+      // Set up program
+      if (!program) {
+        var def = new $.Deferred();
+
+        // Create private program
+        waitsFor(set_permissions("Admin"));
+        runs(function() {
+          waitsFor(make_model("Program", def, { "private": true }));
+          runs(function() {
+            def.done(function(instance) {
+              reset();
+              instance.save(success, error);
+              waitsFor(success_or_error);
+              program = instance;
+            });
+          });
+
+          // Create users
+          var people = [];
+          for (var i = 0; i < 3; i++) {
+            runs(function() {
+              var def;
+              waitsFor(make_model("Person", def = new $.Deferred));
+              runs(function() {
+                def.done(function(instance) {
+                  reset();
+                  instance.save(success, error);
+                  waitsFor(success_or_error);
+                  people.push(instance);
+                });
+              });
+            });
+          }
+
+          // Retrieve roles
+          CMS.Models.Role.findAll({ scope: "Private Program" }).done(function(list) {
+            private_roles = {};
+            can.each(list, function(role) {
+              private_roles[role.name] = role;
+            });
+          });
+
+
+          waitsFor(function() {
+            return people.length >= 3 && !!private_roles;
+          });
+
+          // Add roles
+          runs(function() {
+            owner = people[0];
+            editor = people[1];
+            reader = people[2];
+
+            can.each(["ProgramOwner","ProgramEditor","ProgramReader"], function(role, i) {
+              var def;
+              waitsFor(make_model("UserRole", def = new $.Deferred(), {
+                  person: people[i]
+                , role: private_roles[role]
+                , role_id: private_roles[role].id
+              }, program));
+              runs(function() {
+                def.done(function(instance) {
+                  reset();
+                  instance.save(success, error);
+                  waitsFor(success_or_error);
+                });
+              });
+            });
+
+            runs(function() {
+              owner = { name: owner.name, email: owner.email };
+              editor = { name: editor.name, email: editor.email };
+              reader = { name: reader.name, email: reader.email };
+            });
+          })
+        });
+      }
+    });
+
+    afterEach(function() {
+      if (target) {
+        $(target).remove();
+        target = null;
+        $T = null;
+      }
+    });
+
+    describe("ProgramOwner", function() {
+      beforeEach(function() {
+        waitsFor(set_permissions(owner, null, true));
+        reset();
+        runs(function() {
+          waitsFor(refresh());
+        });
+      });
+
+      it("can map objects", function() {
+        runs(function() {
+          var objects = [
+                "Regulation"
+              , "Contract"
+              , "Policy"
+              , "Objective"
+              , "Control"
+              , "System"
+              , "Process"
+              , "DataAsset"
+              , "Product"
+              ];
+          objects.forEach(function(obj) {
+            var selector = '#'+CMS.Models[obj].table_singular+'_widget'
+              , go = false
+              ;
+            waitsFor(function() {
+              if ($T(selector + ' .cms_controllers_tree_view').length) {
+                setTimeout(function() { go = true }, 0);
+              }
+              return go;
+            })
+            runs(function() {
+              expect($T(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"]').length).toBeGreaterThan(0);
+            });
+          });
+        })
+      });
+    });
+
+    describe("ProgramEditor", function() {
+      beforeEach(function() {
+        waitsFor(set_permissions(editor, null, true));
+        runs(function() {
+          reset();
+          waitsFor(refresh());
+        });
+      });
+
+      it("can map objects", function() {
+        runs(function() {
+          var objects = [
+                "Regulation"
+              , "Contract"
+              , "Policy"
+              , "Objective"
+              , "Control"
+              , "System"
+              , "Process"
+              , "DataAsset"
+              , "Product"
+              ];
+          objects.forEach(function(obj) {
+            var selector = '#'+CMS.Models[obj].table_singular+'_widget'
+              , go = false
+              ;
+            waitsFor(function() {
+              if ($T(selector + ' .cms_controllers_tree_view').length) {
+                setTimeout(function() { go = true }, 0);
+              }
+              return go;
+            })
+            runs(function() {
+              expect($T(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"]').length).toBeGreaterThan(0);
+            });
+          });
+        })
+      });
+    });
+    
+    describe("ProgramReader", function() {
+      beforeEach(function() {
+        waitsFor(set_permissions(reader, null, true));
+        reset();
+        runs(function() {
+          waitsFor(refresh());
+        });
+      });
+
+      it("can't map objects", function() {
+        runs(function() {
+          var objects = [
+                "Regulation"
+              , "Contract"
+              , "Policy"
+              , "Objective"
+              , "Control"
+              , "System"
+              , "Process"
+              , "DataAsset"
+              , "Product"
+              ];
+          objects.forEach(function(obj) {
+            var selector = '#'+CMS.Models[obj].table_singular+'_widget'
+              , go = false
+              ;
+            waitsFor(function() {
+              if ($T(selector + ' .cms_controllers_tree_view').length) {
+                setTimeout(function() { go = true }, 0);
+              }
+              return go;
+            })
+            runs(function() {
+              expect($T(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"]').length).toEqual(0);
+            });
+          });
+        })
+      });
+    });
   });
 
 });
