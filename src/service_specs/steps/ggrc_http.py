@@ -33,9 +33,9 @@ def add_create_permissions(context, rbac_context_id, resource_types):
     permission_type = 'create'
     user_perms.setdefault(permission_type, {})
     for resource_type in resource_types:
-      user_perms[permission_type].setdefault(resource_type, [])
+      user_perms[permission_type].setdefault(resource_type, {'contexts': []})
       if rbac_context_id not in user_perms[permission_type][resource_type]:
-        user_perms[permission_type][resource_type].append(rbac_context_id)
+        user_perms[permission_type][resource_type]['contexts'].append(rbac_context_id)
       context.current_user_json = json.dumps(context.current_user_data)
 
 @given('an example "{resource_type}"')

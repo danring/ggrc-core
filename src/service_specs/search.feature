@@ -39,9 +39,7 @@ Feature: Full text search
     { "email": "admin@testertester.com",
       "name": "Admin Tester",
       "permissions": {
-        "__GGRC_ADMIN__": {
-          "__GGRC_ALL__": [0]
-        }
+        "__GGRC_ADMIN__": {"__GGRC_ALL__": {"contexts": [0]} }
       }
     }
     """
@@ -55,22 +53,28 @@ Feature: Full text search
       "name": "Bob Tester",
       "permissions": {
         "create": {
-          "Control": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ]
+          "Control": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          }
         },
         "read": {
-          "Control": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ]
+          "Control": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          }
         },
         "update": {
-          "Control": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ]
+          "Control": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          }
         }
       }
     }
@@ -92,19 +96,25 @@ Feature: Full text search
       "name": "Jo Tester",
       "permissions": {
         "create": {
-          "Control": [
-            {{context.context1.value['context']['id']}}
-          ]
+          "Control": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          }
         },
         "read": {
-          "Control": [
-            {{context.context1.value['context']['id']}}
-          ]
+          "Control": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          }
         },
         "update": {
-          "Control": [
-            {{context.context1.value['context']['id']}}
-          ]
+          "Control": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          }
         }
       }
     }

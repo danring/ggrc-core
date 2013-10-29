@@ -7,11 +7,14 @@ from ggrc import db
 from .associationproxy import association_proxy
 from .mixins import deferred, BusinessObject
 from .object_document import Documentable
+from .object_owner import Ownable
 from .object_person import Personable
 from .object_objective import Objectiveable
 from .reflection import PublishOnly
 
-class Objective(Objectiveable, Documentable, Personable, BusinessObject, db.Model):
+class Objective(
+    Objectiveable, Documentable, Personable, Ownable, BusinessObject,
+    db.Model):
   __tablename__ = 'objectives'
 
   notes = deferred(db.Column(db.Text), 'Objective')

@@ -9,10 +9,11 @@ from .object_control import Controllable
 from .object_document import Documentable
 from .object_objective import Objectiveable
 from .object_person import Personable
+from .object_owner import Ownable
 from .object_section import Sectionable
 from .relationship import Relatable
 
 class Market(
     Documentable, Personable, Objectiveable, Controllable, Sectionable,
-    Relatable, Timeboxed, BusinessObject, db.Model):
+    Relatable, Timeboxed, Ownable, BusinessObject, db.Model):
   __tablename__ = 'markets'

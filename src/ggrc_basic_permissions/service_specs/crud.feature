@@ -13,7 +13,7 @@ Feature: Role CRUD
       """
       { "email": "example.admin@example.com", "name": "Jo Admin",
         "permissions": {
-          "__GGRC_ADMIN__": {"__GGRC_ALL__": [0]}
+          "__GGRC_ADMIN__": {"__GGRC_ALL__": { "contexts": [0] } }
         }
       }
       """
@@ -45,7 +45,7 @@ Feature: Role CRUD
       """
       { "email": "example.admin@example.com", "name": "Jo Admin",
         "permissions": {
-          "__GGRC_ADMIN__": {"__GGRC_ALL__": [0]}
+          "__GGRC_ADMIN__": {"__GGRC_ALL__": { "contexts": [0] } }
         }
       }
       """
@@ -82,7 +82,7 @@ Feature: Role CRUD
         "email": "example.user2@example.com",
         "name": "Jayne User",
         "permissions": {
-          "read": { "Role": [1] }
+          "read": { "Role": { "contexts": [1] } }
         }
       }
       """
@@ -96,7 +96,7 @@ Feature: Role CRUD
       """
       { "email": "example.admin@example.com", "name": "Jo Admin",
         "permissions": {
-          "__GGRC_ADMIN__": {"__GGRC_ALL__": [0]}
+          "__GGRC_ADMIN__": {"__GGRC_ALL__": {"contexts": [0]} }
         }
       }
       """
@@ -177,7 +177,7 @@ Feature: Role CRUD
       """
       { "email": "example.admin@example.com", "name": "Jo Admin",
         "permissions": {
-          "__GGRC_ADMIN__": {"__GGRC_ALL__": [0]}
+          "__GGRC_ADMIN__": {"__GGRC_ALL__": {"contexts": [0]} }
         }
       }
       """

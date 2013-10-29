@@ -100,13 +100,32 @@ class UserPermissions(DefaultUserPermissions):
       session['permissions__ts'] = None
 
 def load_permissions_for(user):
+  """Permissions is dictionary that can be exported to json to share with
+  clients. Structure is:
+  ..
+
+    permissions[action][resource_type][contexts]
+                                      [conditions][context][context_conditions]
+
+  'action' is one of 'create', 'read', 'update', 'delete'.
+  'resource_type' is the name of a valid gGRC resource type.
+  'contexts' is a list of context_id where the action is allowed.
+  'conditions' is a dictionary of 'context_conditions' indexed by 'context'
+    where 'context' is a context_id.
+  'context_conditions' is a list of dictionaries with 'condition' and 'terms'
+    keys.
+  'condition' is the string name of a conditional operator, such as 'contains'.
+  'terms' are the arguments to the 'condition'.
+  """
   if hasattr(settings, 'BOOTSTRAP_ADMIN_USERS') \
       and user.email in settings.BOOTSTRAP_ADMIN_USERS:
     permissions = {
         DefaultUserPermissions.ADMIN_PERMISSION.action: {
-          DefaultUserPermissions.ADMIN_PERMISSION.resource_type: [
-            DefaultUserPermissions.ADMIN_PERMISSION.context_id,
-            ],
+          DefaultUserPermissions.ADMIN_PERMISSION.resource_type: {
+            'contexts': [
+              DefaultUserPermissions.ADMIN_PERMISSION.context_id,
+              ],
+            }
           },
         }
   else:
@@ -121,11 +140,28 @@ def load_permissions_for(user):
         .all()
     for user_role in user_roles:
       if isinstance(user_role.role.permissions, dict):
-        for action, resource_types in user_role.role.permissions.items():
-          for resource_type in resource_types:
+        for action, resource_permissions in user_role.role.permissions.items():
+          for resource_permission in resource_permissions:
+            if type(resource_permission) in [str, unicode]:
+              resource_type = resource_permission
+              condition = None
+            else:
+              resource_type = resource_permission['type']
+              condition = resource_permission.get('condition', None)
+              terms = resource_permission.get('terms', [])
             permissions.setdefault(action, {})\
-                .setdefault(resource_type, list())\
+                .setdefault(resource_type, dict())\
+                .setdefault('contexts', list())\
                 .append(user_role.context_id)
+            if condition:
+              permissions[action][resource_type]\
+                  .setdefault('conditions', dict())\
+                  .setdefault(user_role.context_id, list())\
+                  .append({
+                    'condition': condition,
+                    'terms': terms,
+                    })
+                  
     #grab personal context
     personal_context = db.session.query(Context).filter(
         Context.related_object_id == user.id,
@@ -142,7 +178,8 @@ def load_permissions_for(user):
       db.session.add(personal_context)
       db.session.commit()
     permissions.setdefault('__GGRC_ADMIN__',{})\
-        .setdefault('__GGRC_ALL__',[])\
+        .setdefault('__GGRC_ALL__', dict())\
+        .setdefault('contexts', list())\
         .append(personal_context.id)
   return permissions
 

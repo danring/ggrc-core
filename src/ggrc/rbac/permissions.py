@@ -35,6 +35,12 @@ def is_allowed_read(resource_type, context_id):
   """
   return permissions_for(get_user()).is_allowed_read(resource_type, context_id)
 
+def is_allowed_read_for(instance):
+  """Whether or not the user is allowed to read this particular resource
+  instance.
+  """
+  return permissions_for(get_user()).is_allowed_read_for(instance)
+
 def is_allowed_update(resource_type, context_id):
   """Whether or not the user is allowed to update a resource of the specified
   type in the context.
@@ -42,12 +48,21 @@ def is_allowed_update(resource_type, context_id):
   return permissions_for(get_user()).is_allowed_update(
       resource_type, context_id)
 
+def is_allowed_update_for(instance):
+  """Whether or not the user is allowed to update this particular resource
+  instance.
+  """
+  return permissions_for(get_user()).is_allowed_update_for(instance)
+
 def is_allowed_delete(resource_type, context_id):
   """Whether or not the user is allowed to delete a resource of the specified
   type in the context.
   """
   return permissions_for(get_user()).is_allowed_delete(
       resource_type, context_id)
+
+def is_allowed_delete_for(instance):
+  return permissions_for(get_user()).is_allowed_delete_for(instance)
 
 def create_contexts_for(resource_type):
   """All contexts in which the user has create permission."""

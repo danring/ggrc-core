@@ -37,7 +37,6 @@ Feature: Private Programs
     Then GET of "private_program" is allowed
     Then DELETE of "private_program" is allowed
 
-  @wip
   Scenario: A user can create a private program and assign another user the ProgramReader role in that program's context granting them the ability to GET the program.
     Given the current user
       """
@@ -100,7 +99,7 @@ Feature: Private Programs
       """
       { "email": "example.admin@example.com", "name": "Jo Admin",
         "permissions": {
-          "__GGRC_ADMIN__": { "__GGRC_ALL__": [0] }
+          "__GGRC_ADMIN__": {"__GGRC_ALL__": {"contexts": [0]} }
         }
       }
       """
@@ -145,7 +144,7 @@ Feature: Private Programs
 
   Examples: Resources
       | resource_type    |
-      | Audit            |
+      #FIXME add back when Auditor role is defined | Audit            |
       #| Categorization   |
       | Category         |
       | Control          |

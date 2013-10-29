@@ -71,6 +71,7 @@ can.Model.Cacheable("CMS.Models.Category", {
   , attributes : {
       children : "CMS.Models.Category.stubs"
     , controls : "CMS.Models.Control.stubs"
+    , owners : "CMS.Models.Person.stubs"
   }
   , tree_view_options : {
     show_view : "/static/mustache/controls/categories_tree.mustache"

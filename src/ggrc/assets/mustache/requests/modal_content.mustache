@@ -9,7 +9,7 @@
         <span class="required">*</span>
       </label>
       <div class="wysiwyg-area">
-        <textarea id="request_description" class="span12 double wysihtml5" name="pbc_request" placeholder="State your request here...">{{{description}}}</textarea>
+        <textarea id="request_description" class="span12 double wysihtml5" name="description" placeholder="State your request here...">{{{description}}}</textarea>
       </div>
     </div>
     <div class="span3">
@@ -98,7 +98,7 @@
           Test
         </label>
         <div class="wysiwyg-area">
-          <textarea id="test_description" class="span12 double wysihtml5" name="test" placeholder="Enter Test">{{{description}}}</textarea>
+          <textarea id="test_description" class="span12 double wysihtml5" name="test" placeholder="Enter Test">{{{test}}}</textarea>
         </div>
       </div>
       <div class="span6">
@@ -106,7 +106,7 @@
           Notes
         </label>
         <div class="wysiwyg-area">
-          <textarea id="notes_description" class="span12 double wysihtml5" name="notes" placeholder="Enter Notes">{{{description}}}</textarea>
+          <textarea id="notes_description" class="span12 double wysihtml5" name="notes" placeholder="Enter Notes">{{{notes}}}</textarea>
         </div>
       </div>
     </div>
@@ -115,7 +115,7 @@
         <label>
           Audit Contact
         </label>
-        <input class="span6" name="audit_contact" type="text" placeholder="Enter Auditor's contact email" value="">
+        <input class="span6" name="auditor_contact" type="text" placeholder="Enter Auditor's contact email" value="{{auditor_contact}}">
       </div>
     </div>
   </div>

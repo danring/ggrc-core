@@ -549,8 +549,9 @@ Mustache.registerHelper("renderLive", function(template, context, options) {
   return can.view.render(template, context);
 });
 
-function defer_render(tag_name, func, deferred) {
+function defer_render(tag_prefix, func, deferred) {
   var hook
+    , tag_name = tag_prefix.split(" ")[0]
     ;
 
   tag_name = tag_name || "span";
@@ -568,7 +569,7 @@ function defer_render(tag_name, func, deferred) {
   }
 
   hook = can.view.hook(hookup);
-  return ["<", tag_name, " ", hook, ">", "</", tag_name, ">"].join("");
+  return ["<", tag_prefix, " ", hook, ">", "</", tag_name, ">"].join("");
 }
 
 Mustache.registerHelper("defer", function(tag_name, options) {
@@ -784,14 +785,13 @@ Mustache.registerHelper("option_select", function(object, attr_name, role) {
   var selected_option = object.attr(attr_name)
     , selected_id = selected_option ? selected_option.id : null
     , options_dfd = CMS.Models.Option.for_role(role)
+    , tag_prefix =
+        'select class="span12" model="Option" name="' + attr_name + '"'
     ;
 
   function get_select_html(options) {
     return [
-        '<select class="span12" model="Option"'
-      ,   ' name="', attr_name
-      , '">'
-      , '<option value=""'
+        '<option value=""'
       ,   !selected_id ? ' selected=selected' : ''
       , '>None</option>'
       , can.map(options, function(option) {
@@ -803,11 +803,10 @@ Mustache.registerHelper("option_select", function(object, attr_name, role) {
           , '</option>'
           ].join('');
         }).join('\n')
-      , '</select>'
     ].join('');
   }
 
-  return defer_render('select', get_select_html, options_dfd);
+  return defer_render(tag_prefix, get_select_html, options_dfd);
 });
 
 Mustache.registerHelper("category_select", function(object, attr_name, scope) {
@@ -816,14 +815,14 @@ Mustache.registerHelper("category_select", function(object, attr_name, scope) {
         return selected_option.id;
       })
     , options_dfd = CMS.Models.Category.for_scope(scope)
+    , tag_prefix =
+        'select class="span12" model="Category" multiple="multiple"' +
+        ' name="' + attr_name + '"'
     ;
 
   function get_select_html(options) {
     return [
-        '<select class="span12" model="Category" multiple=multiple'
-      ,   ' name="', attr_name
-      , '">'
-      , can.map(options, function(option) {
+        can.map(options, function(option) {
           return [
             '<option value="', option.id, '"'
           ,   selected_ids.indexOf(option.id) > -1 ? ' selected=selected' : ''
@@ -832,11 +831,10 @@ Mustache.registerHelper("category_select", function(object, attr_name, scope) {
           , '</option>'
           ].join('');
         }).join('\n')
-      , '</select>'
     ].join('');
   }
 
-  return defer_render('select', get_select_html, options_dfd);
+  return defer_render(tag_prefix, get_select_html, options_dfd);
 });
 
 Mustache.registerHelper("schemed_url", function(url) {
@@ -1106,6 +1104,9 @@ Mustache.registerHelper("is_allowed", function() {
   can.each(actions, function(action) {
     passed =
       passed && Permission.is_allowed(action, resource_type, context_id);
+    if (resource) {
+      passed = passed && Permission.is_allowed_for(action, resource);
+    }
   });
 
   return passed

@@ -6,9 +6,10 @@
 from ggrc import db
 from sqlalchemy.orm import validates
 from .mixins import deferred, Base
+from .object_owner import Ownable
 from .utils import validate_option
 
-class Document(Base, db.Model):
+class Document(Ownable, Base, db.Model):
   __tablename__ = 'documents'
 
   title = deferred(db.Column(db.String), 'Document')

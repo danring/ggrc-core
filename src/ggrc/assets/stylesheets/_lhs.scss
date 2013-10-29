@@ -439,6 +439,9 @@
     color:#e00;
   }
   a.main-title {
+    &.oneline {
+      display: inline-block;
+    }
     i {
       @include opacity(0.5);
     }
@@ -489,6 +492,9 @@
       font-size:12px;
       color:#369;
       margin-bottom:6px;
+    }
+    &.oneline {
+      display: inline-block;
     }
   }
 }

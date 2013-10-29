@@ -9,13 +9,14 @@ from .mixins import deferred, BusinessObject, Timeboxed
 from .object_document import Documentable
 from .object_person import Personable
 from .object_objective import Objectiveable
+from .object_owner import Ownable
 from .relationship import Relatable
 from .reflection import PublishOnly
 from .utils import validate_option
 
 from sqlalchemy.orm import validates
 
-class Directive(Timeboxed, BusinessObject, db.Model):
+class Directive(Timeboxed, Ownable, BusinessObject, db.Model):
   __tablename__ = 'directives'
 
   version = deferred(db.Column(db.String), 'Directive')

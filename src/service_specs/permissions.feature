@@ -12,9 +12,7 @@ Feature: RBAC Permissions enforcement for REST API
     { "email": "admin@testertester.com",
       "name": "Admin Tester",
       "permissions": {
-        "__GGRC_ADMIN__": {
-          "__GGRC_ALL__": [0]
-        }
+        "__GGRC_ADMIN__": { "__GGRC_ALL__": { "contexts": [0] } }
       }
     }
     """
@@ -30,7 +28,9 @@ Feature: RBAC Permissions enforcement for REST API
       "name": "Jo Tester",
       "permissions": {
         "create": {
-          "<resource_type>": [{{context.context1.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context1.value['context']['id']}}]
+          }
         }
       }
     }
@@ -89,10 +89,14 @@ Feature: RBAC Permissions enforcement for REST API
       "name": "Jo Tester",
       "permissions": {
         "create": {
-          "<resource_type>": [{{context.context1.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context1.value['context']['id']}}]
+          }
         },
         "read": {
-          "<resource_type>": [{{context.context1.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context1.value['context']['id']}}]
+          }
         }
       }
     }
@@ -108,10 +112,14 @@ Feature: RBAC Permissions enforcement for REST API
       "name": "Bob Tester",
       "permissions": {
         "create": {
-          "<resource_type>": [{{context.context2.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context2.value['context']['id']}}]
+          }
         },
         "read": {
-          "<resource_type>": [{{context.context2.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context2.value['context']['id']}}]
+          }
         }
       }
     }
@@ -163,13 +171,19 @@ Feature: RBAC Permissions enforcement for REST API
       "name": "Jo Tester",
       "permissions": {
         "create": {
-          "<resource_type>": [{{context.context1.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context1.value['context']['id']}}]
+          }
         },
         "read": {
-          "<resource_type>": [{{context.context1.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context1.value['context']['id']}}]
+          }
         },
         "update": {
-          "<resource_type>": [{{context.context1.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context1.value['context']['id']}}]
+          }
         }
       }
     }
@@ -186,13 +200,17 @@ Feature: RBAC Permissions enforcement for REST API
       "name": "Bob Tester",
       "permissions": {
         "read": {
-          "<resource_type>": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ]
+          "<resource_type>": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          }
         },
         "update": {
-          "<resource_type>": [{{context.context2.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context2.value['context']['id']}}]
+          }
         }
       }
     }
@@ -245,13 +263,19 @@ Feature: RBAC Permissions enforcement for REST API
       "name": "Jo Tester",
       "permissions": {
         "create": {
-          "<resource_type>": [{{context.context1.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context1.value['context']['id']}}]
+          }
         },
         "read": {
-          "<resource_type>": [{{context.context1.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context1.value['context']['id']}}]
+          }
         },
         "update": {
-          "<resource_type>": [{{context.context1.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context1.value['context']['id']}}]
+          }
         }
       }
     }
@@ -268,13 +292,19 @@ Feature: RBAC Permissions enforcement for REST API
       "name": "Bob Tester",
       "permissions": {
         "create": {
-          "<resource_type>": [{{context.context1.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context1.value['context']['id']}}]
+          }
         },
         "read": {
-          "<resource_type>": [{{context.context1.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context1.value['context']['id']}}]
+          }
         },
         "delete": {
-          "<resource_type>": [{{context.context1.value['context']['id']}}]
+          "<resource_type>": {
+            "contexts": [{{context.context1.value['context']['id']}}]
+          }
         }
       }
     }
@@ -327,38 +357,52 @@ Feature: RBAC Permissions enforcement for REST API
       "name": "Bob Tester",
       "permissions": {
         "create": {
-          "Contract": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ],
-          "ProgramDirective": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ],
-          "Program": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ]
+          "Contract": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          },
+          "ProgramDirective": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          },
+          "Program": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          }
         },
         "read": {
-          "Contract": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ],
-          "ProgramDirective": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ],
-          "Program": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ]
+          "Contract": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          },
+          "ProgramDirective": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          },
+          "Program": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          }
         },
         "update": {
-          "Contract": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ]
+          "Contract": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          }
         }
       }
     }
@@ -395,25 +439,35 @@ Feature: RBAC Permissions enforcement for REST API
       "name": "Jo Tester",
       "permissions": {
         "create": {
-          "Contract": [
-            {{context.context1.value['context']['id']}}
-          ]
+          "Contract": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          }
         },
         "read": {
-          "Contract": [
-            {{context.context1.value['context']['id']}}
-          ],
-          "ProgramDirective": [
-            {{context.context1.value['context']['id']}}
-          ],
-          "Program": [
-            {{context.context1.value['context']['id']}}
-          ]
+          "Contract": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          },
+          "ProgramDirective": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          },
+          "Program": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          }
         },
         "update": {
-          "Contract": [
-            {{context.context1.value['context']['id']}}
-          ]
+          "Contract": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          }
         }
       }
     }
@@ -429,18 +483,26 @@ Feature: RBAC Permissions enforcement for REST API
       "name": "Alice Tester",
       "permissions": {
         "read": {
-          "Contract": [333],
-          "ProgramDirective": [
-            {{context.context1.value['context']['id']}}
-          ],
-          "Program": [
-            {{context.context1.value['context']['id']}}
-          ]
+          "Contract": {
+            "contexts": [333]
+          },
+          "ProgramDirective": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          },
+          "Program": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          }
         },
         "update": {
-          "Contract": [
-            {{context.context1.value['context']['id']}}
-          ]
+          "Contract": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          }
         }
       }
     }
@@ -456,22 +518,28 @@ Feature: RBAC Permissions enforcement for REST API
       "name": "Bob Tester",
       "permissions": {
         "create": {
-          "<resource_type>": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ]
+          "<resource_type>": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          }
         },
         "read": {
-          "<resource_type>": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ]
+          "<resource_type>": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          }
         },
         "update": {
-          "<resource_type>": [
-            {{context.context1.value['context']['id']}},
-            {{context.context2.value['context']['id']}}
-          ]
+          "<resource_type>": {
+            "contexts": [
+              {{context.context1.value['context']['id']}},
+              {{context.context2.value['context']['id']}}
+            ]
+          }
         }
       }
     }
@@ -498,19 +566,25 @@ Feature: RBAC Permissions enforcement for REST API
       "name": "Jo Tester",
       "permissions": {
         "create": {
-          "<resource_type>": [
-            {{context.context1.value['context']['id']}}
-          ]
+          "<resource_type>": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          }
         },
         "read": {
-          "<resource_type>": [
-            {{context.context1.value['context']['id']}}
-          ]
+          "<resource_type>": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          }
         },
         "update": {
-          "<resource_type>": [
-            {{context.context1.value['context']['id']}}
-          ]
+          "<resource_type>": {
+            "contexts": [
+              {{context.context1.value['context']['id']}}
+            ]
+          }
         }
       }
     }

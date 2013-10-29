@@ -107,8 +107,11 @@ can.Control("GGRC.Controllers.Modals", {
 
         // Search for the people based on the term
         , source : function(request, response) {
-          var query = request.term
-          , that = this;
+          var query = request.term || ''
+            , that = this;
+
+          if (query.indexOf('@') > -1)
+            query = '"' + query + '"';
 
           GGRC.Models.Search
           .search_for_types(
@@ -372,6 +375,10 @@ can.Control("GGRC.Controllers.Modals", {
       //   `context` to be present even if `null`, unlike other attributes
       if (!instance.context)
         instance.attr('context', { id: null });
+      if (instance.isNew() && instance.constructor.attributes.owners &&
+          !instance.owners) {
+        instance.attr('owners', [{ id: GGRC.current_user.id }]);
+      }
 
       ajd = instance.save().done(function(obj) {
         function finish() {

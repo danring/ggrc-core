@@ -55,6 +55,7 @@
     $green: #1d8d15;
     $darkBlue: #369;
     $warmGray: #ccc;
+    $midGray: #aaa;
   
   // quick search
     $topBarSearchText: #bbbdc1;
@@ -107,6 +108,11 @@
   $ajaxBtnDisabled: #e0e0e0;
   $ajaxGray: #7b7b7b;
   $footerBorder: #ddd;
+  
+  // pbc requests color states
+  $rqDraft: #f4f4f4;
+  $rqAccepted: #daebcf;
+  $rqStarted: #f3f3d1;
 
 // mixins
 

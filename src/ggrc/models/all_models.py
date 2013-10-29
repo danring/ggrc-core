@@ -25,6 +25,7 @@ from .market import Market
 from .object_control import ObjectControl
 from .object_document import ObjectDocument
 from .object_objective import ObjectObjective
+from .object_owner import ObjectOwner
 from .object_person import ObjectPerson
 from .object_section import ObjectSection
 from .objective import Objective
@@ -78,6 +79,7 @@ all_models = [
   ObjectControl,
   ObjectDocument,
   ObjectObjective,
+  ObjectOwner,
   ObjectPerson,
   ObjectSection,
   Option,

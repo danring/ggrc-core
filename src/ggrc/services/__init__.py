@@ -42,6 +42,7 @@ def all_collections():
     service('object_controls', models.ObjectControl),
     service('object_documents', models.ObjectDocument),
     service('object_objectives', models.ObjectObjective),
+    service('object_owners', models.ObjectOwner),
     service('object_people', models.ObjectPerson),
     service('object_sections', models.ObjectSection),
     service('objectives', models.Objective),

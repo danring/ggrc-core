@@ -244,6 +244,53 @@ ul.new-tree {
     }
   }
   
+  &.text-color {
+    li.tree-item {
+      &.rq-draft {
+        background: $white;
+        .tree-title-area {
+          color: $rqDraft;
+        }
+      }
+      &.rq-requested {
+        background: $white;
+        .tree-title-area {
+          color: $rqStarted;
+        }
+      }
+      &.rq-responded {
+        background: $white;
+        .tree-title-area {
+          color: $rqStarted;
+        }
+      }
+      &.rq-amended-request {
+        background: $white;
+        .tree-title-area {
+          color: $rqStarted;
+        }
+      }
+      &.rq-updated-response {
+        background: $white;
+        .tree-title-area {
+          color: $rqStarted;
+        }
+      }
+      &.rq-accepted {
+        background: $white;
+        .tree-title-area {
+          color: $rqAccepted;
+        }
+      }
+      &.rq-warning {
+        background: $white;
+        .tree-title-area {
+          color: $orange;
+        }
+      }
+    }
+  }
+  
   li.tree-item {
     border-bottom:1px solid #ccc;
     line-height:31px;
@@ -289,6 +336,27 @@ ul.new-tree {
       .item-data {
         color:$programs;
       }
+    }
+    &.rq-draft {
+      background: $rqDraft;
+    }
+    &.rq-requested {
+      background: $rqStarted;
+    }
+    &.rq-responded {
+      background: $rqStarted;
+    }
+    &.rq-amended-request {
+      background: $rqStarted;
+    }
+    &.rq-updated-response {
+      background: $rqStarted;
+    }
+    &.rq-accepted {
+      background: $rqAccepted;
+    }
+    &.rq-warning {
+      background: $orange;
     }
     .small {
       font-size:$f-small;
@@ -662,6 +730,31 @@ ul.new-tree {
     margin-left:20px;
     margin-right:20px;
     line-height:24px;
+    .advanced-filter-trigger {
+      margin-right: 20px;
+      float: right;
+      color: $gray;
+      font-size: 11px;
+      @include transition(color 0.2s ease-in-out);
+      i {
+        @include opacity(0.3);
+        @include transition(opacity 0.2s ease-in-out);
+        margin-top: 4px;
+      }
+      &:hover {
+        color: $black;
+        text-decoration: none;
+        i {
+          @include opacity(1);
+        }
+      }
+      &.active {
+        color: $black;
+        i {
+          @include opacity(1);
+        }
+      }
+    }
   }
 }
 

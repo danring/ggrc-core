@@ -12,6 +12,7 @@ from .categorization import Categorizable
 from .object_control import Controllable
 from .object_document import Documentable
 from .object_objective import Objectiveable
+from .object_owner import Ownable
 from .object_person import Personable
 from .object_section import Sectionable
 from .relationship import Relatable
@@ -26,7 +27,7 @@ class SystemCategorized(Categorizable):
         'categorizations', 'categories', CATEGORY_SYSTEM_TYPE_ID)
 
 class SystemOrProcess(
-    Timeboxed, SystemCategorized, BusinessObject, db.Model):
+    Timeboxed, SystemCategorized, Ownable, BusinessObject, db.Model):
   # Override model_inflector
   _table_plural = 'systems_or_processes'
   __tablename__ = 'systems'

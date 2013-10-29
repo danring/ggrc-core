@@ -22,6 +22,8 @@ class Person(Base, db.Model):
 
   object_people = db.relationship(
       'ObjectPerson', backref='person', cascade='all, delete-orphan')
+  object_owners = db.relationship(
+      'ObjectOwner', backref='person', cascade='all, delete-orphan')
   language = db.relationship(
       'Option',
       primaryjoin='and_(foreign(Person.language_id) == Option.id, '\

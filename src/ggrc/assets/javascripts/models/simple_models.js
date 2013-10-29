@@ -156,6 +156,7 @@ CMS.Models.Directive("CMS.Models.Regulation", {
     }
   , attributes : {
       owner : "CMS.Models.Person.stub"
+    , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
@@ -197,6 +198,7 @@ CMS.Models.Directive("CMS.Models.Policy", {
     }
   , attributes : {
       owner : "CMS.Models.Person.stub"
+    , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
@@ -238,6 +240,7 @@ CMS.Models.Directive("CMS.Models.Contract", {
     }
   , attributes : {
       owner : "CMS.Models.Person.stub"
+    , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
@@ -268,6 +271,7 @@ can.Model.Cacheable("CMS.Models.OrgGroup", {
   , destroy : "DELETE /api/org_groups/{id}"
   , attributes : {
       owner : "CMS.Models.Person.stub"
+    , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
@@ -348,6 +352,7 @@ can.Model.Cacheable("CMS.Models.Project", {
   , destroy : "DELETE /api/projects/{id}"
   , attributes : {
       owner : "CMS.Models.Person.stub"
+    , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
@@ -412,6 +417,7 @@ can.Model.Cacheable("CMS.Models.Facility", {
   , destroy : "DELETE /api/facilities/{id}"
   , attributes : {
       owner : "CMS.Models.Person.stub"
+    , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
@@ -492,6 +498,7 @@ can.Model.Cacheable("CMS.Models.Product", {
   , destroy : "DELETE /api/products/{id}"
   , attributes : {
       owner : "CMS.Models.Person.stub"
+    , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
@@ -595,6 +602,7 @@ can.Model.Cacheable("CMS.Models.DataAsset", {
   , destroy : "DELETE /api/data_assets/{id}"
   , attributes : {
       owner : "CMS.Models.Person.stub"
+    , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
@@ -675,6 +683,7 @@ can.Model.Cacheable("CMS.Models.Market", {
   , destroy : "DELETE /api/markets/{id}"
   , attributes : {
       owner : "CMS.Models.Person.stub"
+    , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
@@ -857,6 +866,7 @@ can.Model.Cacheable("CMS.Models.Objective", {
   }
   , attributes : {
       owner : "CMS.Models.Person.stub"
+    , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , section_objectives : "CMS.Models.SectionObjective.stubs"
     , sections : "CMS.Models.Section.stubs"

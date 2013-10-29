@@ -7,10 +7,12 @@ from ggrc import db
 from .associationproxy import association_proxy
 from .mixins import deferred, BusinessObject, Hierarchical
 from .object_document import Documentable
+from .object_owner import Ownable
 from .object_person import Personable
 from .reflection import PublishOnly
 
-class Section(Documentable, Personable, Hierarchical, BusinessObject, db.Model):
+class Section(
+    Documentable, Personable, Hierarchical, Ownable, BusinessObject, db.Model):
   __tablename__ = 'sections'
 
   directive_id = deferred(
@@ -58,6 +60,13 @@ class Section(Documentable, Personable, Hierarchical, BusinessObject, db.Model):
       'section_objectives',
       'object_sections',
       ]
+
+  @classmethod
+  def generate_slug_prefix_for(cls, obj):
+    from directive import Contract
+    if obj.directive and isinstance(obj.directive, Contract):
+      return "CLAUSE"
+    return super(Section, cls).generate_slug_prefix_for(obj)
 
   @classmethod
   def eager_query(cls):

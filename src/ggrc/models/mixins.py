@@ -133,7 +133,6 @@ class Hyperlinked(object):
   def url(cls):
     return deferred(db.Column(db.String), cls.__name__)
 
-
   # REST properties
   _publish_attrs = ['url']
 
@@ -247,7 +246,11 @@ class Slugged(Base):
   @classmethod
   def generate_slug_for(cls, obj):
     id = obj.id if hasattr(obj, 'id') else uuid1()
-    obj.slug = "{0}-{1}".format(obj.__class__.__name__.upper(), id)
+    obj.slug = "{0}-{1}".format(cls.generate_slug_prefix_for(obj), id)
+
+  @classmethod
+  def generate_slug_prefix_for(cls, obj):
+    return obj.__class__.__name__.upper()
 
   @classmethod
   def ensure_slug_before_flush(cls, session, flush_context, instances):
@@ -266,7 +269,7 @@ class Slugged(Base):
     """
     for o in session.identity_map.values():
       if isinstance(o, Slugged) and hasattr(o, '_replace_slug'):
-        cls.generate_slug_for(o)
+        o.generate_slug_for(o)
         delattr(o, '_replace_slug')
 
 event.listen(Session, 'before_flush', Slugged.ensure_slug_before_flush)

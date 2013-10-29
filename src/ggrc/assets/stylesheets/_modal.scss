@@ -136,6 +136,11 @@
           top: 13px !important;
           left: 465px !important;
         }
+        .selected {
+          .row-fluid {
+            background: #ffffb3;
+          }
+        }
       }
       .selector-info {
         h4.simple-url {
@@ -671,6 +676,17 @@ a.show-hidden-fields {
 
 .checkbox-area {
 	padding:6px 0 16px 0;
+}
+
+.role-area {
+  .checkbox-area {
+  	padding: 0 0 25px 0;
+  	font-size: 12px;
+  	color: $darkGray;
+  	input[type="checkbox"] {
+    	margin-top: 0;
+  	}
+  }
 }
 
 .owner,

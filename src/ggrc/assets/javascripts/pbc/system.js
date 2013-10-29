@@ -128,6 +128,7 @@ CMS.Models.SystemOrProcess("CMS.Models.System", {
   , cache : can.getObject("cache", CMS.Models.SystemOrProcess, true)
   , attributes : {
       owner : "CMS.Models.Person.stub"
+    , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
@@ -177,6 +178,7 @@ CMS.Models.SystemOrProcess("CMS.Models.Process", {
   , cache : can.getObject("cache", CMS.Models.SystemOrProcess, true)
   , attributes : {
       owner : "CMS.Models.Person.stub"
+    , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"

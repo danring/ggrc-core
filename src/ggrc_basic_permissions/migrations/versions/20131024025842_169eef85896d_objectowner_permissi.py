@@ -1,14 +1,15 @@
-"""Fix system roles.
 
-Revision ID: 8f33d9bd2043
-Revises: 758b4012b5f
-Create Date: 2013-09-20 14:12:32.846302
+"""ObjectOwner permissions changes.
+
+Revision ID: 169eef85896d
+Revises: 33a9ca4c32ac
+Create Date: 2013-10-24 02:58:42.263799
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '8f33d9bd2043'
-down_revision = '758b4012b5f'
+revision = '169eef85896d'
+down_revision = '33a9ca4c32ac'
 
 import json
 import sqlalchemy as sa
@@ -76,6 +77,7 @@ def upgrade():
       'Person',
       'Program',
       'Role',
+      'ObjectOwner',
       #'UserRole', ?? why?
       ])
 

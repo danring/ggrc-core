@@ -42,6 +42,7 @@ can.Model.Cacheable("CMS.Models.Document", {
     }
     , attributes : {
         object_documents : "CMS.Models.ObjectDocument.stubs"
+      , owners : "CMS.Models.Person.stubs"
       , type : "CMS.Models.Option.stub"
       , kind : "CMS.Models.Option.stub"
       , year : "CMS.Models.Option.stub"

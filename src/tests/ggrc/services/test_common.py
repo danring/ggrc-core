@@ -39,6 +39,10 @@ class TestResource(TestCase):
     # Explicitly create test tables
     if not ServicesTestMockModel.__table__.exists(db.engine):
       ServicesTestMockModel.__table__.create(db.engine)
+    with self.client.session_transaction() as session:
+      session['permissions'] = {
+          "__GGRC_ADMIN__": {"__GGRC_ALL__": {"contexts": [0]} }
+          }
 
   def tearDown(self):
     super(TestResource, self).tearDown()
@@ -182,7 +186,7 @@ class TestResource(TestCase):
     data = json.dumps(
         { 'services_test_mock_model': { 'foo': 'bar', 'context': None} })
     response = self.client.post(
-        URL_MOCK_COLLECTION, 
+        URL_MOCK_COLLECTION,
         content_type='application/json',
         data=data,
         headers=self.headers(),
@@ -350,7 +354,7 @@ class TestResource(TestCase):
     response = self.client.open(
         self.mock_url(), method='OPTIONS', headers=self.headers())
     self.assertOptions(response, COLLECTION_ALLOWED)
-  
+
   def test_get_bad_accept(self):
     mock1 = self.mock_model(foo='baz')
     response = self.client.get(

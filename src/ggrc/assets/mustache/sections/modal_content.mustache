@@ -61,7 +61,7 @@
           Code
           <i class="grcicon-help-black" rel="tooltip" title="Enter Code"></i>
         </label>
-        <input id="section-code" class="input-block-level" name="slug" placeholder="SECTION-XXX" type="text" value="{{slug}}">
+        <input id="section-code" class="input-block-level" name="slug" placeholder="{{#if_equals instance.directive.type 'Contract'}}CLAUSE{{else}}SECTION{{/if_equals}}-XXX" type="text" value="{{slug}}">
       </div>
     </div>
   </div>

@@ -2,7 +2,7 @@
   <div class="item-main" {{#instance}}{{data 'model'}}{{/instance}} data-model="true">
     <a href="javascript://" class="openclose">
       <div class="row-fluid">
-        <div class="span3">
+        <div class="span4">
           <div class="item-data">
             <div class="tree-title-area">
               <i class="grcicon-objective-color"></i>
@@ -16,7 +16,7 @@
           <i class="grcicon-person-green pull-left"></i>
         {{#using assignee=instance.assignee}}
           <div class="objective-selector">
-            <input type="text" name="assignee.name" data-lookup="Person" class="span8 short-field" value="{{firstnonempty assignee.name assignee.email ''}}">
+            <input type="text" name="assignee.name" data-lookup="Person" class="span10 short-field" value="{{firstnonempty assignee.name assignee.email ''}}">
           </div>
         {{/using}}
         </div>
@@ -28,7 +28,7 @@
             {{/iterate}}
           </select>
         </div>
-        <div class="span3" {{ (el) -> el.ggrc_controllers_quick_form({ instance : el.closest('[data-model]').data('model')}); }}>
+        <div class="span2" {{ (el) -> el.ggrc_controllers_quick_form({ instance : el.closest('[data-model]').data('model')}); }}>
           <select name="status" class="span9 short-field">
             {{#iterate 'Draft' 'Requested' 'Responded' 'Amended Request' 'Updated Response' 'Accepted'}}
             <option {{#if_equals iterator instance.status}}selected="true"{{/if_equals}}>{{iterator}}</option>

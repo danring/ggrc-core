@@ -9,6 +9,7 @@ from .mixins import deferred, BusinessObject, Timeboxed
 from .object_control import Controllable
 from .object_document import Documentable
 from .object_objective import Objectiveable
+from .object_owner import Ownable
 from .object_person import Personable
 from .object_section import Sectionable
 from .relationship import Relatable
@@ -16,7 +17,7 @@ from .utils import validate_option
 
 class Product(
     Documentable, Personable, Objectiveable, Controllable, Sectionable,
-    Relatable, Timeboxed, BusinessObject, db.Model):
+    Relatable, Timeboxed, Ownable, BusinessObject, db.Model):
   __tablename__ = 'products'
 
   type_id = deferred(db.Column(db.Integer), 'Product')

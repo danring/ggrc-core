@@ -12,6 +12,7 @@ from .mixins import (
     deferred, BusinessObject, Hierarchical, Timeboxed,
     )
 from .object_document import Documentable
+from .object_owner import Ownable
 from .object_person import Personable
 from .reflection import PublishOnly
 from .utils import validate_option
@@ -33,7 +34,7 @@ class AssertionCategorized(Categorizable):
 
 class Control(
     Documentable, Personable, ControlCategorized, AssertionCategorized,
-    Hierarchical, Timeboxed, BusinessObject, db.Model):
+    Hierarchical, Timeboxed, Ownable, BusinessObject, db.Model):
   __tablename__ = 'controls'
 
   company_control = deferred(db.Column(db.Boolean), 'Control')

@@ -34,9 +34,13 @@
         Role-specific Privileges for Program Dependent Objects
         <i class="grcicon-help-black" rel="tooltip" title="Priveleges for all private program objects"></i>
       </label>
-      <div class="checkbox-area">
-        {{#permission_checkbox "view" "__ALL__"}}{{/permission_checkbox}}
-        {{#permission_checkbox "modify" "__ALL__"}}{{/permission_checkbox}}
+      <div class="role-area">
+        <div class="checkbox-area">
+          <div clas="row-fluid">
+            <div class="span2">{{#permission_checkbox " View" "__ALL__"}}{{/permission_checkbox}}</div>
+            <div class="span2">{{#permission_checkbox " Modify" "__ALL__"}}{{/permission_checkbox}}</div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="span6">
@@ -71,88 +75,90 @@
       </div>
     </div>
   </div>
-  <div class="hidden-fields-area" style="display:none">
+  <div class="hidden-fields-area role-area" style="display:none">
     <div class="row-fluid">
-      <div class="span2">
+      <div class="span3">
         <label>Program Info</label>
         <div class="checkbox-area">
-          {{#permission_checkbox "view" "Program"}}{{/permission_checkbox}}
+          {{#permission_checkbox " View" "Program"}}{{/permission_checkbox}}
           <br/>
-          {{#permission_checkbox "modify" "Program"}}{{/permission_checkbox}}
+          {{#permission_checkbox " Modify" "Program"}}{{/permission_checkbox}}
         </div>
       </div>
-      <div class="span2">
-        <label>Audits</label>
+      <div class="span3">
+        <label>Audit Mappings</label>
         <div class="checkbox-area">
-          {{#permission_checkbox "view" "Cycle"}}{{/permission_checkbox}}
+          {{#permission_checkbox " View" "Cycle"}}{{/permission_checkbox}}
           <br/>
-          {{#permission_checkbox "modify" "Cycle"}}{{/permission_checkbox}}
+          {{#permission_checkbox " Modify" "Cycle"}}{{/permission_checkbox}}
         </div>
       </div>
-      <div class="span2">
-        <label>Directives</label>
+      <div class="span3">
+        <label>Directive Mappings</label>
         <div class="checkbox-area">
-          {{#permission_checkbox "view" "ProgramDirective"}}{{/permission_checkbox}}
+          {{#permission_checkbox " View" "ProgramDirective"}}{{/permission_checkbox}}
           <br/>
-          {{#permission_checkbox "modify" "ProgramDirective"}}{{/permission_checkbox}}
+          {{#permission_checkbox " Modify" "ProgramDirective"}}{{/permission_checkbox}}
         </div>
       </div>
-      <div class="span2">
-        <label>Controls</label>
+      <div class="span3">
+        <label>Control Mappings</label>
         <div class="checkbox-area">
-          {{#permission_checkbox "view" "ProgramControl"}}{{/permission_checkbox}}
+          {{#permission_checkbox " View" "ProgramControl"}}{{/permission_checkbox}}
           <br/>
-          {{#permission_checkbox "modify" "ProgramControl"}}{{/permission_checkbox}}
-        </div>
-      </div>
-      <div class="span2">
-        <label>Objectives</label>
-        <div class="checkbox-area">
-          {{#permission_checkbox "view" "ObjectObjective"}}{{/permission_checkbox}}
-          <br/>
-          {{#permission_checkbox "modify" "ObjectObjective"}}{{/permission_checkbox}}
-        </div>
-      </div>
-      <div class="span2">
-        <label>Sections</label>
-        <div class="checkbox-area">
-          {{#permission_checkbox "view" "ObjectSection"}}{{/permission_checkbox}}
-          <br/>
-          {{#permission_checkbox "modify" "ObjectSection"}}{{/permission_checkbox}}
+          {{#permission_checkbox " Modify" "ProgramControl"}}{{/permission_checkbox}}
         </div>
       </div>
     </div>
     <div class="row-fluid">
-      <div class="span2">
-        <label>Business Objects</label>
+      <div class="span3">
+        <label>Objective Mappings</label>
         <div class="checkbox-area">
-          {{#permission_checkbox "view" "Relationship"}}{{/permission_checkbox}}
+          {{#permission_checkbox " View" "ObjectObjective"}}{{/permission_checkbox}}
           <br/>
-          {{#permission_checkbox "modify" "Relationship"}}{{/permission_checkbox}}
+          {{#permission_checkbox " Modify" "ObjectObjective"}}{{/permission_checkbox}}
         </div>
       </div>
-      <div class="span2">
-        <label>References</label>
+      <div class="span3">
+        <label>Section Mappings</label>
         <div class="checkbox-area">
-          {{#permission_checkbox "view" "ObjectDocument"}}{{/permission_checkbox}}
+          {{#permission_checkbox " View" "ObjectSection"}}{{/permission_checkbox}}
           <br/>
-          {{#permission_checkbox "modify" "ObjectDocument"}}{{/permission_checkbox}}
+          {{#permission_checkbox " Modify" "ObjectSection"}}{{/permission_checkbox}}
         </div>
       </div>
-      <div class="span2">
-        <label>People</label>
+      <div class="span3">
+        <label>Business Object Mappings</label>
         <div class="checkbox-area">
-          {{#permission_checkbox "view" "ObjectPerson"}}{{/permission_checkbox}}
+          {{#permission_checkbox " View" "Relationship"}}{{/permission_checkbox}}
           <br/>
-          {{#permission_checkbox "modify" "ObjectPerson"}}{{/permission_checkbox}}
+          {{#permission_checkbox " Modify" "Relationship"}}{{/permission_checkbox}}
         </div>
       </div>
-      <div class="span2">
-        <label>User Roles</label>
+      <div class="span3">
+        <label>Reference Mappings</label>
         <div class="checkbox-area">
-          {{#permission_checkbox "view" "UserRole"}}{{/permission_checkbox}}
+          {{#permission_checkbox " View" "ObjectDocument"}}{{/permission_checkbox}}
           <br/>
-          {{#permission_checkbox "modify" "UserRole"}}{{/permission_checkbox}}
+          {{#permission_checkbox " Modify" "ObjectDocument"}}{{/permission_checkbox}}
+        </div>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span3">
+        <label>People Mappings</label>
+        <div class="checkbox-area">
+          {{#permission_checkbox " View" "ObjectPerson"}}{{/permission_checkbox}}
+          <br/>
+          {{#permission_checkbox " Modify" "ObjectPerson"}}{{/permission_checkbox}}
+        </div>
+      </div>
+      <div class="span3">
+        <label>User Role Mappings</label>
+        <div class="checkbox-area">
+          {{#permission_checkbox " View" "UserRole"}}{{/permission_checkbox}}
+          <br/>
+          {{#permission_checkbox " Modify" "UserRole"}}{{/permission_checkbox}}
         </div>
       </div>
     </div>

@@ -6,6 +6,26 @@
  */
 
 .popover {
+  padding: 0;
+  .arrow {
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 11px;
+    &:after {
+      position: absolute;
+      display: block;
+      width: 0;
+      height: 0;
+      border-color: transparent;
+      border-style: solid;
+      border-width: 10px;
+      content: "";
+    }
+  }
   .popover-inner-content {
     .row-fluid {
       margin-bottom:10px;
@@ -35,23 +55,41 @@
   &.top {
     margin-top: -5px;
     .arrow {
-      bottom: -5px;
+      bottom: -10px;
       left: 50%;
-      margin-left: -5px;
-      border-top: 5px solid $popOverBorder;
-      border-right: 5px solid transparent;
-      border-left: 5px solid transparent;
+      margin-left: -11px;
+      border-top-color: $popOverBorder;
+      border-top-color: rgba(0, 0, 0, 0.25);
+      border-bottom-width: 0;
+      border-left: 11px solid transparent;
+      border-right: 11px solid transparent;
+      border-top: 11px solid $popOverBorder;
+      &:after {
+        bottom: 1px;
+        margin-left: -10px;
+        border-top-color: $white;
+        border-bottom-width: 0;
+      }
     }
   }
   &.right {
     margin-left: 14px;
     .arrow {
       top: 50%;
-      left: -5px;
-      margin-top: -10px;
+      left: -10px;
+      margin-top: -11px;
+      border-right-color: $popOverBorder;
+      border-right-color: rgba(0, 0, 0, 0.25);
+      border-left-width: 0;
       border-top: 10px solid transparent;
       border-right: 10px solid $popOverBorder;
       border-bottom: 10px solid transparent;
+      &:after {
+        bottom: -10px;
+        left: 1px;
+        border-right-color: $white;
+        border-left-width: 0;
+      }
     }
   }
   &.bottom {

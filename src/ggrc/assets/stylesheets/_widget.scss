@@ -648,6 +648,47 @@
       margin-bottom: 0;
     }
   }
+  &.pbc-filters {
+    border-left: 1px solid $widgetBorder;
+    border-right: 1px solid $widgetBorder;
+    border-top: 1px solid $darkGray;
+    border-bottom: 1px solid $darkGray;
+    background: darken($widgetHeader, 15%);
+    margin: 0 20px;
+    padding: 0;
+    display: none;
+    span {
+      line-height: 30px;
+    }
+    .request-type {
+      margin-right: 4px;
+    }
+    .input-mini {
+      &.date {
+        width: 30px;
+        padding-top: 5px;
+        padding-bottom: 3px;
+      }
+    }
+    i {
+      margin-top: 7px;
+    }
+    .short-field {
+      min-height: 23px;
+      margin-top: 4px;
+    }
+    .filter-date-range {
+      @include clearfix();
+      padding-left: 20px;
+      li {
+        line-height: 30px;
+      }
+      span {
+        font-size: 12px;
+        color: $black;
+      }
+    }
+  }
 }
 
 .widget-filters {
@@ -776,4 +817,106 @@
 
 .nav.nav-tabs {
   margin-bottom:0;
+}
+
+// Profile Info Widget
+.profile-info {
+  padding-top: 12px;
+  ul {
+    @include reset-list();
+    li {
+      padding-bottom: 6px;
+    }
+  }
+  .profile-contact {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    ul {
+      @include clearfix();
+      li {
+        padding-bottom: 0;
+        float: left;
+        margin-right: 10px;
+        a {
+          line-height: 23px;
+          display: block;
+          &.btn {
+            font-size: 12px;
+            line-height: 17px;
+            color: $darkGray;
+            &:hover {
+              color: $black;
+            }
+            i {
+              margin-top: 1px;
+            }
+          }
+          i {
+            margin-top: 4px;
+            @include opacity(0.3);
+            @include transition(opacity 0.2s ease-in-out);
+          }
+          &:hover {
+            i {
+              @include opacity(1);
+            }
+          }
+        }
+        &.circle-holder {
+          position: relative;
+        }
+        .square-popover {
+          padding: 7px 3px 6px 3px;
+          border: 1px solid $midGray;
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          display: none;
+          background: $white;
+          ul {
+            li {
+              float: none;
+              clear: both;
+              margin: 0 0 3px 0;
+              padding-left: 7px;
+              padding-right: 7px;
+              width: 190px;
+              font-size: 11px;
+              font-weight: bold;
+              color: $black;
+              label {
+                font-size: 11px;
+                font-weight: bold;
+                color: $black;
+                cursor: pointer;
+              }
+              input {
+                margin-top: 0;
+              }
+              span {
+                float: right;
+                text-align: right;
+              }
+              &.create {
+                border-top: 1px solid $sidenavBorder;
+                padding-top: 5px;
+                margin: 0;
+                a {
+                  line-height: 16px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.profile-photo {
+  padding-top: 10px;
+  text-align: right;
+  img {
+    @include border-radius($default-border-radius);
+  }
 }
