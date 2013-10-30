@@ -223,3 +223,6 @@ dashboard-js-spec-files:
 
 dashboard-js-spec-helpers:
   - jasmine-fixture.js
+  - helpers/helpers.js
+  - helpers/object_factory.js
+  - helpers/permission.js

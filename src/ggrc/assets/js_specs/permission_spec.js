@@ -9,7 +9,17 @@
 
 describe("Permission", function() {
       // Models helpers
-  var debug = false
+  var Helpers
+    , ObjectFactory
+    , Permission
+    , login
+    , login_with_roles
+    , logout
+    , load
+    , unload
+    , make
+    , make_with_admin
+    , debug = false
     , models = ["Categorization", "Category", "Control", "ControlControl", "ControlSection", "Cycle", "DataAsset", "Directive", "Contract", "Policy", "Regulation", "DirectiveControl", "Document", "Facility", "Help", "Market", "Objective", "ObjectiveControl", "ObjectControl", "ObjectDocument", "ObjectObjective", "ObjectPerson", "ObjectSection", "Option", "OrgGroup", "PopulationSample", "Product", "ProgramControl", "ProgramDirective", "Project", "Relationship", "RelationshipType", "Section", "SectionObjective", "SystemOrProcess", "System", "Process", "SystemControl", "SystemSystem", "Person", "Program", "Role"]
     , base_instances = {}
     , create_models = models.slice(0).filter(function(model) { return !model.match(/^(Cycle|Category|SystemSystem|SystemControl|Categorization|PopulationSample|Categorization|RelationshipType|Directive|SystemOrProcess|Option)$/) })
@@ -35,93 +45,6 @@ describe("Permission", function() {
     , private_program_models = roles.PrivateProgram.ProgramOwner.create.slice(0).filter(function(model) { return !model.match(/^(Cycle|ObjectSection)$/) })
     , role_can = function(role, action, model) {
         return !!role.__GGRC_ADMIN__ || (role[action] && role[action].indexOf(model) > -1);
-      }
-
-      // Permissions helpers
-    , current_permissions
-    , last_permissions
-    , lookup_permissions = function(role) {
-        for (var type in roles) {
-          if (type === role) return roles[type];
-          else {
-            for (var type2 in roles[type]) {
-              if (type2 === role) return roles[type][type2];
-            }
-          }
-        }
-      }
-    , make_permissions = function(permissions) {
-        var result = {};
-        for (var action in permissions) {
-          // Context ID w/CRUD
-          if (action == parseInt(action,10)) {
-            !function(context, permissions) {
-              for (var action in permissions) {
-                result[action] = result[action] || {};
-                can.each(permissions[action], function(model) {
-                  result[action][model] = result[action][model] || [];
-                  result[action][model].indexOf(context) === -1 && result[action][model].push(context);
-                });
-              }
-            }(parseInt(action,10), permissions[action]);
-          }
-          // CRUD
-          else {
-            result[action] = result[action] || {};
-            can.each(permissions[action], function(model) {
-              result[action][model] = result[action][model] || [];
-              result[action][model].indexOf(null) === -1 && result[action][model].push(null);
-            });
-          }
-        }
-        return result;
-      }
-    , set_permissions = function(permissions, retry, override) {
-        var result = {};
-        if (!retry) {
-          last_permissions = current_permissions;
-          current_permissions = permissions;
-        }
-        else {
-          permissions = current_permissions;
-        }
-        user = override ? permissions : {
-            email: "user_permission@example.com"
-          , name: "Test User"
-          , permissions: permissions === "Admin" 
-              ? roles.System.Admin 
-              : (make_permissions(typeof permissions === 'string' ? lookup_permissions(permissions) : permissions))
-        };
-
-        $.ajax("/login", {
-          beforeSend: function(xhr) {
-            xhr.setRequestHeader('X-ggrc-user', JSON.stringify(user));
-          }
-        }).pipe(function(response) {
-          // Sometimes the server pukes dude to excessive logins when running lots of tests
-          if (!response) {
-            console.log('failed login');
-            setTimeout(function() {
-              // Retry the login
-              waitsFor(set_permissions(null, true));
-              runs(function() {
-                result.permissions = GGRC.permissions;
-              });
-            }, 250);
-          }
-          // Parse permissions from the HTML response
-          else {
-            return result.permissions = GGRC.permissions = JSON.parse(response.match(/GGRC\.permissions.+/)[0].replace(/^GGRC.permissions\s*=\s*(.+?);$/, '$1'));
-          }
-        });
-
-        return function() {
-          result.permissions && reset();
-          return !!result.permissions;
-        };
-      }
-    , reset_permissions = function() {
-        return set_permissions(last_permissions);
       }
     , make_model = function(model, deferred, attrs, context) {
         deferred = deferred || new $.Deferred();
@@ -291,36 +214,54 @@ describe("Permission", function() {
     ; 
 
   beforeEach(function() {
-    if (before_first) {
-      before_first = false;
-      after_last = $.debounce(5000, function() {
-        $.ajaxSetup({ async: false });
-        set_permissions("Admin");
-
-        // Remove joins first
-        created.sort(function(a, b) {
-          if (a instanceof can.Model.Join && !(b instanceof can.Model.Join)) return -1;
-          else if (!(a instanceof can.Model.Join) && b instanceof can.Model.Join) return 1;
-          return 0;
-        });
-
-        can.each(created, function(instance) {
-          instance.id && instance.destroy();
-        });
-
-        // Reset as base admin user
-        set_permissions({ "email" : "user@example.com", "name" : "Test User" });
-      });
-    }
-
-    unique_id || (unique_id = 1);
-    created = [];
+    Helpers = jasmine.GGRC.Helpers;
+    ObjectFactory = Helpers.ObjectFactory;
+    Permission = Helpers.Permission;
+    load = Helpers.load;
+    unload = Helpers.unload;
+    login = Permission.login;
+    login_with_roles = Permission.login_with_roles;
+    logout = Permission.logout;
+    make = ObjectFactory.make;
+    make_with_admin = ObjectFactory.make_with_admin;
+    waitsFor(Permission.init());
   });
+
+  afterEach(function() {
+    waitsFor(ObjectFactory.destroy());
+  });
+
+  // beforeEach(function() {
+  //   if (before_first) {
+  //     before_first = false;
+  //     after_last = $.debounce(5000, function() {
+  //       $.ajaxSetup({ async: false });
+  //       set_permissions("Admin");
+
+  //       // Remove joins first
+  //       created.sort(function(a, b) {
+  //         if (a instanceof can.Model.Join && !(b instanceof can.Model.Join)) return -1;
+  //         else if (!(a instanceof can.Model.Join) && b instanceof can.Model.Join) return 1;
+  //         return 0;
+  //       });
+
+  //       can.each(created, function(instance) {
+  //         instance.id && instance.destroy();
+  //       });
+
+  //       // Reset as base admin user
+  //       set_permissions({ "email" : "user@example.com", "name" : "Test User" });
+  //     });
+  //   }
+
+  //   unique_id || (unique_id = 1);
+  //   created = [];
+  // });
   
   // Remove every new object that was saved on teardown
-  afterEach(function() {
-    after_last();
-  });
+  // afterEach(function() {
+  //   after_last();
+  // });
 
   // Verify CRUD abilities for each role
   describe("System roles", function() {
@@ -684,14 +625,7 @@ describe("Permission", function() {
 
   describe("Private Program UI", function() {
     var program
-      , target
-      , $T
-      , private_roles
-      , owner = {
-
-        }
-      , editor
-      , reader
+      , page
       , objects = [
           "Regulation"
         , "Contract"
@@ -708,212 +642,103 @@ describe("Permission", function() {
         , "OrgGroup"
         , "Person"
         , "Document"
-        , "Audit"
+        // , "Audit"
         ]
-      , refresh = function() {
-          if (target) {
-            $(target).remove();
-            target = null;
-            $T = null;
-          }
-          target = document.createElement('iframe');
-          $(target).css(debug ? { width: 1280, height: 720 } : { width: 0, height: 0 })
-          document.body.appendChild(target);
-          target.onload = function() {
-            setTimeout(function() {
-              if (target.contentWindow.$) {
-                $T = target.contentWindow.$;
-                target._loaded = true;
-              }
-              else {
-                setTimeout(arguments.callee, 100);
-              }
-            }, 0);
-          };
-          target.src = "/programs/" + program.id;
-          var fn = function() {
-            return target._loaded && $T;
-          };
-          waitsFor(fn);
-          return fn;
-        }
       ;
 
     beforeEach(function() {
-      // Set up program
-      if (!program) {
-        var def = new $.Deferred();
-
-        // Create private program
-        waitsFor(set_permissions("Admin"));
-        runs(function() {
-          waitsFor(make_model("Program", def, { "private": true }));
-          runs(function() {
-            def.done(function(instance) {
-              reset();
-              instance.save(success, error);
-              waitsFor(success_or_error);
-              program = instance;
-            });
-          });
-
-          // Create users
-          var people = [];
-          for (var i = 0; i < 3; i++) {
-            runs(function() {
-              var def;
-              waitsFor(make_model("Person", def = new $.Deferred));
-              runs(function() {
-                def.done(function(instance) {
-                  reset();
-                  instance.save(success, error);
-                  waitsFor(success_or_error);
-                  people.push(instance);
-                });
-              });
-            });
-          }
-
-          // Retrieve roles
-          CMS.Models.Role.findAll({ scope: "Private Program" }).done(function(list) {
-            private_roles = {};
-            can.each(list, function(role) {
-              private_roles[role.name] = role;
-            });
-          });
-
-
-          waitsFor(function() {
-            return people.length >= 3 && !!private_roles;
-          });
-
-          // Add roles
-          runs(function() {
-            owner = people[0];
-            editor = people[1];
-            reader = people[2];
-
-            can.each(["ProgramOwner","ProgramEditor","ProgramReader"], function(role, i) {
-              var def;
-              waitsFor(make_model("UserRole", def = new $.Deferred(), {
-                  person: people[i]
-                , role: private_roles[role]
-                , role_id: private_roles[role].id
-              }, program));
-              runs(function() {
-                def.done(function(instance) {
-                  reset();
-                  instance.save(success, error);
-                  waitsFor(success_or_error);
-                });
-              });
-            });
-
-            runs(function() {
-              owner = { name: owner.name, email: owner.email };
-              editor = { name: editor.name, email: editor.email };
-              reader = { name: reader.name, email: reader.email };
-            });
-          })
-        });
-      }
+      waitsFor(make_with_admin("Program", { "private": true }).done(function(instance) {
+        program = instance;
+      }));
     });
 
     afterEach(function() {
-      if (!debug && target) {
-        $(target).remove();
-        target = null;
-        $T = null;
-      }
+      program = undefined;
+      page = undefined;
+      unload();
     });
 
     describe("ProgramOwner", function() {
-      beforeEach(function() {
-        waitsFor(set_permissions(owner, null, true));
-        reset();
-        runs(function() {
-          waitsFor(refresh());
-        });
-      });
-
       it("can map objects", function() {
+        waitsFor(login_with_roles(['Reader'], [program.context, 'ProgramOwner']));
         runs(function() {
-          objects.forEach(function(obj) {
-            var selector = '#'+CMS.Models[obj].table_singular+'_widget'
-              , go = false
-              ;
-            waitsFor(function() {
-              if ($T(selector + ' .cms_controllers_tree_view').length) {
-                setTimeout(function() { go = true }, 0);
-              }
-              return go;
-            })
-            runs(function() {
-              expect($T(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"], '
-                + selector + ' [data-toggle="modal-ajax-form"][data-object-singular="'+obj+'"]').length).toBeGreaterThan(0);
+          waitsFor(page = load('/programs/' + program.id));
+        });
+        runs(function() {
+          page.done(function($) {
+            objects.forEach(function(obj) {
+              var selector = '#'+CMS.Models[obj].table_singular+'_widget'
+                , go = false
+                ;
+              waitsFor(function() {
+                if ($(selector + ' .cms_controllers_tree_view').length) {
+                  setTimeout(function() { go = true }, 0);
+                }
+                return go;
+              });
+              runs(function() {
+                expect($(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"], '
+                  + selector + ' [data-toggle="modal-ajax-form"][data-object-singular="'+obj+'"]').length).toBeGreaterThan(0);
+              });
             });
           });
-        })
+        });
       });
     });
 
     describe("ProgramEditor", function() {
-      beforeEach(function() {
-        waitsFor(set_permissions(editor, null, true));
-        runs(function() {
-          reset();
-          waitsFor(refresh());
-        });
-      });
-
       it("can map objects", function() {
+        waitsFor(login_with_roles(['Reader'], [program.context, 'ProgramEditor']));
         runs(function() {
-          objects.forEach(function(obj) {
-            var selector = '#'+CMS.Models[obj].table_singular+'_widget'
-              , go = false
-              ;
-            waitsFor(function() {
-              if ($T(selector + ' .cms_controllers_tree_view').length) {
-                setTimeout(function() { go = true }, 0);
-              }
-              return go;
-            })
-            runs(function() {
-              expect($T(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"], '
-                + selector + ' [data-toggle="modal-ajax-form"][data-object-singular="'+obj+'"]').length).toBeGreaterThan(0);
+          waitsFor(page = load('/programs/' + program.id));
+        });
+        runs(function() {
+          page.done(function($) {
+            objects.forEach(function(obj) {
+              var selector = '#'+CMS.Models[obj].table_singular+'_widget'
+                , go = false
+                ;
+              waitsFor(function() {
+                if ($(selector + ' .cms_controllers_tree_view').length) {
+                  setTimeout(function() { go = true }, 0);
+                }
+                return go;
+              })
+              runs(function() {
+                expect($(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"], '
+                  + selector + ' [data-toggle="modal-ajax-form"][data-object-singular="'+obj+'"]').length).toBeGreaterThan(0);
+              });
             });
           });
-        })
+        });
       });
     });
     
     describe("ProgramReader", function() {
-      beforeEach(function() {
-        waitsFor(set_permissions(reader, null, true));
-        reset();
-        runs(function() {
-          waitsFor(refresh());
-        });
-      });
-
       it("can't map objects", function() {
+        waitsFor(login_with_roles(['Reader'], [program.context, 'ProgramReader']));
         runs(function() {
-          objects.forEach(function(obj) {
-            var selector = '#'+CMS.Models[obj].table_singular+'_widget'
-              , go = false
-              ;
-            waitsFor(function() {
-              if ($T(selector + ' .cms_controllers_tree_view').length) {
-                setTimeout(function() { go = true }, 0);
-              }
-              return go;
-            })
-            runs(function() {
-              expect($T(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"], '
-                + selector + ' [data-toggle="modal-ajax-form"][data-object-singular="'+obj+'"]').length).toEqual(0);
+          waitsFor(page = load('/programs/' + program.id));
+        });
+        runs(function() {
+          page.done(function($) {
+            objects.forEach(function(obj) {
+              var selector = '#'+CMS.Models[obj].table_singular+'_widget'
+                , go = false
+                ;
+              waitsFor(function() {
+                if ($(selector + ' .cms_controllers_tree_view').length) {
+                  setTimeout(function() { go = true }, 0);
+                }
+                return go;
+              })
+              runs(function() {
+                expect($(selector + ' [data-toggle="multitype-modal-selector"][data-join-option-type="'+obj+'"], '
+                  + selector + ' [data-toggle="modal-ajax-form"][data-object-singular="'+obj+'"]').length).toEqual(0);
+              });
             });
           });
-        })
+        });
       });
     });
   });
