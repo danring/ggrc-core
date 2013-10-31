@@ -57,6 +57,7 @@ describe("Permission", function() {
   // Verify CRUD abilities for each role
   describe("System roles", function() {
     ["gGRC Admin", "Reader", "ObjectEditor", "ProgramCreator"].forEach(function(role) {
+
       describe(role, function() {
         var user
           , permissions
@@ -77,173 +78,108 @@ describe("Permission", function() {
         describe("create", function() {
           create_models.forEach(function(model) {
             it(model, function() {
-              runs(function() {
-                if (CMS.Models[model]) {
-                  var instance
-                    , result
-                    ;
-                  waitsFor(make(model, null, true).done(function(inst) {
-                    instance = inst;
-                  }));
-                  runs(function() {
-                    waitsFor(result = success_or_error(function(s,e) { instance.save(s,e); }));
-                  });
-                  runs(function() {
-                    expect(role_can(permissions, "create", model) ? result.success : result.error).toHaveBeenCalled();
-                  });
-                }
-              });
+              if (CMS.Models[model]) {
+                var instance
+                  , result
+                  ;
+
+                waitsFor(make(model, null, true).done(function(inst) {
+                  instance = inst;
+                }));
+
+                runs(function() {
+                  waitsFor(result = success_or_error(function(s,e) { instance.save(s,e); }));
+                });
+
+                runs(function() {
+                  expect(role_can(permissions, "create", model) ? result.success : result.error).toHaveBeenCalled();
+                });
+              }
             });
           });
         });
+
+        describe("read", function() {
+          read_models.forEach(function(model) {
+            it(model, function() {
+              if (CMS.Models[model] && CMS.Models[model].findAll) {
+                var instance
+                  , result
+                  ;
+
+                waitsFor(make_with_admin(model).done(function(inst) {
+                  instance = inst;
+                }));
+
+                runs(function() {
+                  waitsFor(CMS.Models[model].findOne({ id: instance.id }).done(function() {
+                    console.log(arguments);
+                    result = arguments[0];
+                  }));
+                });
+
+                runs(function() {
+                  if (role_can(permissions, "read", model))
+                    expect(result).toBeDefined();
+                  else
+                    expect(result).toBeUndefined();
+                });
+              }
+            });
+          });
+        });
+
+        describe("update", function() {
+          update_models.forEach(function(model) {
+            it(model, function() {
+              if (CMS.Models[model]) {
+                var instance
+                  , result
+                  ;
+
+                waitsFor(make_with_admin(model).done(function(inst) {
+                  instance = inst;
+                }));
+
+                runs(function() {
+                  waitsFor(result = success_or_error(function(s,e) { instance.save(s,e); }));
+                });
+
+                runs(function() {
+                  expect(role_can(permissions, "update", model) ? result.success : result.error).toHaveBeenCalled();
+                });
+              }
+            });
+          });
+        });
+
+        describe("delete", function() {
+          delete_models.forEach(function(model) {
+            it(model, function() {
+              if (CMS.Models[model]) {
+                var instance
+                  , result
+                  ;
+
+                waitsFor(make_with_admin(model).done(function(inst) {
+                  instance = inst;
+                }));
+
+                runs(function() {
+                  waitsFor(result = success_or_error(function(s,e) { instance.destroy(s,e); }));
+                });
+                
+                runs(function() {
+                  expect(role_can(permissions, "delete", model) ? result.success : result.error).toHaveBeenCalled();
+                });
+              }
+            });
+          });
+        });
+
       });
     });
   });
-  //     !function(role) {
-  //       describe(role, function() {
-  //         // Login before each test
-  //         beforeEach(function() {
-  //           waitsFor(set_permissions(role));
-  //         });
-
-  //         describe("create", function() {
-  //           create_models.forEach(function(model) {
-  //             it((role_can(roles[scope][role], "create", model) ? "can" : "can't") + " create " + model, function() {
-  //               runs(function() {
-  //                 if (CMS.Models[model]) {
-  //                   var def;
-  //                   waitsFor(make_model(model, def = new $.Deferred()));
-  //                   runs(function() {
-  //                     def.done(function(instance) {
-  //                       reset();
-  //                       instance.save(success, error);
-  //                       waitsFor(success_or_error);
-  //                     });
-  //                   })
-  //                   runs(function() {
-  //                     expect(role_can(roles[scope][role], "create", model) ? success : error).toHaveBeenCalled();
-  //                   });
-  //                 }
-  //               });
-  //             });
-  //           });
-  //         });
-
-  //         describe("read", function() {
-  //           read_models.forEach(function(model) {
-  //             it((role_can(roles[scope][role], "read", model) ? "can" : "can't") + " read " + model, function() {
-  //               runs(function() {
-  //                 if (CMS.Models[model] && CMS.Models[model].findAll) {
-  //                   var list;
-  //                   CMS.Models[model].findAll({ __stubs_only: true }).done(function() {
-  //                     list = arguments[0];
-  //                   });
-
-  //                   waitsFor(function() {
-  //                     return list;
-  //                   });
-
-  //                   runs(function() {
-  //                     if (role_can(roles[scope][role], "read", model))
-  //                       expect(list.length).toBeGreaterThan(0);
-  //                     else
-  //                       expect(list.length).toEqual(0);
-  //                   });
-  //                 }
-  //               });
-  //             });
-  //           });
-  //         });
-
-  //         describe("update", function() {
-  //           update_models.forEach(function(model) {
-  //             it((role_can(roles[scope][role], "update", model) ? "can" : "can't") + " update " + model, function() {
-  //               runs(function() {
-  //                 if (CMS.Models[model]) {
-  //                   var instance;
-
-  //                   // Create as an admin first
-  //                   waitsFor(set_permissions("Admin"));
-  //                   runs(function() {
-  //                     var def = new $.Deferred();
-  //                     waitsFor(make_model(model, def));
-  //                     runs(function() {
-  //                       def.done(function(inst) {
-  //                         instance = inst;
-  //                         reset();
-  //                         instance.save(success, error);
-  //                         waitsFor(success_or_error);
-  //                         runs(function() {
-  //                           expect(success).toHaveBeenCalled();
-  //                         });
-  //                       })
-  //                     });
-  //                   });
-
-  //                   // Try to update
-  //                   runs(function() {
-  //                     waitsFor(set_permissions(role));
-  //                     runs(function() {
-  //                       reset();
-  //                       instance.save(success, error);
-  //                       waitsFor(success_or_error);
-  //                       runs(function() {
-  //                         expect(role_can(roles[scope][role], "update", model) ? success : error).toHaveBeenCalled();
-  //                       });
-  //                     });
-  //                   });
-  //                 }
-  //               });
-  //             });
-  //           });
-  //         });
-
-  //         describe("delete", function() {
-  //           delete_models.forEach(function(model) {
-  //             it((role_can(roles[scope][role], "delete", model) ? "can" : "can't") + " delete " + model, function() {
-  //               runs(function() {
-  //                 if (CMS.Models[model]) {
-  //                   var instance;
-
-  //                   // Create as an admin first
-  //                   waitsFor(set_permissions("Admin"));
-  //                   runs(function() {
-  //                     var def = new $.Deferred();
-  //                     waitsFor(make_model(model, def));
-  //                     runs(function() {
-  //                       def.done(function(inst) {
-  //                         instance = inst;
-  //                         reset();
-  //                         instance.save(success, error);
-  //                         waitsFor(success_or_error);
-  //                         runs(function() {
-  //                           expect(success).toHaveBeenCalled();
-  //                         });
-  //                       })
-  //                     });
-  //                   });
-
-  //                   // Try to delete
-  //                   runs(function() {
-  //                     waitsFor(set_permissions(role));
-  //                     runs(function() {
-  //                       reset();
-  //                       instance.destroy(success, error);
-  //                       waitsFor(success_or_error);
-  //                       runs(function() {
-  //                         expect(role_can(roles[scope][role], "delete", model) ? success : error).toHaveBeenCalled();
-  //                       });
-  //                     });
-  //                   });
-  //                 }
-  //               });
-  //             });
-  //           });
-  //         });
-  //       });
-  //     }(role);
-  //   }
-  // });
   
   describe("Private Program roles", function() {
     var scope = "PrivateProgram";
