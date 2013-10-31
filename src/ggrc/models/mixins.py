@@ -86,6 +86,10 @@ class ChangeTracked(object):
     return deferred(db.Column(db.Integer), cls.__name__)
 
   @declared_attr
+  def modified_by_id(cls):
+    return deferred(db.Column(db.Integer), cls.__name__)
+
+  @declared_attr
   def created_at(cls):
     return deferred(db.Column(
       db.DateTime,
@@ -111,6 +115,7 @@ class ChangeTracked(object):
 
   # REST properties
   _publish_attrs = [
+      'created_by',
       'modified_by',
       'created_at',
       'updated_at',
