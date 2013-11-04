@@ -203,7 +203,20 @@ class ModelView(View):
         if j_contexts is not None:
           query = query.filter(
               context_query_filter(j_class.context_id, j_contexts))
-    query = query.order_by(self.modified_attr.desc())
+    if '__search' in request.args:
+      terms = request.args['__search']
+      type_ = self.model.__name__
+      indexer = get_indexer()
+      search_query = indexer._get_type_query([type_], 'read', None)
+      search_query = and_(search_query, indexer._get_filter_query(terms))
+      search_subquery =\
+          db.session.query(indexer.record_type.key, indexer.record_type.type)\
+          .filter(search_query).distinct().subquery()
+      query = query.join(
+          search_subquery,
+          and_(
+            search_subquery.c.type == type_,
+            search_subquery.c.key == self.model.id))
     order_properties = []
     if '__sort' in request.args:
       sort_attrs = request.args['__sort'].split(",")
