@@ -24,7 +24,7 @@ from ggrc.models.event import Event
 from ggrc.models.revision import Revision
 from ggrc.models.exceptions import ValidationError, translate_message
 from ggrc.rbac import permissions, context_query_filter
-from sqlalchemy import or_
+from sqlalchemy import and_
 from sqlalchemy.exc import IntegrityError
 import sqlalchemy.orm.exc
 from werkzeug.exceptions import BadRequest, Forbidden
@@ -105,6 +105,49 @@ def log_event(session, obj=None, current_user_id=None):
     event.revisions = revisions
     session.add(event)
 
+
+from sqlalchemy import Table, Column, Integer, String, literal
+
+collection_get_temporary_table = Table(
+  'temp_products11',
+  db.metadata,
+  Column('id', Integer, primary_key=True),
+  Column('type', String(length=255)),
+  prefixes=["TEMPORARY"])
+
+from sqlalchemy.sql.expression import UpdateBase
+class CreateTemporaryTableFromSelect(UpdateBase):
+  def __init__(self, table, select):
+    self.table = table
+    self.select = select
+
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.schema import CreateTable, DropTable
+@compiles(CreateTemporaryTableFromSelect)
+def visit_create_temporary_table_from_select(element, compiler, **kw):
+  return "{} ({})".format(
+      CreateTable(element.table),
+      compiler.process(element.select))
+
+def get_query_for_temporary_table(model):
+  return db.session.query(
+      model.id.label('id'),
+      literal(model.__name__).label('type'))
+
+def prepare_collection_get_temporary_table(query):
+  db.session.execute(
+      CreateTemporaryTableFromSelect(
+        collection_get_temporary_table, query.statement))
+
+def teardown_collection_get_temporary_table():
+  db.session.execute(DropTable(collection_get_temporary_table))
+
+def get_query_for_results(query, model):
+  return query.join(
+      collection_get_temporary_table,
+      model.id == collection_get_temporary_table.c.id)
+
+
 class ModelView(View):
   DEFAULT_PAGE_SIZE = 20
   MAX_PAGE_SIZE = 100
@@ -138,11 +181,8 @@ class ModelView(View):
 
   # Default model/DB helpers
   def get_collection(self, filter_by_contexts=True):
-    if '__stubs_only' not in request.args and \
-        hasattr(self.model, 'eager_query'):
-      query = self.model.eager_query()
-    else:
-      query = db.session.query(self.model)
+    # `query` is used to populate the temporary table
+    query = get_query_for_temporary_table(self.model)
     joinlist = []
     if request.args:
       querybuilder = AttributeQueryBuilder(self.model)
@@ -190,7 +230,18 @@ class ModelView(View):
         query = query.limit(limit)
       except (TypeError, ValueError):
         pass
-    return query
+    prepare_collection_get_temporary_table(query)
+
+    # `real_query` returns the full results for building the returned resource,
+    #   based on the contents of the temporary table
+    if '__stubs_only' not in request.args and \
+        hasattr(self.model, 'eager_query'):
+      real_query = self.model.eager_query()
+    else:
+      real_query = db.session.query(self.model)
+    real_query = get_query_for_results(real_query, self.model)
+    real_query = real_query.order_by(*order_properties)
+    return real_query
 
   def get_object(self, id):
     # This could also use `self.pk`
@@ -198,9 +249,12 @@ class ModelView(View):
     #   'contains_eager()' to the core query, because 'LIMIT 1' breaks up
     #   that JOIN result (e.g. Categorizable)
     try:
-      return self.get_collection(filter_by_contexts=False)\
+      result = self.get_collection(filter_by_contexts=False)\
           .filter(self.model.id == id).one()
+      teardown_collection_get_temporary_table()
+      return result
     except sqlalchemy.orm.exc.NoResultFound:
+      teardown_collection_get_temporary_table()
       return None
 
   def not_found_message(self):
@@ -452,6 +506,7 @@ class Resource(ModelView):
 
     objs = self.get_collection()
     collection = self.collection_for_json(objs)
+    teardown_collection_get_temporary_table()
     if 'If-None-Match' in self.request.headers and \
         self.request.headers['If-None-Match'] == self.etag(collection):
       return current_app.make_response((
