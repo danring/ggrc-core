@@ -115,7 +115,6 @@ class ChangeTracked(object):
 
   # REST properties
   _publish_attrs = [
-      'created_by',
       'modified_by',
       'created_at',
       'updated_at',
