@@ -6,6 +6,7 @@
 import datetime
 from flask import session, Blueprint
 import sqlalchemy.orm
+from sqlalchemy import and_, or_
 from ggrc import db, settings
 from ggrc.login import get_current_user, login_required
 from ggrc.models.audit import Audit
@@ -165,20 +166,32 @@ def load_permissions_for(user):
         .all()
     roles_contexts = {}
     for user_role in user_roles:
-      roles_contexts[user_role.role.id] = user_role.context_id
+      roles_contexts.setdefault(user_role.role_id, set())
+      roles_contexts[user_role.role_id].add(user_role.context_id)
       if isinstance(user_role.role.permissions, dict):
         collect_permissions(
             user_role.role.permissions, user_role.context_id, permissions)
-    for role_id, context_id in roles_contexts.items():
-      implications = db.session.query(RoleImplication)\
-          .filter(
-              RoleImplication.source_role_id == role_id and \
-              RoleImplicaiton.source_context_id == context_id)\
+
+    # Collate roles/contexts to eager load all required implications
+    implications_queries = []
+    for role_id, context_ids in roles_contexts.items():
+      implications_queries.append(and_(
+        RoleImplication.source_role_id == role_id,
+        RoleImplication.source_context_id.in_(context_ids)))
+    if len(implications_queries) > 0:
+      implications = RoleImplication.query\
+          .filter(or_(*implications_queries))\
+          .options(
+              sqlalchemy.orm.undefer_group('Role_complete'),
+              sqlalchemy.orm.joinedload('role'))\
           .all()
-      for implication in implications:
-        if isinstance(implication.role.permissions, dict):
-          collect_permissions(
-              implication.role.permissions, implication.context_id, permissions)
+    else:
+      implications = []
+
+    for implication in implications:
+      if isinstance(implication.role.permissions, dict):
+        collect_permissions(
+            implication.role.permissions, implication.context_id, permissions)
 
     #grab personal context
     personal_context = db.session.query(Context).filter(

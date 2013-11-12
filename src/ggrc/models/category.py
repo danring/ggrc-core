@@ -8,7 +8,6 @@ from ggrc import db
 from sqlalchemy.ext.associationproxy import association_proxy
 from .categorization import Categorization
 from .mixins import deferred, Base, Hierarchical
-from .object_owner import Ownable
 
 class CategorizedPublishable(object):
   def __init__(self, attr_name, type_name):
@@ -23,7 +22,7 @@ class CategorizedPublishable(object):
   def __call__(self, updater, obj, json_obj):
     return updater.query_for(self.rel_class, json_obj, self.attr_name, True)
 
-class Category(Hierarchical, Ownable, Base, db.Model):
+class Category(Hierarchical, Base, db.Model):
   __tablename__ = 'categories'
 
   name = deferred(db.Column(db.String), 'Category')

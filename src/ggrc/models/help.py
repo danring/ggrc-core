@@ -5,9 +5,8 @@
 
 from ggrc import db
 from .mixins import deferred, Slugged
-from .object_owner import Ownable
 
-class Help(Ownable, Slugged, db.Model):
+class Help(Slugged, db.Model):
   __tablename__ = 'helps'
 
   content = deferred(db.Column(db.Text), 'Help')

@@ -43,16 +43,13 @@ Feature: Some object types can have an owner as recorded in an ObjectOwner
 
     Examples:
       | type       |
-      | Category   |
       | Contract   |
       | Control    |
       | DataAsset  |
       | Document   |
       | Facility   |
-      | Help       |
       | Market     |
       | Objective  |
-      | Option     |
       | OrgGroup   |
       | Policy     |
       | Process    |

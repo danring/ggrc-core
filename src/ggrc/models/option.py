@@ -5,9 +5,8 @@
 
 from ggrc import db
 from .mixins import deferred, Base, Described
-from .object_owner import Ownable
 
-class Option(Base, Described, Ownable, db.Model):
+class Option(Base, Described, db.Model):
   __tablename__ = 'options'
 
   role = db.Column(db.String)
