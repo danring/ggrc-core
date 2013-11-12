@@ -37,8 +37,6 @@ class Program(
       'program_directives', 'directive', 'ProgramDirective')
   audits = db.relationship(
      'Audit', backref='program', cascade='all, delete-orphan')
-  scope = deferred(db.Column(db.Text), 'Program')
-  organization = deferred(db.Column(db.String), 'Program')
 
   _publish_attrs = [
       'kind',
@@ -47,8 +45,6 @@ class Program(
       'program_directives',
       'directives',
       'audits',
-      'scope',
-      'organization',
       ]
 
   _include_links = [
