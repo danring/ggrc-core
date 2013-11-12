@@ -244,53 +244,6 @@ ul.new-tree {
     }
   }
   
-  &.text-color {
-    li.tree-item {
-      &.rq-draft {
-        background: $white;
-        .tree-title-area {
-          color: $rqDraft;
-        }
-      }
-      &.rq-requested {
-        background: $white;
-        .tree-title-area {
-          color: $rqStarted;
-        }
-      }
-      &.rq-responded {
-        background: $white;
-        .tree-title-area {
-          color: $rqStarted;
-        }
-      }
-      &.rq-amended-request {
-        background: $white;
-        .tree-title-area {
-          color: $rqStarted;
-        }
-      }
-      &.rq-updated-response {
-        background: $white;
-        .tree-title-area {
-          color: $rqStarted;
-        }
-      }
-      &.rq-accepted {
-        background: $white;
-        .tree-title-area {
-          color: $rqAccepted;
-        }
-      }
-      &.rq-warning {
-        background: $white;
-        .tree-title-area {
-          color: $orange;
-        }
-      }
-    }
-  }
-  
   li.tree-item {
     border-bottom:1px solid #ccc;
     line-height:31px;
@@ -384,27 +337,6 @@ ul.new-tree {
         color:$programs;
       }
     }
-    &.rq-draft {
-      background: $rqDraft;
-    }
-    &.rq-requested {
-      background: $rqStarted;
-    }
-    &.rq-responded {
-      background: $rqStarted;
-    }
-    &.rq-amended-request {
-      background: $rqStarted;
-    }
-    &.rq-updated-response {
-      background: $rqStarted;
-    }
-    &.rq-accepted {
-      background: $rqAccepted;
-    }
-    &.rq-warning {
-      background: $orange;
-    }
     .small {
       font-size:$f-small;
       display: inline-block;
@@ -462,6 +394,115 @@ ul.new-tree {
         .request-status {
           font-size: 11px;
           font-style: italic;
+        }
+      }
+    }
+  }
+  &.rq-colors {
+    li.tree-item {
+      padding: 1px 1px 0px 1px;
+      background: $white;
+      border-bottom: none !important;
+      &:last-child {
+        padding-bottom: 1px;
+        border-bottom: 1px solid #ccc !important;
+      }
+      &.rq-draft {
+        .item-main {
+          .row-fluid {
+            background: $rqDraft;
+            border-bottom: 1px solid #d8d8d8;
+            .tree-title-area {
+              color: $text;
+            }
+            .row-fluid {
+              border-bottom: none;
+            }
+          }
+        }
+      }
+      &.rq-requested {
+        .item-main {
+          .row-fluid {
+            background: $rqStarted;
+            border-bottom: 1px solid #efbb70;
+            .tree-title-area {
+              color: $darkText;
+            }
+            .row-fluid {
+              border-bottom: none;
+            }
+          }
+        }
+      }
+      &.rq-responded {
+        .item-main {
+          .row-fluid {
+            background: $rqStarted;
+            border-bottom: 1px solid #efbb70;
+            .tree-title-area {
+              color: $darkText;
+            }
+            .row-fluid {
+              border-bottom: none;
+            }
+          }
+        }
+      }
+      &.rq-amended-request {
+        .item-main {
+          .row-fluid {
+            background: $rqStarted;
+            border-bottom: 1px solid #efbb70;
+            .tree-title-area {
+              color: $darkText;
+            }
+            .row-fluid {
+              border-bottom: none;
+            }
+          }
+        }
+      }
+      &.rq-updated-response {
+        .item-main {
+          .row-fluid {
+            background: $rqStarted;
+            border-bottom: 1px solid #efbb70;
+            .tree-title-area {
+              color: $darkText;
+            }
+            .row-fluid {
+              border-bottom: none;
+            }
+          }
+        }
+      }
+      &.rq-accepted {
+        .item-main {
+          .row-fluid {
+            background: $rqAccepted;
+            border-bottom: 1px solid #a8de84;
+            .tree-title-area {
+              color: #3e7b39;
+            }
+            .row-fluid {
+              border-bottom: none;
+            }
+          }
+        }
+      }
+      &.rq-warning {
+        .item-main {
+          .row-fluid {
+            background: $rqWarning;
+            border-bottom: 1px solid #f1977a;
+            .tree-title-area {
+              color: #c73535;
+            }
+            .row-fluid {
+              border-bottom: none;
+            }
+          }
         }
       }
     }
