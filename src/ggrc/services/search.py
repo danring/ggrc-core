@@ -29,15 +29,15 @@ def search():
   if len(types) == 0:
     types = None
 
-  owner_id = request.args.get('owner_id')
+  contact_id = request.args.get('contact_id')
 
   if should_just_count:
-    return do_counts(terms, types, owner_id)
+    return do_counts(terms, types, contact_id)
   if should_group_by_type:
-    return group_by_type_search(terms, types, owner_id)
-  return basic_search(terms, types, permission_type, permission_model, owner_id)
+    return group_by_type_search(terms, types, contact_id)
+  return basic_search(terms, types, permission_type, permission_model, contact_id)
 
-def do_counts(terms, types=None, owner_id=None):
+def do_counts(terms, types=None, contact_id=None):
   from ggrc.rbac import permissions
 
   # Remove types that the user can't read
