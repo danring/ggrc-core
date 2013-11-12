@@ -80,8 +80,8 @@ class MysqlIndexer(SqlIndexer):
       return MysqlRecordProperty.content.match(terms)
 
   # filters by "myview" for a given person
-  def _get_owner_query(self, types=None, owner_id=None):
-    if not owner_id:
+  def _get_owner_query(self, types=None, contact_id=None):
+    if not contact_id:
       return True
 
     model_names = [model.__name__ for model in all_models]
@@ -100,18 +100,18 @@ class MysqlIndexer(SqlIndexer):
             MysqlRecordProperty.context_id.in_(
               db.session.query(UserRole.context_id).filter(
                 and_(
-                  UserRole.person_id == owner_id, 
+                  UserRole.person_id == contact_id,
                   UserRole.context_id != None
                 )
               ).distinct()
             ),
             MysqlRecordProperty.key.in_(
-              db.session.query(model.id).filter(model.owner_id == owner_id)
+              db.session.query(model.id).filter(model.contact_id == contact_id)
             ),
             MysqlRecordProperty.key.in_(
               db.session.query(ObjectPerson.personable_id).filter(
                 and_(
-                  ObjectPerson.person_id == owner_id, 
+                  ObjectPerson.person_id == contact_id,
                   ObjectPerson.personable_type == model_name
                 )
               )
@@ -121,10 +121,10 @@ class MysqlIndexer(SqlIndexer):
               MysqlRecordProperty.key.in_(
                 db.session.query(Request.audit_id).filter(
                   or_(
-                    Request.assignee_id == owner_id, 
+                    Request.assignee_id == contact_id,
                     Request.id.in_(
                       db.session.query(Response.request_id).filter(
-                        Response.owner_id == owner_id
+                        Response.contact_id == contact_id
                       ).distinct()
                     )
                   )
@@ -140,20 +140,20 @@ class MysqlIndexer(SqlIndexer):
         or_(*owner_queries))
 
   def search(
-      self, terms, types=None, permission_type='read', permission_model=None, owner_id=None):
+      self, terms, types=None, permission_type='read', permission_model=None, contact_id=None):
     query = self._get_type_query(types, permission_type, permission_model)
     query = and_(query, self._get_filter_query(terms))
-    query = and_(query, self._get_owner_query(types, owner_id))
+    query = and_(query, self._get_owner_query(types, contact_id))
     return db.session.query(self.record_type).filter(query)
 
-  def counts(self, terms, group_by_type=True, types=None, owner_id=None):
+  def counts(self, terms, group_by_type=True, types=None, contact_id=None):
     from sqlalchemy import func, distinct
 
     query = db.session.query(
         self.record_type.type, func.count(distinct(self.record_type.key)))
     query = query.filter(self._get_type_query(types))
     query = query.filter(self._get_filter_query(terms))
-    query = query.filter(self._get_owner_query(types, owner_id))
+    query = query.filter(self._get_owner_query(types, contact_id))
     query = query.group_by(self.record_type.type)
     # FIXME: Is this needed for correct group_by/count-distinct behavior?
     #query = query.order_by(self.record_type.type, self.record_type.key)

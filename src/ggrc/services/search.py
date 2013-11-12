@@ -47,7 +47,7 @@ def do_counts(terms, types=None, owner_id=None):
   
   indexer = get_indexer()
   with benchmark("Counts"):
-    results = indexer.counts(terms, types=types, owner_id=owner_id)
+    results = indexer.counts(terms, types=types, contact_id=contact_id)
 
   return current_app.make_response((
     json.dumps({ 'results': {
@@ -61,12 +61,12 @@ def do_counts(terms, types=None, owner_id=None):
 
 def do_search(
     terms, list_for_type, types=None, permission_type='read',
-    permission_model=None, owner_id=None):
+    permission_model=None, contact_id=None):
   indexer = get_indexer()
   with benchmark("Search"):
     results = indexer.search(
         terms, types=types, permission_type=permission_type,
-        permission_model=permission_model, owner_id=owner_id)
+        permission_model=permission_model, contact_id=contact_id)
   seen_results = {}
 
   for result in results:
@@ -94,15 +94,15 @@ def make_search_result(entries):
     ))
 
 def basic_search(
-    terms, types=None, permission_type='read', permission_model=None, owner_id=None):
+    terms, types=None, permission_type='read', permission_model=None, contact_id=None):
   entries = []
   list_for_type = lambda t: entries
-  do_search(terms, list_for_type, types, permission_type, permission_model, owner_id)
+  do_search(terms, list_for_type, types, permission_type, permission_model, contact_id)
   return make_search_result(entries)
 
-def group_by_type_search(terms, types=None, owner_id=None):
+def group_by_type_search(terms, types=None, contact_id=None):
   entries = {}
   list_for_type = \
       lambda t: entries[t] if t in entries else entries.setdefault(t, [])
-  do_search(terms, list_for_type, types, owner_id=owner_id)
+  do_search(terms, list_for_type, types, contact_id=contact_id)
   return make_search_result(entries)
