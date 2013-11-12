@@ -63,7 +63,6 @@ class SystemOrProcess(
       'type',
       'version',
       'network_zone',
-      'owner',
       ]
   _update_attrs = [
       'infrastructure',
@@ -71,7 +70,6 @@ class SystemOrProcess(
       'type',
       'version',
       'network_zone',
-      'owner',
       ]
   _sanitize_html = [
       'version',
