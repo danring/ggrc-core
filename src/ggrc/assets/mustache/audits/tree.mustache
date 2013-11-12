@@ -29,9 +29,9 @@
         {{#if_equals page_object.constructor.shortName 'Person'}}
         <div class="span1">
           <div class="counter">
-            {{^instance.owner}}
+            {{^instance.contact}}
               <i class="grcicon-people-warning"></i>
-            {{/instance.owner}}
+            {{/instance.contact}}
           </div>
         </div>
         <div class="span1">
@@ -48,9 +48,9 @@
         <div class="span1"></div>
         <div class="span1">
           <div class="counter">
-            {{^instance.owner}}
+            {{^instance.contact}}
               <i class="grcicon-people-warning"></i>
-            {{/instance.owner}}
+            {{/instance.contact}}
           </div>
         </div>
         {{/if_equals}}
@@ -155,9 +155,9 @@
               </li>
               <li>
                 <strong>Audit Lead: </strong>
-                {{#if instance.owner}}
-                  {{#using owner=instance.owner}}
-                  {{owner.name}}
+                {{#if instance.contact}}
+                  {{#using contact=instance.contact}}
+                  {{contact.name}}
                   {{/using}}
                 {{else}}
                   None

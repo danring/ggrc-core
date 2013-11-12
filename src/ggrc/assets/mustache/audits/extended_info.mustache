@@ -64,9 +64,9 @@
         {{{firstnonempty instance.audit_firm 'None'}}}
         <br>
         <strong>Audit Lead: </strong>
-        {{#if instance.owner}}
-          {{#using owner=instance.owner}}
-          {{owner.name}}
+        {{#if instance.contact}}
+          {{#using contact=instance.contact}}
+          {{contact.name}}
           {{/using}}
         {{else}}
           None

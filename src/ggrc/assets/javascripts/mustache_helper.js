@@ -1563,8 +1563,8 @@ Mustache.registerHelper("infer_roles", function(instance, options) {
     });
 
     // Check for owner
-    if (instance.owner && instance.owner.id === person.id) {
-      state.attr('roles').push('Owner/POC');
+    if (instance.contact && instance.contact.id === person.id) {
+      state.attr('roles').push('Contact');
     }
 
     // Check for people

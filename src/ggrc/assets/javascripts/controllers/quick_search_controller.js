@@ -144,7 +144,7 @@ CMS.Controllers.Filterable("CMS.Controllers.QuickSearch", {
   }
 
   , "{observer} my_work" : function(el, ev, newval) {
-    this.filter(null, newval ? { "owner_id": GGRC.current_user.id } : null);
+    this.filter(null, newval ? { "contact_id": GGRC.current_user.id } : null);
     this.element.trigger('kill-all-popovers');
   }
 
@@ -215,7 +215,7 @@ can.Control("CMS.Controllers.LHN_Search", {
 
       this.init_object_lists();
       this.init_list_views();
-      this.run_search("", this.options.observer.my_work ? { "owner_id": GGRC.current_user.id } : null);
+      this.run_search("", this.options.observer.my_work ? { "contact_id": GGRC.current_user.id } : null);
 
       can.Model.Cacheable.bind("created", function(ev, instance) {
         var visible_model_names =
@@ -293,7 +293,7 @@ can.Control("CMS.Controllers.LHN_Search", {
     }
 
   , "{observer} my_work" : function(el, ev, newval) {
-    this.run_search(this.current_term, newval ? { "owner_id": GGRC.current_user.id } : null);
+    this.run_search(this.current_term, newval ? { "contact_id": GGRC.current_user.id } : null);
   }
 
   , show_more: function($el) {

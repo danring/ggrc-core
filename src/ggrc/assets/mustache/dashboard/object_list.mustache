@@ -28,9 +28,9 @@
           </div>
           <div class="span1">
             <div class="counter">
-              {{^owner}}
+              {{^contact}}
                 <i class="grcicon-people-warning"></i>
-              {{/owner}}
+              {{/contact}}
             </div>
           </div>
         </div>
@@ -65,15 +65,15 @@
         <div class="row-fluid">
           <div class="span6">
             <div class="tree-info">
-              <strong>Owner:</strong>
-              {{^owner}}
+              <strong>Contact:</strong>
+              {{^contact}}
                 <span class="error">
                   Not Assigned
                 </span>
-              {{/owner}}
-              {{#if owner}}
-                {{#using owner=owner}}
-                {{owner.name}}
+              {{/contact}}
+              {{#if contact}}
+                {{#using contact=contact}}
+                {{contact.name}}
                 {{/using}}
               {{/if}}
             </div>

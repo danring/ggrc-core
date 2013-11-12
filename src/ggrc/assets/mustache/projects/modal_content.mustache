@@ -29,12 +29,12 @@
       </div>
     </div>
     <div class="span6">
-      {{#using owner=instance.owner}}
+      {{#using contact=instance.contact}}
       <label>
-        Owner/Person of Contact
+        Contact
         <i class="grcicon-help-black" rel="tooltip" title="This is the person in charge of this {{model.model_singular}}."></i>
       </label>
-      <input tabindex="3" class="input-block-level" name="owner.email" data-lookup="Person" placeholder="Enter email address" type="text" value="{{firstexist owner.email ''}}" />
+      <input tabindex="3" class="input-block-level" name="contact.email" data-lookup="Person" placeholder="Enter email address" type="text" value="{{firstexist contact.email ''}}" />
       {{/using}}
       <label>
         Project URL

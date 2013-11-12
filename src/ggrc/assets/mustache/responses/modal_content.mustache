@@ -29,7 +29,7 @@
       </div>
       
       <div class="row-fluid">
-        {{#using owner=instance.owner}}
+        {{#using contact=instance.contact}}
         {{#with_current_user_as 'current_user'}}
         <div class="span12">
           <label>
@@ -38,8 +38,8 @@
           </label>
           <i class="grcicon-person-green pull-left icon-field"></i>
           <div class="objective-selector">
-            <input tabindex="3" type="text" name="owner.email" class="input-wide" data-lookup="Person" value="{{firstnonempty owner.email current_user.email ''}}">
-            <input type="hidden" name="owner.id" value="{{firstnonempty owner.id current_user.id ''}}">
+            <input tabindex="3" type="text" name="contact.email" class="input-wide" data-lookup="Person" value="{{firstnonempty contact.email current_user.email ''}}">
+            <input type="hidden" name="contact.id" value="{{firstnonempty contact.id current_user.id ''}}">
           </div>
         </div>
         {{/with_current_user_as}}

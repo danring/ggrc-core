@@ -19,7 +19,7 @@ can.Model.Cacheable("CMS.Models.Program", {
   , update : "PUT /api/programs/{id}"
   , destroy : "DELETE /api/programs/{id}"
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
@@ -92,7 +92,7 @@ can.Model.Cacheable("CMS.Models.Directive", {
     }
 
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
@@ -155,7 +155,7 @@ CMS.Models.Directive("CMS.Models.Regulation", {
       list_view : GGRC.mustache_path + "/directives/tree.mustache"
     }
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
@@ -197,7 +197,7 @@ CMS.Models.Directive("CMS.Models.Policy", {
       list_view : GGRC.mustache_path + "/directives/tree.mustache"
     }
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
@@ -239,7 +239,7 @@ CMS.Models.Directive("CMS.Models.Contract", {
       list_view : GGRC.mustache_path + "/directives/tree.mustache"
     }
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
@@ -270,7 +270,7 @@ can.Model.Cacheable("CMS.Models.OrgGroup", {
   , update : "PUT /api/org_groups/{id}"
   , destroy : "DELETE /api/org_groups/{id}"
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
@@ -351,7 +351,7 @@ can.Model.Cacheable("CMS.Models.Project", {
   , update : "PUT /api/projects/{id}"
   , destroy : "DELETE /api/projects/{id}"
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
@@ -416,7 +416,7 @@ can.Model.Cacheable("CMS.Models.Facility", {
   , update : "PUT /api/facilities/{id}"
   , destroy : "DELETE /api/facilities/{id}"
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
@@ -497,7 +497,7 @@ can.Model.Cacheable("CMS.Models.Product", {
   , update : "PUT /api/products/{id}"
   , destroy : "DELETE /api/products/{id}"
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
@@ -601,7 +601,7 @@ can.Model.Cacheable("CMS.Models.DataAsset", {
   , update : "PUT /api/data_assets/{id}"
   , destroy : "DELETE /api/data_assets/{id}"
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
@@ -682,7 +682,7 @@ can.Model.Cacheable("CMS.Models.Market", {
   , update : "PUT /api/markets/{id}"
   , destroy : "DELETE /api/markets/{id}"
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
@@ -797,7 +797,7 @@ can.Model.Cacheable("CMS.Models.Risk", {
     });
   }
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
@@ -865,7 +865,7 @@ can.Model.Cacheable("CMS.Models.Objective", {
       "Section" : "SectionObjective"
   }
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , section_objectives : "CMS.Models.SectionObjective.stubs"
@@ -981,11 +981,11 @@ can.Model.Cacheable("CMS.Models.Audit", {
     , report_end_date : "date"
     , object_people : "CMS.Models.ObjectPerson.stubs"
     , people : "CMS.Models.Person.stubs"
-    , owner : "CMS.Models.Person.stub"
+    , contact : "CMS.Models.Person.stub"
   }
   , defaults : {
     status : "Draft"
-    , owner: {id : null}//gets replaced in init()
+    , contact: {id : null}//gets replaced in init()
   }
   , tree_view_options : {
     draw_children : true
@@ -1012,7 +1012,7 @@ can.Model.Cacheable("CMS.Models.Audit", {
     this._super && this._super.apply(this, arguments);
     $(function() {
       if (GGRC.current_user) {
-        CMS.Models.Audit.defaults.owner = CMS.Models.Person.model(GGRC.current_user).stub();
+        CMS.Models.Audit.defaults.contact = CMS.Models.Person.model(GGRC.current_user).stub();
       }
     });
     this.validatePresenceOf("program");
@@ -1074,7 +1074,7 @@ can.Model.Cacheable("CMS.Models.Request", {
     this._super && this._super.apply(this, arguments);
     function setAssigneeFromAudit() {
       if(!this.selfLink && !this.assignee && this.audit) {
-        this.attr("assignee", this.audit.reify().owner || {id : null});
+        this.attr("assignee", this.audit.reify().contact || {id : null});
       }
     }
     setAssigneeFromAudit.call(this);

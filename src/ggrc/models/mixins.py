@@ -281,13 +281,15 @@ event.listen(Session, 'before_flush', Slugged.ensure_slug_before_flush)
 event.listen(
   Session, 'after_flush_postexec', Slugged.ensure_slug_after_flush_postexec)
 
-class BusinessObject(Slugged, Described, Hyperlinked):
+
+class BusinessObject(Slugged, Noted, Described, Hyperlinked):
   @declared_attr
-  def owner_id(cls):
+  def contact_id(cls):
     return deferred(
         db.Column(db.Integer, db.ForeignKey('people.id')), cls.__name__)
+
   @declared_attr
-  def owner(cls):
+  def contact(cls):
     return db.relationship('Person', uselist=False)
 
-  _publish_attrs = ['owner']
+  _publish_attrs = ['contact']

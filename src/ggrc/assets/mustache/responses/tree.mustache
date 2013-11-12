@@ -13,8 +13,8 @@
           <div class="span3" {{ (el) -> el.ggrc_controllers_quick_form({ instance : el.closest('[data-model]').data('model')}); }}>
             <i class="grcicon-person-green pull-left"></i>
             <div class="objective-selector">
-              {{#using owner=instance.owner}}
-                <input type="text" name="owner.name" data-lookup="Person" class="span8 short-field" value="{{firstnonempty instance.owner.name instance.owner.email ''}}" {{^is_allowed 'update' instance context=instance.context.id}}disabled readonly{{/is_allowed}}>
+              {{#using contact=instance.contact}}
+                <input type="text" name="contact.name" data-lookup="Person" class="span8 short-field" value="{{firstnonempty instance.contact.name instance.contact.email ''}}" {{^is_allowed 'update' instance context=instance.context.id}}disabled readonly{{/is_allowed}}>
               {{/using}}
             </div>
           </div>

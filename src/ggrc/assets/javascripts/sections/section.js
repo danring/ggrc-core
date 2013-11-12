@@ -26,7 +26,7 @@ can.Model.Cacheable("CMS.Models.Section", {
   , update : "PUT /api/sections/{id}"
   , destroy : "DELETE /api/sections/{id}"
   , attributes : {
-      owner : "CMS.Models.Person.stub"
+      contact : "CMS.Models.Person.stub"
     , owners : "CMS.Models.Person.stubs"
     , modified_by : "CMS.Models.Person.stub"
     , object_people : "CMS.Models.ObjectPerson.stubs"
