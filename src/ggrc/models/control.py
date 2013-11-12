@@ -49,7 +49,6 @@ class Control(
   fraud_related = deferred(db.Column(db.Boolean), 'Control')
   key_control = deferred(db.Column(db.Boolean), 'Control')
   active = deferred(db.Column(db.Boolean), 'Control')
-  notes = deferred(db.Column(db.Text), 'Control')
 
   type = db.relationship(
       'Option',
@@ -124,7 +123,6 @@ class Control(
       'key_control',
       'kind',
       'means',
-      'notes',
       'risks',
       'sections',
       'objectives',
@@ -145,7 +143,6 @@ class Control(
   _sanitize_html = [
       'documentation_description',
       'version',
-      'notes',
       ]
 
   _include_links = [

@@ -133,6 +133,18 @@ class Described(object):
   _fulltext_attrs = ['description']
   _sanitize_html = ['description']
 
+
+class Noted(object):
+  @declared_attr
+  def notes(cls):
+    return deferred(db.Column(db.Text), cls.__name__)
+
+  # REST properties
+  _publish_attrs = ['notes']
+  _fulltext_attrs = ['notes']
+  _sanitize_html = ['notes']
+
+
 class Hyperlinked(object):
   @declared_attr
   def url(cls):

@@ -17,8 +17,6 @@ class Objective(
     db.Model):
   __tablename__ = 'objectives'
 
-  notes = deferred(db.Column(db.Text), 'Objective')
-
   section_objectives = db.relationship(
       'SectionObjective', backref='objective', cascade='all, delete-orphan')
   sections = association_proxy(
@@ -33,17 +31,12 @@ class Objective(
      'Request', backref='objective', cascade='all, delete-orphan')
 
   _publish_attrs = [
-      'notes',
       PublishOnly('section_objectives'),
       'sections',
       PublishOnly('objective_controls'),
       'controls',
       #'object_objectives',
       'objective_objects',
-      ]
-
-  _sanitize_html = [
-      'notes',
       ]
 
   _include_links = [

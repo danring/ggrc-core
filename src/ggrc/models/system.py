@@ -37,7 +37,6 @@ class SystemOrProcess(
   # TODO: handle option
   type_id = deferred(db.Column(db.Integer), 'SystemOrProcess')
   version = deferred(db.Column(db.String), 'SystemOrProcess')
-  notes = deferred(db.Column(db.Text), 'SystemOrProcess')
   # TODO: handle option
   network_zone_id = deferred(db.Column(db.Integer), 'SystemOrProcess')
   type = db.relationship(
@@ -63,7 +62,6 @@ class SystemOrProcess(
       'is_biz_process',
       'type',
       'version',
-      'notes',
       'network_zone',
       'owner',
       ]
@@ -72,12 +70,10 @@ class SystemOrProcess(
       #'is_biz_process',
       'type',
       'version',
-      'notes',
       'network_zone',
       'owner',
       ]
   _sanitize_html = [
-      'notes',
       'version',
       ]
 
