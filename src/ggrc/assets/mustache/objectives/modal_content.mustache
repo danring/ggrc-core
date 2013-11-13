@@ -57,7 +57,7 @@
           </span>
           Advanced
           <span class="hidden-fields out">
-            Code
+            Code, State
           </span>
         </a>
       </div>
@@ -71,6 +71,23 @@
           <i class="grcicon-help-black" rel="tooltip" title="The gGRC application will automatically provide codes for new objects.  If you would like to override this feature you may manually enter a code of your choosing.  You should have a specific reason for doing this."></i>
         </label>
         <input tabindex="5" class="input-block-level" name="slug" placeholder="OBJECTIVE-XXX" type="text" value="{{slug}}">
+      </div>
+      <div class="span6">
+        <label>
+          State
+          <i class="grcicon-help-black" rel="tooltip" title="Description goes here"></i>
+        </label>
+        <select class="input-block-level" name="state" null-if-empty="null-if-empty" tabindex="6">
+          <option value="" {{#if_equals state ""}}selected{{/if_equals}}>---</option>
+          <option value="0" {{#if_equals state "0"}}selected{{/if_equals}}>Draft</option>
+          <option value="1" {{#if_equals state "1"}}selected{{/if_equals}}>Final</option>
+          <option value="2" {{#if_equals state "2"}}selected{{/if_equals}}>Effective</option>
+          <option value="3" {{#if_equals state "3"}}selected{{/if_equals}}>Ineffective</option>
+          <option value="4" {{#if_equals state "4"}}selected{{/if_equals}}>Launched</option>
+          <option value="5" {{#if_equals state "5"}}selected{{/if_equals}}>Not Launched</option>
+          <option value="6" {{#if_equals state "6"}}selected{{/if_equals}}>In Scope</option>
+          <option value="7" {{#if_equals state "7"}}selected{{/if_equals}}>Not in Scope</option>
+        </select>
       </div>
     </div>
   </div>

@@ -9,10 +9,10 @@
   <div class="row-fluid">
     <div class="span3">
       <div class="deny-buttons">
-        <a tabindex="18" class="btn" data-dismiss="modal-reset" href="#">Cancel</a>
+        <a tabindex="22" class="btn" data-dismiss="modal-reset" href="#">Cancel</a>
         {{^new_object_form}}
           {{#is_allowed 'delete' instance}}
-          <a tabindex="19" class="btn btn-danger" data-toggle="modal-ajax-deleteform" data-object-plural="{{model.table_plural}}" data-object-singular="{{model.model_singular}}" data-modal-reset="reset" data-modal-class="modal" data-object-id="{{instance.id}}" href="javascript://">Delete</a>
+          <a tabindex="23" class="btn btn-danger" data-toggle="modal-ajax-deleteform" data-object-plural="{{model.table_plural}}" data-object-singular="{{model.model_singular}}" data-modal-reset="reset" data-modal-class="modal" data-object-id="{{instance.id}}" href="javascript://">Delete</a>
           {{/is_allowed}}
         {{/new_object_form}}
       </div>
@@ -22,7 +22,7 @@
     </div>
     <div class="span3">
       <div class="confirm-buttons">
-        <a tabindex="20" class="btn btn-primary preventdoubleclick {{#instance.computed_errors}}disabled{{/instance.computed_errors}}" data-toggle="modal-submit" href="javascript://">Save</a>
+        <a tabindex="24" class="btn btn-primary preventdoubleclick {{#instance.computed_errors}}disabled{{/instance.computed_errors}}" data-toggle="modal-submit" href="javascript://">Save</a>
       </div>
     </div>
   </div>

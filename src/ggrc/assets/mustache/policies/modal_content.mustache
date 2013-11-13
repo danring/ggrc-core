@@ -57,7 +57,7 @@
           </span>
           Advanced
           <span class="hidden-fields out">
-            Code, Kind/Type
+            Code, Kind/Type, Effective Date, Stop Date, State
           </span>
         </a>
       </div>
@@ -78,13 +78,46 @@
           <i class="grcicon-help-black" rel="tooltip" title="Choose from the options in the drop down list, or leave this set to None."></i>
         </label>
         <select class="input-block-level" name="kind" tabindex="6">
-          <option {{^kind}}selected="selected"{{/kind}} {{^if kind}}selected="selected"{{/if}} value="">None</option>
+          <option {{^kind}}selected="selected"{{/kind}} {{^if kind}}selected="selected"{{/if}} value="">---</option>
           <option {{#if_equals kind 'Company Policy'}}selected="selected"{{/if_equals}} value="Company Policy">Company Policy</option>
           <option {{#if_equals kind 'Org Group Policy'}}selected="selected"{{/if_equals}} value="Org Group Policy">Org Group Policy</option>
           <option {{#if_equals kind 'Data Asset Policy'}}selected="selected"{{/if_equals}} value="Data Asset Policy">Data Asset Policy</option>
           <option {{#if_equals kind 'Product Policy'}}selected="selected"{{/if_equals}} value="Product Policy">Product Policy</option>
           <option {{#if_equals kind 'Contract-Related Policy'}}selected="selected"{{/if_equals}} value="Contract-Related Policy">Contract-Related Policy</option>
           <option {{#if_equals kind 'Company Controls Policy'}}selected="selected"{{/if_equals}} value="Company Controls Policy">Company Controls Policy</option>
+        </select>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span4">
+        <label>
+          Effective Date
+          <i class="grcicon-help-black" rel="tooltip" title="Description goes here"></i>
+        </label>
+        <input tabindex="7" class="input-block-level date" name="start_date" data-toggle="datepicker" data-before="end_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date start_date}}">
+      </div>
+      <div class="span4">
+        <label>
+          Stop Date
+          <i class="grcicon-help-black" rel="tooltip" title="Description goes here"></i>
+        </label>
+        <input tabindex="8" class="input-block-level date" name="end_date" data-toggle="datepicker" data-after="start_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date end_date}}">
+      </div>
+      <div class="span4">
+        <label>
+          State
+          <i class="grcicon-help-black" rel="tooltip" title="Description goes here"></i>
+        </label>
+        <select class="input-block-level" name="state" null-if-empty="null-if-empty" tabindex="9">
+          <option value="" {{#if_equals state ""}}selected{{/if_equals}}>---</option>
+          <option value="0" {{#if_equals state "0"}}selected{{/if_equals}}>Draft</option>
+          <option value="1" {{#if_equals state "1"}}selected{{/if_equals}}>Final</option>
+          <option value="2" {{#if_equals state "2"}}selected{{/if_equals}}>Effective</option>
+          <option value="3" {{#if_equals state "3"}}selected{{/if_equals}}>Ineffective</option>
+          <option value="4" {{#if_equals state "4"}}selected{{/if_equals}}>Launched</option>
+          <option value="5" {{#if_equals state "5"}}selected{{/if_equals}}>Not Launched</option>
+          <option value="6" {{#if_equals state "6"}}selected{{/if_equals}}>In Scope</option>
+          <option value="7" {{#if_equals state "7"}}selected{{/if_equals}}>Not in Scope</option>
         </select>
       </div>
     </div>

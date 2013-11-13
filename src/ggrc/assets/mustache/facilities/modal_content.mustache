@@ -57,7 +57,7 @@
           </span>
           Advanced
           <span class="hidden-fields out">
-            Code
+            Code, Effective Date, Stop Date
           </span>
         </a>
       </div>
@@ -71,6 +71,24 @@
           <i class="grcicon-help-black" rel="tooltip" title="The gGRC application will automatically provide codes for new objects.  If you would like to override this feature you may manually enter a code of your choosing.  You should have a specific reason for doing this."></i>
         </label>
         <input tabindex="5" class="input-block-level" name="slug" placeholder="FACILITY-XXX" type="text" value="{{slug}}">
+      </div>
+      <div class="span6">
+        <div class="row-fluid">
+          <div class="span6">
+            <label>
+              Effective Date
+              <i class="grcicon-help-black" rel="tooltip" title="Description goes here"></i>
+            </label>
+            <input tabindex="6" class="input-block-level date" name="start_date" data-toggle="datepicker" data-before="end_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date start_date}}">
+          </div>
+          <div class="span6">
+            <label>
+              Stop Date
+              <i class="grcicon-help-black" rel="tooltip" title="Description goes here"></i>
+            </label>
+            <input tabindex="7" class="input-block-level date" name="end_date" data-toggle="datepicker" data-after="start_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date end_date}}">
+          </div>
+        </div>
       </div>
     </div>
   </div>
