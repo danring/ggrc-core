@@ -29,6 +29,7 @@ Feature: Some resources can be related to Person resources
       | Contract        |
       | Policy          |
       | Regulation      |
+      | Standard        |
       | Facility        |
       | Market          |
       | Objective       |

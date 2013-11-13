@@ -51,7 +51,7 @@ def upgrade():
 
 def downgrade():
   op.drop_constraint(
-      'fk_program_controls_program', 'program_controls', type='foreignkey')
+      'fk_program_controls_program', 'program_controls', type_='foreignkey')
   op.drop_constraint(
-      'fk_program_controls_control', 'program_controls', type='foreignkey')
+      'fk_program_controls_control', 'program_controls', type_='foreignkey')
   op.drop_table('program_controls')

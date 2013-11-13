@@ -4,13 +4,15 @@
 # Maintained By: vraj@reciprocitylabs.com
 
 from ggrc import db
-from .mixins import deferred, BusinessObject
+from .mixins import (
+    deferred, Noted, Described, Hyperlinked, WithContact, Slugged,
+    )
 from .relationship import Relatable
 from .object_document import Documentable
 from .object_person import Personable
 from .object_control import Controllable
 
-class Response(BusinessObject, db.Model):
+class Response(Noted, Described, Hyperlinked, WithContact, Slugged, db.Model):
   __tablename__ = 'responses'
   __mapper_args__ = {
       'polymorphic_on': 'response_type',

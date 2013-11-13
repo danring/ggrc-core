@@ -45,6 +45,7 @@ Feature: Many resources type pairs reference each other M x N relations. This
       | Contract  | programs             | Program   | directives            |
       | Policy    | programs             | Program   | directives            |
       | Regulation| programs             | Program   | directives            |
+      | Standard  | programs             | Program   | directives            |
       | Control   | objectives           | Objective | controls              |
       | Section   | objectives           | Objective | sections              |
       | Objective | controls             | Control   | objectives            |
@@ -65,3 +66,4 @@ Feature: Many resources type pairs reference each other M x N relations. This
       | Contract   | programs             | Program |
       | Policy     | programs             | Program |
       | Regulation | programs             | Program |
+      | Standard   | programs             | Program |

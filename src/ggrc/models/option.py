@@ -6,7 +6,7 @@
 from ggrc import db
 from .mixins import deferred, Base, Described
 
-class Option(Base, Described, db.Model):
+class Option(Described, Base, db.Model):
   __tablename__ = 'options'
 
   role = db.Column(db.String)

@@ -32,6 +32,7 @@ def all_collections():
       service('contracts', models.Contract),
       service('policies', models.Policy),
       service('regulations', models.Regulation),
+      service('standards', models.Standard),
     service('directive_controls', models.DirectiveControl),
     service('documents', models.Document),
     service('events', models.Event, ReadOnlyResource),

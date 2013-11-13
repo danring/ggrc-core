@@ -260,24 +260,54 @@ can.Control("CMS.Controllers.LHN_Search", {
       } else {
         // Use a cached max-height if one exists
         var holder = el.closest('.lhs-holder')
-          , maxHeight = parseInt(holder.find(this.options.list_content_selector).filter(':visible').css('maxHeight'),10)
+          , $content = $ul.filter(this.options.list_content_selector)
+          , $siblings = $ul.closest(".lhs").find(selector)
+          , extra_height = 0
+          , top
           ;
 
         // Collapse other lists
-        $ul.closest(".lhs").find(selector)
-          .slideUp().removeClass("in");
+        $siblings.slideUp().removeClass("in");
         // Expand this list
         $ul.slideDown().addClass("in");
 
+        // Compute the extra height to add to the expandable height, 
+        // based on the size of the content that is sliding away.
+        top = $content.offset().top;
+        $siblings.filter(':visible').each(function() {
+          var sibling_top = $(this).offset().top;
+          if (sibling_top <= top) {
+            extra_height += this.offsetHeight + (sibling_top < 0 ? -holder[0].scrollTop : 0);
+          }
+        });
+
         // Determine the expandable height
-        $ul.filter(this.options.list_content_selector).css('maxHeight', Math.max(160, (maxHeight || (holder[0].offsetHeight
-          - el.closest('#lhs')[0].offsetHeight
-          - $ul.filter(this.options.actions_content_selector)[0].scrollHeight
-          - 25))) + 'px');
+        this._holder_height = holder.outerHeight();
+        $content.filter(this.options.list_content_selector).css(
+            'maxHeight'
+          , Math.max(160, (this._holder_height - holder.position().top + extra_height - top - 40)) + 'px'
+        );
 
         this.on_show_list($ul);
       }
       ev.preventDefault();
+    }
+
+  , " resize": function() {
+      var $content = this.element.find(this.options.list_content_selector).filter(':visible');
+
+
+      if ($content.length) {
+        var last_height = this._holder_height
+          , holder = this.element.closest('.lhs-holder')
+          ;
+        this._holder_height = holder.outerHeight();
+
+        $content.css(
+            'maxHeight'
+          , (parseFloat($content.css('maxHeight')) + this._holder_height - last_height) + 'px'
+        );
+      }
     }
 
   , on_show_list: function(el, ev) {

@@ -14,7 +14,7 @@ from .relationship import Relatable
 
 class Program(
     Documentable, Personable, Objectiveable, Relatable,
-    BusinessObject, Timeboxed, db.Model):
+    Timeboxed, BusinessObject, db.Model):
   __tablename__ = 'programs'
 
   KINDS = [

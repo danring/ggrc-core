@@ -154,6 +154,7 @@ Feature: Private Programs
       | Contract         |
       | Policy           |
       | Regulation       |
+      | Standard         |
       | DirectiveControl |
       | Document         |
       | Facility         |

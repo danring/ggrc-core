@@ -178,25 +178,95 @@ def factory_for(model_class):
     factory = model_factory
   return factory
 
-class ProgramFactory(ModelFactory):
-  MODEL = models.Program
-  kind = FuzzyChoice(['Directive', 'Company Controls'])
 
-class ContractFactory(ModelFactory):
-  MODEL = models.Contract
-  kind = FuzzyChoice(MODEL.valid_kinds)
-
-class PolicyFactory(ModelFactory):
-  MODEL = models.Policy
-  kind = FuzzyChoice(MODEL.valid_kinds)
-
-class RegulationFactory(ModelFactory):
-  MODEL = models.Regulation
-  kind = FuzzyChoice(MODEL.valid_kinds)
 
 class PersonFactory(ModelFactory):
   MODEL = models.Person
   email = FuzzyEmail()
+
+
+# Governance Objects
+
+class ProgramFactory(ModelFactory):
+  MODEL = models.Program
+  kind = FuzzyChoice(['Directive', 'Company Controls'])
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ContractFactory(ModelFactory):
+  MODEL = models.Contract
+  kind = FuzzyChoice(MODEL.valid_kinds)
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class PolicyFactory(ModelFactory):
+  MODEL = models.Policy
+  kind = FuzzyChoice(MODEL.valid_kinds)
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class RegulationFactory(ModelFactory):
+  MODEL = models.Regulation
+  kind = FuzzyChoice(MODEL.valid_kinds)
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class StandardFactory(ModelFactory):
+  MODEL = models.Standard
+  kind = FuzzyChoice(MODEL.valid_kinds)
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ObjectiveFactory(ModelFactory):
+  MODEL = models.Objective
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ControlFactory(ModelFactory):
+  MODEL = models.Control
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+
+# Business Objects
+class DataAssetFactory(ModelFactory):
+  MODEL = models.DataAsset
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class FacilityFactory(ModelFactory):
+  MODEL = models.Facility
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class MarketFactory(ModelFactory):
+  MODEL = models.Market
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class OrgGroupFactory(ModelFactory):
+  MODEL = models.OrgGroup
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ProductFactory(ModelFactory):
+  MODEL = models.Product
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ProjectFactory(ModelFactory):
+  MODEL = models.Project
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class SystemFactory(ModelFactory):
+  MODEL = models.System
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ProcessFactory(ModelFactory):
+  MODEL = models.Process
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+
+# Risk Objects
+
+class RiskFactory(ModelFactory):
+  MODEL = models.Risk
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class RiskyAttributeFactory(ModelFactory):
+  MODEL = models.RiskyAttribute
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+
+# Audit Objects
 
 class AuditFactory(ModelFactory):
   MODEL = models.Audit
@@ -220,3 +290,69 @@ class InterviewResponseFactory(ResponseFactory):
 class PopulationSampleResponseFactory(ResponseFactory):
   response_type = 'population sample'
 
+
+# Mapping Objects
+
+class ControlControlFactory(ModelFactory):
+  MODEL = models.ControlControl
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ControlRiskFactory(ModelFactory):
+  MODEL = models.ControlRisk
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ControlSectionFactory(ModelFactory):
+  MODEL = models.ControlSection
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class DirectiveControlFactory(ModelFactory):
+  MODEL = models.DirectiveControl
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ObjectControlFactory(ModelFactory):
+  MODEL = models.ObjectControl
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ObjectDocumentFactory(ModelFactory):
+  MODEL = models.ObjectDocument
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ObjectObjectiveFactory(ModelFactory):
+  MODEL = models.ObjectObjective
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ObjectOwnerFactory(ModelFactory):
+  MODEL = models.ObjectOwner
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ObjectPersonFactory(ModelFactory):
+  MODEL = models.ObjectPerson
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ObjectSectionFactory(ModelFactory):
+  MODEL = models.ObjectSection
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ObjectiveControlFactory(ModelFactory):
+  MODEL = models.ObjectiveControl
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ProgramControlFactory(ModelFactory):
+  MODEL = models.ProgramControl
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class ProgramDirectiveFactory(ModelFactory):
+  MODEL = models.ProgramDirective
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class RelationshipFactory(ModelFactory):
+  MODEL = models.Relationship
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class RiskRiskyAttributeFactory(ModelFactory):
+  MODEL = models.RiskRiskyAttribute
+  status = FuzzyChoice(MODEL.VALID_STATES)
+
+class SectionObjectiveFactory(ModelFactory):
+  MODEL = models.SectionObjective
+  status = FuzzyChoice(MODEL.VALID_STATES)

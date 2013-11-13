@@ -20,25 +20,25 @@ class Product(
     Relatable, Timeboxed, Ownable, BusinessObject, db.Model):
   __tablename__ = 'products'
 
-  type_id = deferred(db.Column(db.Integer), 'Product')
+  kind_id = deferred(db.Column(db.Integer), 'Product')
   version = deferred(db.Column(db.String), 'Product')
 
-  type = db.relationship(
+  kind = db.relationship(
       'Option',
-      primaryjoin='and_(foreign(Product.type_id) == Option.id, '\
+      primaryjoin='and_(foreign(Product.kind_id) == Option.id, '\
                        'Option.role == "product_type")',
       uselist=False,
       )
 
   _publish_attrs = [
-      'type',
+      'kind',
       'version',
       ]
   _sanitize_html = [
       'version',
       ]
 
-  @validates('type')
+  @validates('kind')
   def validate_product_options(self, key, option):
     return validate_option(self.__class__.__name__, key, option, 'product_type')
 
@@ -47,4 +47,4 @@ class Product(
     from sqlalchemy import orm
 
     query = super(Product, cls).eager_query()
-    return query.options(orm.joinedload('type'))
+    return query.options(orm.joinedload('kind'))

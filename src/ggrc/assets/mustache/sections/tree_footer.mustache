@@ -6,7 +6,7 @@
 }}
 
 {{#if allow_mapping_or_creating}}
-{{#if_match parent_instance.constructor.shortName '^(Directive|Regulation|Policy|Contract)$'}}
+{{#if_match parent_instance.constructor.shortName '^(Directive|Regulation|Policy|Standard|Contract)$'}}
 {{#if allow_creating}}
 {{#is_allowed 'create' model.shortName context=null}}
 <li class="tree-footer tree-item tree-item-add">
@@ -36,7 +36,7 @@
         </a>
         {{/if}}
         {{else}}
-        <a href="{{parent_instance.viewLink}}/import_sections" class="section-import">
+        <a href="{{parent_instance.viewLink}}/import_sections?return_to={{param_current_location}}" class="section-import">
           <i class="grcicon-imp-exp"></i>
           Import Sections
         </a>

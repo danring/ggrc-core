@@ -3,8 +3,13 @@
 # Created By: dan@reciprocitylabs.com
 # Maintained By: dan@reciprocitylabs.com
 
+from datetime import datetime
+import re
 from .common import *
-from ggrc.models.all_models import Control, Objective, Person
+from ggrc.models.all_models import (
+    Category, Control, Document, Objective, ObjectControl, ObjectPerson,
+    Option, Person, Process, Relationship, Request, System, SystemOrProcess,
+    )
 from ggrc.models.exceptions import ValidationError
 
 def unpack_list(vals):
@@ -247,7 +252,6 @@ class ColumnHandler(object):
 class RequestTypeColumnHandler(ColumnHandler):
 
     def parse_item(self, value):
-      from ggrc.models import Request
       formatted_type = value.lower()
       if formatted_type in Request.VALID_TYPES:
         return formatted_type
@@ -261,7 +265,6 @@ class RequestTypeColumnHandler(ColumnHandler):
 class RequestTypeColumnHandler(ColumnHandler):
 
   def parse_item(self, value):
-    from ggrc.models import Request
     formatted_type = value.strip().lower()
     if formatted_type in Request.VALID_TYPES:
       return formatted_type
@@ -275,7 +278,6 @@ class RequestTypeColumnHandler(ColumnHandler):
 class RequestStatusColumnHandler(ColumnHandler):
 
   def parse_item(self, value):
-    from ggrc.models import Request
     words = value.strip().split()
     formatted_type = u" ".join(s.capitalize() for s in words)
     if formatted_type in Request.VALID_STATES:
@@ -313,7 +315,6 @@ class ContactEmailHandler(ColumnHandler):
     return value
 
   def find_contact(self, email_str, is_required=False):
-
     existing_person = Person.query.filter_by(email=email_str).first()
     if not existing_person and is_required:
       self.add_error("{} was not found. Please enter a valid email address"
@@ -384,7 +385,6 @@ class SlugColumnHandler(ColumnHandler):
     return content
 
 class OptionColumnHandler(ColumnHandler):
-  from ggrc.models.option import Option
 
   def parse_item(self, value):
     if value:
@@ -442,7 +442,6 @@ class DateColumnHandler(ColumnHandler):
 
   def parse_item(self, value):
     try:
-      from datetime import datetime
       date_result = None
       if isinstance(value, basestring):
         if re.match(r'\d{1,2}\/\d{1,2}\/\d{4}', value):
@@ -684,7 +683,6 @@ class LinkControlsHandler(LinksHandler):
     return None
 
 class LinkCategoriesHandler(LinksHandler):
-  from ggrc.models.category import Category
   model_class = Category
 
   def parse_item(self, data):
@@ -712,8 +710,6 @@ class LinkCategoriesHandler(LinksHandler):
     return obj.name
 
 class LinkDocumentsHandler(LinksHandler):
-  from ggrc.models.document import Document
-  import re
   model_class = Document
 
   def is_valid_url(self, url_string):
@@ -746,10 +742,7 @@ class LinkDocumentsHandler(LinksHandler):
     return u"[{} {}] {}".format(item.link, item.title, item.description)
 
 class LinkPeopleHandler(LinksHandler):
-  from ggrc.models.person import Person
-  from ggrc.models.all_models import ObjectPerson
   model_class = Person
-  import re
 
   def parse_item(self, value):
     data = {}
@@ -813,7 +806,6 @@ class LinkPeopleHandler(LinksHandler):
       return obj.email
 
 class LinkSystemsHandler(LinksHandler):
-  from ggrc.models.all_models import System, Process, SystemOrProcess
   model_class = System
 
   def parse_item(self, value):
@@ -842,8 +834,6 @@ class LinkSystemsHandler(LinksHandler):
     return None
 
 class LinkRelationshipsHandler(LinksHandler):
-  from ggrc.models.relationship import Relationship
-  import re
 
   def parse_item(self, value):
     if value and value[0] == '[':
@@ -900,8 +890,6 @@ class LinkRelationshipsHandler(LinksHandler):
     return model_class.query.filter_by(**where_params).first() if model_class else None
 
 class LinkObjectControl(LinksHandler):
-  from ggrc.models import ObjectControl
-  import re
 
   def parse_item(self, value):
     if value and value[0] == '[':

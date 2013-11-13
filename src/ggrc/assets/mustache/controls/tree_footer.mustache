@@ -6,7 +6,7 @@
 }}
 
 {{#if allow_mapping_or_creating}}
-{{#if_match parent_instance.constructor.shortName '^(Directive|Regulation|Policy|Contract)$'}}
+{{#if_match parent_instance.constructor.shortName '^(Directive|Regulation|Policy|Standard|Contract)$'}}
 {{#if allow_creating}}
 {{#is_allowed 'create' model.shortName context=null}}
 <li class="tree-footer tree-item tree-item-add">

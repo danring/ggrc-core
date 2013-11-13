@@ -34,7 +34,7 @@ dashboard-js-files:
   - moment.js
   - permission.js
   - application.js
-  - fastfix.js
+  - jquerypp.custom.js
   - related_selector.js
   - single_selector.js
   - spin.min.js
@@ -182,6 +182,7 @@ dashboard-js-template-files:
   - selectors/multitype_option_items.mustache
   - selectors/option_column.mustache
   - selectors/option_detail.mustache
+  - standards/modal_content.mustache
   - systems/modal_content.mustache
   - base_objects/tree_footer.mustache
   - controls/tree_footer.mustache

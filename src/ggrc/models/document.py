@@ -15,18 +15,11 @@ class Document(Ownable, Base, db.Model):
   title = deferred(db.Column(db.String), 'Document')
   link = deferred(db.Column(db.String), 'Document')
   description = deferred(db.Column(db.Text), 'Document')
-  type_id = deferred(db.Column(db.Integer), 'Document')
   kind_id = deferred(db.Column(db.Integer), 'Document')
   year_id = deferred(db.Column(db.Integer), 'Document')
   language_id = deferred(db.Column(db.Integer), 'Document')
 
   object_documents = db.relationship('ObjectDocument', backref='document', cascade='all, delete-orphan')
-  type = db.relationship(
-      'Option',
-      primaryjoin='and_(foreign(Document.type_id) == Option.id, '\
-                       'Option.role == "document_type")',
-      uselist=False,
-      )
   kind = db.relationship(
       'Option',
       primaryjoin='and_(foreign(Document.kind_id) == Option.id, '\
@@ -56,7 +49,6 @@ class Document(Ownable, Base, db.Model):
       'link',
       'description',
       'object_documents',
-      'type',
       'kind',
       'year',
       'language',
@@ -66,10 +58,10 @@ class Document(Ownable, Base, db.Model):
       'description',
       ]
 
-  @validates('type', 'kind', 'year', 'language')
+  @validates('kind', 'year', 'language')
   def validate_document_options(self, key, option):
-    if key in ('type', 'year'):
-      desired_role  = 'document_' + key
+    if key == 'year':
+      desired_role  = 'document_year'
     elif key == 'kind':
       desired_role = 'reference_type'
     else:
@@ -82,7 +74,6 @@ class Document(Ownable, Base, db.Model):
 
     query = super(Document, cls).eager_query()
     return query.options(
-        orm.joinedload('type'),
         orm.joinedload('kind'),
         orm.joinedload('year'),
         orm.joinedload('language'),

@@ -22,6 +22,7 @@ var RELATIONSHIP_TYPES = {
     , "Project": []
     , "Regulation": []
     , "Policy" : []
+    , "Standard" : []
     , "Contract" : []
   }, "Facility": {
     "Process": ["facility_has_process"]
@@ -35,6 +36,7 @@ var RELATIONSHIP_TYPES = {
     , "Project": []
     , "Regulation": []
     , "Policy" : []
+    , "Standard" : []
     , "Contract" : []
   }, "Market": {
     "Process": ["market_has_process"]
@@ -48,6 +50,7 @@ var RELATIONSHIP_TYPES = {
     , "Project": []
     , "Regulation": []
     , "Policy" : []
+    , "Standard" : []
     , "Contract" : []
   }, "OrgGroup": {
       "Process": ["org_group_has_process", "org_group_is_responsible_for_process"]
@@ -61,6 +64,7 @@ var RELATIONSHIP_TYPES = {
     , "Program": []
     , "Regulation": []
     , "Policy" : []
+    , "Standard" : []
     , "Contract" : []
   }, "Product": {
     "Process": ["product_has_process"]
@@ -74,6 +78,7 @@ var RELATIONSHIP_TYPES = {
     , "Project": []
     , "Regulation": []
     , "Policy" : []
+    , "Standard" : []
     , "Contract" : []
   }, "Program": {
     "DataAsset": ["program_applies_to_data_asset"]
@@ -96,6 +101,7 @@ var RELATIONSHIP_TYPES = {
     , "Program": []
     , "Regulation": []
     , "Policy" : []
+    , "Standard" : []
     , "Contract" : []
   }, /*"Risk": {
     "DataAsset": ["risk_is_a_threat_to_data_asset"]
@@ -119,6 +125,7 @@ var RELATIONSHIP_TYPES = {
     , "Program": []
     , "Regulation": []
     , "Policy" : []
+    , "Standard" : []
     , "Contract" : []
   }, "Process": {
       "System": []
@@ -132,6 +139,7 @@ var RELATIONSHIP_TYPES = {
     , "Program": []
     , "Regulation": []
     , "Policy" : []
+    , "Standard" : []
     , "Contract" : []
   }, "DocumentationResponse" : {
       "System": []
@@ -357,7 +365,7 @@ GGRC.RELATIONSHIP_TYPES = RELATIONSHIP_TYPES;
   business_plus_program_object_types =
     business_object_types.concat(["Program"]);
 
-  directive_object_types = ["Regulation", "Policy", "Contract"];
+  directive_object_types = ["Regulation", "Policy", "Standard", "Contract"];
 
   response_object_types = ["DocumentationResponse", "InterviewResponse", "PopulationSampleResponse"];
 
@@ -490,7 +498,7 @@ $(function() {
       prefs[0].save();
     }
     settings = prefs[0].getGlobal("lhs");
-    checked = !!(settings && settings.my_work);
+    checked = (settings && 'my_work' in settings) ? !!settings.my_work : true;
     target.prop('checked', checked);
     obs.attr("my_work", checked);
     target.closest('.btn')[checked ? 'addClass' : 'removeClass']('btn-success');

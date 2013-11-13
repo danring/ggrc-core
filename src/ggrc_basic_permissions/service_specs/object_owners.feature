@@ -57,4 +57,5 @@ Feature: Some object types can have an owner as recorded in an ObjectOwner
       | Project    |
       | Regulation |
       | Section    |
+      | Standard   |
       | System     |

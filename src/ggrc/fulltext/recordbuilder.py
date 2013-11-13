@@ -23,6 +23,10 @@ class RecordBuilder(object):
         **properties
         )
 
+def model_is_indexed(tgt_class):
+  fulltext_attrs = AttributeInfo.gather_attrs(tgt_class, '_fulltext_attrs')
+  return len(fulltext_attrs) > 0
+
 def get_record_builder(obj, builders={}):
   builder = builders.get(obj.__class__.__name__)
   if builder is None:

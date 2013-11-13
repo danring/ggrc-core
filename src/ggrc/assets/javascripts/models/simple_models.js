@@ -41,6 +41,7 @@ can.Model.Cacheable("CMS.Models.Program", {
     "Regulation" : "ProgramDirective"
     , "Policy" : "ProgramDirective"
     , "Contract" : "ProgramDirective"
+    , "Standard" : "ProgramDirective"
     , "System" : {}
     , "Process" : {}
     , "Control" : "ProgramControl"
@@ -87,6 +88,8 @@ can.Model.Cacheable("CMS.Models.Directive", {
           return CMS.Models.Regulation.model(params);
         else if (CMS.Models.Policy.meta_kinds.indexOf(params.kind) > -1)
           return CMS.Models.Policy.model(params);
+        else if (CMS.Models.Standard.meta_kinds.indexOf(params.kind) > -1)
+          return CMS.Models.Standard.model(params);
       }
       console.debug("Invalid Directive:", params);
     }
@@ -133,6 +136,48 @@ can.Model.Cacheable("CMS.Models.Directive", {
   }
   , lowercase_kind : function() { return this.kind ? this.kind.toLowerCase() : undefined; }
 });
+
+CMS.Models.Directive("CMS.Models.Standard", {
+    root_object : "standard"
+  , root_collection : "standards"
+  , model_plural : "Standards"
+  , table_plural : "standards"
+  , title_plural : "Standards"
+  , model_singular : "Standard"
+  , title_singular : "Standard"
+  , table_singular : "standard"
+  , findAll : "GET /api/standards"
+  , findOne : "GET /api/standards/{id}"
+  , create : "POST /api/standards"
+  , update : "PUT /api/standards/{id}"
+  , destroy : "DELETE /api/standards/{id}"
+  , defaults : {
+    kind : "Standard"
+  }
+  , tree_view_options : {
+      list_view : GGRC.mustache_path + "/directives/tree.mustache"
+    }
+  , attributes : {
+      contact : "CMS.Models.Person.stub"
+    , owners : "CMS.Models.Person.stubs"
+    , modified_by : "CMS.Models.Person.stub"
+    , object_people : "CMS.Models.ObjectPerson.stubs"
+    , people : "CMS.Models.Person.stubs"
+    , object_documents : "CMS.Models.ObjectDocument.stubs"
+    , documents : "CMS.Models.Document.stubs"
+    , related_sources : "CMS.Models.Relationship.stubs"
+    , related_destinations : "CMS.Models.Relationship.stubs"
+    , object_objectives : "CMS.Models.ObjectObjective.stubs"
+    , objectives : "CMS.Models.Objective.stubs"
+    , program_directives : "CMS.Models.ProgramDirective.stubs"
+    , directive_controls : "CMS.Models.DirectiveControl.stubs"
+    , programs : "CMS.Models.Program.stubs"
+    , sections : "CMS.Models.Section.stubs"
+    , controls : "CMS.Models.Control.stubs"
+  }
+  , meta_kinds : [ "Standard" ]
+  , cache : can.getObject("cache", CMS.Models.Directive, true)
+}, {});
 
 CMS.Models.Directive("CMS.Models.Regulation", {
   root_object : "regulation"

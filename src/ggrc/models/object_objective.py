@@ -6,10 +6,10 @@
 from ggrc import db
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
-from .mixins import deferred, Base, Timeboxed
+from .mixins import deferred, Mapping, Timeboxed
 from .reflection import PublishOnly
 
-class ObjectObjective(Base, Timeboxed, db.Model):
+class ObjectObjective(Timeboxed, Mapping, db.Model):
   __tablename__ = 'object_objectives'
 
   role = deferred(db.Column(db.String), 'ObjectObjective')

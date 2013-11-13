@@ -103,6 +103,8 @@
               -set noop = pol_directives.append(directive)
             -elif directive.kind == "Contract"
               -set noop = ct_directives.append(directive)
+            -elif directive.kind == "Standard"
+              -set noop = std_directives.append(directive)
           {{ controls_progressbar(controls) }}
           %h4
             Directives ({{instance.directives|length}})
@@ -114,6 +116,9 @@
           &nbsp;
           %i.grcicon-policy-color
           =pol_directives|length
+          &nbsp;
+          %i.grcicon-standard-color
+          =std_directives|length
     -elif object == 'contract'
       .row-fluid
         .span6
@@ -143,6 +148,20 @@
           %i.grcicon-program-color
           =instance.programs|length
     -elif object == 'regulation'
+      .row-fluid
+        .span6
+          {{ controls_progressbar(instance.controls) }}
+        .span3
+          %h4
+            Sections
+          %i.grcicon-section-color
+          =instance.sections|length
+        .span3
+          %h4
+            Programs
+          %i.grcicon-program-color
+          =instance.programs|length
+    -elif object == 'standard'
       .row-fluid
         .span6
           {{ controls_progressbar(instance.controls) }}

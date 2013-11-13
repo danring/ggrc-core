@@ -67,7 +67,7 @@ class Person(Base, db.Model):
 
   @validates('email')
   def validate_email(self, key, email):
-    if re.match(Person.EMAIL_RE_STRING, email) is None:
+    if re.match(Person.EMAIL_RE_STRING, email, re.IGNORECASE) is None:
       message = "Must provide a valid email address"
       raise ValidationError(message)
     return email

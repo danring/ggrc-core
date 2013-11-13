@@ -54,6 +54,7 @@ Feature: RBAC Permissions enforcement for REST API
       | Contract           |
       | Policy             |
       | Regulation         |
+      | Standard           |
       | Document           |
       | Facility           |
       | Help               |
@@ -130,6 +131,7 @@ Feature: RBAC Permissions enforcement for REST API
       | Contract           |
       | Policy             |
       | Regulation         |
+      | Standard           |
       | Document           |
       | Facility           |
       | Help               |
@@ -216,6 +218,7 @@ Feature: RBAC Permissions enforcement for REST API
       | Contract           |
       | Policy             |
       | Regulation         |
+      | Standard           |
       | Document           |
       | Facility           |
       | Help               |
@@ -304,6 +307,7 @@ Feature: RBAC Permissions enforcement for REST API
       | Contract           |
       | Policy             |
       | Regulation         |
+      | Standard           |
       | Document           |
       | Facility           |
       | Help               |

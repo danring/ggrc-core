@@ -30,6 +30,7 @@ Feature: Many resources have links to other resources. This feature will
     #| Document          | PopulationSample  | sample_evidence_document  | sample_evidences_documented      |
     #| Request           | Response          | request                   | responses                        |
     | Regulation        | Section           | directive                 | sections                         |
+    | Standard          | Section           | directive                 | sections                         |
 
   #Scenario Outline:
     #Given a new "<parent_type>" named "parent"

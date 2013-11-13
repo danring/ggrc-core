@@ -38,6 +38,13 @@ var model_descriptors = {
     , object_route : "directives"
     , object_display : "Regulations"
   }
+  , "standard" : {
+    model : CMS.Models.Standard
+    , object_type : "standard"
+    , object_category : "governance"
+    , object_route : "directives"
+    , object_display : "Policies"
+  }
   , "policy" : {
     model : CMS.Models.Policy
     , object_type : "policy"
@@ -363,7 +370,7 @@ if (/admin\/\d+/.test(window.location)) {
 
 dashboard_menu_spec = [
   { title : "Governance / Compliance"
-  , objects: [ "regulation", "policy", "contract", "control" ]
+  , objects: [ "regulation", "policy", "standard", "contract", "control" ]
   },
   { title : "Asset / Business"
   , objects: [ "system", "process", "project"

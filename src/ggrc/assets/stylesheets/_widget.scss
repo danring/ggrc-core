@@ -86,7 +86,8 @@
           &.text-policy,
           &.text-directive,
           &.text-contract,
-          &.text-regulation {
+          &.text-regulation,
+          &.text-standard {
             a {
               color:$governance;  
             }

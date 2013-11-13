@@ -41,11 +41,15 @@ class Identifiable(object):
   id = db.Column(db.Integer, primary_key=True)
 
   # REST properties
-  _publish_attrs = ['id']
+  _publish_attrs = ['id', 'type']
   _update_attrs = []
-  _stub_attrs = ['id']
+  _stub_attrs = ['id', 'type']
 
   _inflector = ModelInflectorDescriptor()
+
+  @computed_property
+  def type(self):
+    return self.__class__.__name__
 
   @classmethod
   def eager_query(cls):
@@ -149,8 +153,13 @@ class Hyperlinked(object):
   def url(cls):
     return deferred(db.Column(db.String), cls.__name__)
 
+  @declared_attr
+  def reference_url(cls):
+    return deferred(db.Column(db.String), cls.__name__)
+
   # REST properties
-  _publish_attrs = ['url']
+  _publish_attrs = ['url', 'reference_url']
+
 
 class Hierarchical(object):
   @declared_attr
@@ -182,6 +191,7 @@ class Hierarchical(object):
         #orm.joinedload('parent'),
         )
 
+
 class Timeboxed(object):
   @declared_attr
   def start_date(cls):
@@ -191,9 +201,35 @@ class Timeboxed(object):
   def end_date(cls):
     return deferred(db.Column(db.DateTime), cls.__name__)
 
-
   # REST properties
   _publish_attrs = ['start_date', 'end_date']
+
+
+class Stateful(object):
+  @declared_attr
+  def status(cls):
+    return deferred(
+        db.Column(db.String, default=cls.default_status), cls.__name__)
+
+  _publish_attrs = ['status']
+
+  @classmethod
+  def default_status(cls):
+    return cls.valid_statuses()[0]
+
+  @classmethod
+  def valid_statuses(cls):
+    return cls.VALID_STATES
+
+  @validates('status')
+  def validate_status(self, key, value):
+    if value is None:
+      value = self.default_status()
+    if value not in self.valid_statuses():
+      message = "Invalid state '{}'".format(value)
+      raise ValueError(message)
+    return value
+
 
 class ContextRBAC(object):
   @declared_attr
@@ -214,6 +250,7 @@ class ContextRBAC(object):
     #query = super(ContextRBAC, cls).eager_query()
     #return query.options(
         #orm.subqueryload('context'))
+
 
 class Base(ChangeTracked, ContextRBAC, Identifiable):
   """Several of the models use the same mixins. This class covers that common
@@ -293,14 +330,51 @@ event.listen(
   Session, 'after_flush_postexec', Slugged.ensure_slug_after_flush_postexec)
 
 
+<<<<<<< HEAD
 class BusinessObject(Slugged, Noted, Described, Hyperlinked):
+=======
+class Mapping(Stateful, Base):
+  VALID_STATES = [
+      'Draft',
+      'Final',
+      ]
+
+
+class WithContact(object):
+>>>>>>> origin/feature/database-changes
   @declared_attr
   def contact_id(cls):
     return deferred(
         db.Column(db.Integer, db.ForeignKey('people.id')), cls.__name__)
+<<<<<<< HEAD
 
   @declared_attr
   def contact(cls):
     return db.relationship('Person', uselist=False)
 
   _publish_attrs = ['contact']
+=======
+
+  @declared_attr
+  def contact(cls):
+    return db.relationship(
+        'Person',
+        uselist=False,
+        foreign_keys='{}.contact_id'.format(cls.__name__))
+
+  _publish_attrs = ['contact']
+
+
+class BusinessObject(
+    Stateful, Noted, Described, Hyperlinked, WithContact, Slugged):
+  VALID_STATES = [
+      'Draft',
+      'Final',
+      'Effective',
+      'Ineffective',
+      'Launched',
+      'Not Launched',
+      'In Scope',
+      'Not in Scope',
+      ]
+>>>>>>> origin/feature/database-changes

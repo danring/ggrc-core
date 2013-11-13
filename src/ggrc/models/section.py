@@ -5,14 +5,18 @@
 
 from ggrc import db
 from .associationproxy import association_proxy
-from .mixins import deferred, BusinessObject, Hierarchical
+from .mixins import (
+    deferred, Hierarchical, Noted, Described, Hyperlinked, WithContact,
+    Slugged,
+    )
 from .object_document import Documentable
 from .object_owner import Ownable
 from .object_person import Personable
 from .reflection import PublishOnly
 
 class Section(
-    Documentable, Personable, Hierarchical, Ownable, BusinessObject, db.Model):
+    Documentable, Personable, Hierarchical, Ownable,
+    Noted, Described, Hyperlinked, WithContact, Slugged, db.Model):
   __tablename__ = 'sections'
 
   directive_id = deferred(

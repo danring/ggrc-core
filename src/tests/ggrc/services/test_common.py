@@ -64,6 +64,7 @@ class TestResource(TestCase):
     return {
         u'id': int(model.id),
         u'selfLink': unicode(URL_MOCK_RESOURCE.format(model.id)),
+        u'type': unicode(model.__class__.__name__),
         u'modified_by': {
           u'href': u'/api/people/1',
           u'id': model.modified_by_id,
