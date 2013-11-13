@@ -34,12 +34,17 @@ class SystemOrProcess(
 
   infrastructure = deferred(db.Column(db.Boolean), 'SystemOrProcess')
   is_biz_process = db.Column(db.Boolean, default=False)
-  version = deferred(db.Column(db.String), 'SystemOrProcess')
-<<<<<<< HEAD
   # TODO: handle option
-=======
->>>>>>> origin/feature/database-changes
+  type_id = deferred(db.Column(db.Integer), 'SystemOrProcess')
+  version = deferred(db.Column(db.String), 'SystemOrProcess')
+  # TODO: handle option
   network_zone_id = deferred(db.Column(db.Integer), 'SystemOrProcess')
+  type = db.relationship(
+      'Option',
+      primaryjoin='and_(foreign(SystemOrProcess.type_id) == Option.id, '\
+                       'Option.role == "system_type")',
+      uselist=False,
+      )
   network_zone = db.relationship(
       'Option',
       primaryjoin='and_(foreign(SystemOrProcess.network_zone_id) == Option.id, '\
@@ -55,12 +60,14 @@ class SystemOrProcess(
   _publish_attrs = [
       'infrastructure',
       'is_biz_process',
+      'type',
       'version',
       'network_zone',
       ]
   _update_attrs = [
       'infrastructure',
       #'is_biz_process',
+      'type',
       'version',
       'network_zone',
       ]
@@ -68,10 +75,10 @@ class SystemOrProcess(
       'version',
       ]
 
-  @validates('network_zone')
+  @validates('network_zone', 'type')
   def validate_system_options(self, key, option):
-    return validate_option(
-        self.__class__.__name__, key, option, 'network_zone')
+    desired_role = key if key == 'network_zone' else 'system_type'
+    return validate_option(self.__class__.__name__, key, option, desired_role)
 
   @classmethod
   def eager_query(cls):
@@ -79,6 +86,7 @@ class SystemOrProcess(
 
     query = super(SystemOrProcess, cls).eager_query()
     return query.options(
+        orm.joinedload('type'),
         orm.joinedload('network_zone'))
 
 

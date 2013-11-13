@@ -6,10 +6,10 @@
 from ggrc import db
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
-from .mixins import deferred, Mapping, Timeboxed
+from .mixins import deferred, Base, Timeboxed
 from .reflection import PublishOnly
 
-class ObjectDocument(Timeboxed, Mapping, db.Model):
+class ObjectDocument(Base, Timeboxed, db.Model):
   __tablename__ = 'object_documents'
 
   role = deferred(db.Column(db.String), 'ObjectDocument')

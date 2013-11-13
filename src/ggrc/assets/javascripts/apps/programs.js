@@ -77,7 +77,6 @@ can.Construct("RefreshQueueManager", {
       //  Regulation: 'Directive'
       //, Contract: 'Directive'
       //, Policy: 'Directive'
-      //, Standard: 'Directive'
       //, System: 'SystemOrProcess'
       //, Process: 'SystemOrProcess'
     }

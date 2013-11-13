@@ -19,16 +19,19 @@ Feature: Options relationships
 
   Examples:
       | role             | resource_type | link_property    |
+      | control_type     | Control       | type             |
       | control_kind     | Control       | kind             |
       | control_means    | Control       | means            |
       | verify_frequency | Control       | verify_frequency |
       | audit_frequency  | Regulation    | audit_frequency  |
       | audit_duration   | Regulation    | audit_duration   |
+      | document_type    | Document      | type             |
       | reference_type   | Document      | kind             |
       | document_year    | Document      | year             |
       | language         | Document      | language         |
       | person_language  | Person        | language         |
-      | product_type     | Product       | kind             |
+      | product_type     | Product       | type             |
+      | system_type      | System        | type             |
       | network_zone     | System        | network_zone     |
 
   Scenario: Validation of invalid option role

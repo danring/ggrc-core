@@ -23,7 +23,6 @@ Feature: Rather than have clients keep a list of the endpoint URLs for
       | Contract           | 10              |
       | Policy             | 10              |
       | Regulation         | 10              |
-      | Standard           | 10              |
       | Document           | 10              |
       | Facility           | 10              |
       | Market             | 10              |

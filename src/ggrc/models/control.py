@@ -40,6 +40,7 @@ class Control(
   company_control = deferred(db.Column(db.Boolean), 'Control')
   directive_id = deferred(
       db.Column(db.Integer, db.ForeignKey('directives.id')), 'Control')
+  type_id = deferred(db.Column(db.Integer), 'Control')
   kind_id = deferred(db.Column(db.Integer), 'Control')
   means_id = deferred(db.Column(db.Integer), 'Control')
   version = deferred(db.Column(db.String), 'Control')
@@ -48,19 +49,12 @@ class Control(
   fraud_related = deferred(db.Column(db.Boolean), 'Control')
   key_control = deferred(db.Column(db.Boolean), 'Control')
   active = deferred(db.Column(db.Boolean), 'Control')
-<<<<<<< HEAD
-=======
-  principal_assessor_id = deferred(
-      db.Column(db.Integer, db.ForeignKey('people.id')), 'Control')
-  secondary_assessor_id = deferred(
-      db.Column(db.Integer, db.ForeignKey('people.id')), 'Control')
 
-  principal_assessor = db.relationship(
-      'Person', uselist=False, foreign_keys='Control.principal_assessor_id')
-  secondary_assessor = db.relationship(
-      'Person', uselist=False, foreign_keys='Control.secondary_assessor_id')
->>>>>>> origin/feature/database-changes
-
+  type = db.relationship(
+      'Option',
+      primaryjoin='and_(foreign(Control.type_id) == Option.id, '\
+                  'Option.role == "control_type")',
+      uselist=False)
   kind = db.relationship(
       'Option',
       primaryjoin='and_(foreign(Control.kind_id) == Option.id, '\
@@ -133,10 +127,9 @@ class Control(
       'sections',
       'objectives',
       'programs',
+      'type',
       'verify_frequency',
       'version',
-      'principal_assessor',
-      'secondary_assessor',
       PublishOnly('control_controls'),
       PublishOnly('control_risks'),
       PublishOnly('control_sections'),
@@ -160,7 +153,7 @@ class Control(
       'object_controls',
       ]
 
-  @validates('kind', 'means', 'verify_frequency')
+  @validates('type', 'kind', 'means', 'verify_frequency')
   def validate_control_options(self, key, option):
     desired_role = key if key == 'verify_frequency' else 'control_' + key
     return validate_option(self.__class__.__name__, key, option, desired_role)
@@ -171,8 +164,6 @@ class Control(
     query = super(Control, cls).eager_query()
     return cls.eager_inclusions(query, Control._include_links).options(
         orm.joinedload('directive'),
-        orm.joinedload('principal_assessor'),
-        orm.joinedload('secondary_assessor'),
         orm.subqueryload('control_controls'),
         orm.subqueryload('implementing_control_controls'),
         orm.subqueryload('control_risks'),

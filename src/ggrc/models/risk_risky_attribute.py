@@ -4,9 +4,9 @@
 # Maintained By: vraj@reciprocitylabs.com
 
 from ggrc import db
-from .mixins import Mapping
+from .mixins import Base
 
-class RiskRiskyAttribute(Mapping, db.Model):
+class RiskRiskyAttribute(Base, db.Model):
   __tablename__ = 'risk_risky_attributes'
 
   risk_id = db.Column(db.Integer, db.ForeignKey('risks.id'), nullable=False)

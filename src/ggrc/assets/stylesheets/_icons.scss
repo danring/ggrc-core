@@ -30,14 +30,6 @@
   }
 }
 
-// Top level tree items don't need icons
-.tree-item .tree-title-area [class^="grcicon-"] {
-  display: none;
-}
-.tree-item .tree-item .tree-title-area [class^="grcicon-"] {
-  display: inline-block;
-}
-
 [class^="grciconlarge-"] {
   display: inline-block;
   width: 24px;
@@ -487,9 +479,6 @@
 .grcicon-regulation { background-position:-174px -128px; }
 .grcicon-regulation-black { background-position:-174px -104px; }
 .grcicon-regulation-color { background-position:-78px -296px; }
-.grcicon-standard { background-position:-174px -128px; }
-.grcicon-standard-black { background-position:-174px -104px; }
-.grcicon-standard-color { background-position:-78px -296px; }
 .grcicon-directive { background-position:-78px -200px; }
 .grcicon-directive-black { background-position:-78px -176px; }
 .grcicon-event-color { background-position:-102px -176px; }
@@ -625,7 +614,6 @@ i.short {
   .grcicon-contract-color { background-position:-126px -104px; }
   .grcicon-policy-color { background-position:-150px -104px; }
   .grcicon-regulation-color { background-position:-174px -104px; }
-  .grcicon-standard-color { background-position:-174px -104px; }
   .grcicon-objective-color { background-position:-150px -56px; }
   .grcicon-risk-color { background-position:-198px -224px; }
   .grcicon-risky_attribute-color { background-position:-222px -224px; }
@@ -660,7 +648,6 @@ i.short {
       .grcicon-contract-color { background-position:-126px -128px; }
       .grcicon-policy-color { background-position:-150px -128px; }
       .grcicon-regulation-color { background-position:-174px -128px; }
-      .grcicon-standard-color { background-position:-174px -128px; }
       .grcicon-objective-color { background-position:-150px -80px; }
       .grcicon-risk-color { background-position:-198px -248px; }
       .grcicon-risky_attribute-color { background-position:-222px -248px; }
@@ -700,7 +687,6 @@ i.short {
       .grcicon-contract-color { background-position:-126px -128px; }
       .grcicon-policy-color { background-position:-150px -128px; }
       .grcicon-regulation-color { background-position:-174px -128px; }
-      .grcicon-standard-color { background-position:-174px -128px; }
       .grcicon-objective-color { background-position:-150px -80px; }
       .grcicon-risk-color { background-position:-198px -248px; }
       .grcicon-risky_attribute-color { background-position:-222px -248px; }

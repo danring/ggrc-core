@@ -65,7 +65,6 @@ Feature: Collections can be paged
       | Contract           |
       | Policy             |
       | Regulation         |
-      | Standard           |
       | Document           |
       | Facility           |
       | Help               |

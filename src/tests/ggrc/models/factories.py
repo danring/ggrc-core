@@ -38,6 +38,7 @@ class DirectiveFactory(ModelFactory):
 class ControlFactory(ModelFactory, SlugFactory):
   FACTORY_FOR = Control
   directive = factory.SubFactory(DirectiveFactory)
+  type_id = None
   kind_id = None
   version = None
   documentation_description = None

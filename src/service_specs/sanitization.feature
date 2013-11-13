@@ -24,7 +24,6 @@ Feature: String and Text column HTML sanitization
       | Contract          | title, version, scope, description, organization |
       | Policy            | title, version, scope, description, organization |
       | Regulation        | title, version, scope, description, organization |
-      | Standard          | title, version, scope, description, organization |
       | Document          | title, description |
       | Facility          | title, description |
       | Help              | title, content |

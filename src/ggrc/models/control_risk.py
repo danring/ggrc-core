@@ -4,9 +4,9 @@
 # Maintained By: vraj@reciprocitylabs.com
 
 from ggrc import db
-from .mixins import Mapping
+from .mixins import Base
 
-class ControlRisk(Mapping, db.Model):
+class ControlRisk(Base, db.Model):
   __tablename__ = 'control_risks'
 
   control_id = db.Column(

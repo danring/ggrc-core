@@ -4,9 +4,9 @@
 # Maintained By: david@reciprocitylabs.com
 
 from ggrc import db
-from .mixins import Mapping
+from .mixins import Base
 
-class ProgramDirective(Mapping, db.Model):
+class ProgramDirective(Base, db.Model):
   __tablename__ = 'program_directives'
 
   program_id = db.Column(db.Integer, db.ForeignKey('programs.id'), nullable=False)

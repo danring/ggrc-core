@@ -4,34 +4,24 @@
 # Maintained By: vraj@reciprocitylabs.com
 
 from ggrc import db
-from .mixins import (
-    deferred, Timeboxed, Noted, Described, Hyperlinked, WithContact, Slugged,
-    )
+from .mixins import deferred, BusinessObject, Timeboxed
 from .object_person import Personable
 
-class Audit(
-    Personable,
-    Timeboxed, Noted, Described, Hyperlinked, WithContact, Slugged, db.Model):
+class Audit(Personable, Timeboxed, BusinessObject, db.Model):
   __tablename__ = 'audits'
 
-  VALID_STATES = (
-      u'Planned', u'In Progress', u'Manager Review',
-      u'Ready for External Review', u'Completed'
-      )
-
+  VALID_STATES = (u'Planned', u'In Progress', u'Manager Review',
+    u'Ready for External Review', u'Completed')
   report_start_date = deferred(db.Column(db.Date), 'Audit')
   report_end_date = deferred(db.Column(db.Date), 'Audit')
-  audit_firm_id = deferred(
-      db.Column(db.Integer, db.ForeignKey('org_groups.id')), 'Audit')
-  audit_firm = db.relationship('OrgGroup', uselist=False)
+  audit_firm = deferred(db.Column(db.String), 'Audit')
   status = deferred(db.Column(db.Enum(*VALID_STATES), nullable=False),
     'Audit')
   gdrive_evidence_folder = deferred(db.Column(db.String), 'Audit')
-  program_id = deferred(
-      db.Column(db.Integer, db.ForeignKey('programs.id'), nullable=False),
-      'Audit')
-  requests = db.relationship(
-      'Request', backref='audit', cascade='all, delete-orphan')
+  program_id = deferred(db.Column(db.Integer, db.ForeignKey('programs.id'),
+    nullable=False), 'Audit')
+  requests = db.relationship('Request', backref='audit',
+    cascade='all, delete-orphan')
   _publish_attrs = [
     'report_start_date',
     'report_end_date',
@@ -42,6 +32,7 @@ class Audit(
     'requests',
   ]
   _sanitize_html = [
+    'audit_firm',
     'gdrive_evidence_folder',
   ]
 

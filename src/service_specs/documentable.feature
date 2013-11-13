@@ -28,7 +28,6 @@ Feature: Some resources can be related to Document resources
       | Contract          |
       | Policy            |
       | Regulation        |
-      | Standard          |
       | Facility          |
       | Market            |
       | Objective         |

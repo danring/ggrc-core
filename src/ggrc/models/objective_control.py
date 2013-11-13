@@ -4,9 +4,9 @@
 # Maintained By: dan@reciprocitylabs.com
 
 from ggrc import db
-from .mixins import Mapping
+from .mixins import Base
 
-class ObjectiveControl(Mapping, db.Model):
+class ObjectiveControl(Base, db.Model):
   __tablename__ = 'objective_controls'
 
   __table_args__ = (

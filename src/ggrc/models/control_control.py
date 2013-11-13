@@ -4,9 +4,9 @@
 # Maintained By: david@reciprocitylabs.com
 
 from ggrc import db
-from .mixins import Mapping
+from .mixins import Base
 
-class ControlControl(Mapping, db.Model):
+class ControlControl(Base, db.Model):
   __tablename__ = 'control_controls'
 
   control_id = db.Column(

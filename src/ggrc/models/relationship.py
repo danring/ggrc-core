@@ -5,10 +5,10 @@
 
 import ggrc.models
 from ggrc import db
-from .mixins import deferred, Base, Described, Mapping
+from .mixins import deferred, Base, Described
 from sqlalchemy.ext.declarative import declared_attr
 
-class Relationship(Mapping, db.Model):
+class Relationship(Base, db.Model):
   __tablename__ = 'relationships'
   source_id = db.Column(db.Integer, nullable=False)
   source_type = db.Column(db.String, nullable=False)
@@ -73,7 +73,7 @@ class Relationship(Mapping, db.Model):
   def _display_name(self):
     return self.source.display_name + '<->' + self.destination.display_name
 
-class RelationshipType(Described, Base, db.Model):
+class RelationshipType(Base, Described, db.Model):
   __tablename__ = 'relationship_types'
   relationship_type = deferred(db.Column(db.String), 'RelationshipType')
   forward_phrase = deferred(db.Column(db.String), 'RelationshipType')

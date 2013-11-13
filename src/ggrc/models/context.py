@@ -6,7 +6,7 @@
 from ggrc import db
 from ggrc.models.mixins import deferred, Base, Described
 
-class Context(Described, Base, db.Model):
+class Context(Base, Described, db.Model):
   __tablename__ = 'contexts'
 
   name = deferred(db.Column(db.String(128), nullable=True), 'Context')

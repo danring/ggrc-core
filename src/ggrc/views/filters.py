@@ -17,8 +17,8 @@ def with_static_subdomain_filter(path):
   if not getattr(settings, 'APP_ENGINE', False):
     return path
   scheme, netloc, _, _, _ = urlparse.urlsplit(request.url_root)
-  if not netloc.startswith('static-dot-'):
-    netloc = 'static-dot-' + netloc
+  if not netloc.startswith('static.'):
+    netloc = 'static.' + netloc
   return urlparse.urlunsplit((scheme, netloc, path, '', ''))
 
 @app.template_filter("viewlink")
@@ -47,9 +47,7 @@ def get_display_class_filter(obj):
 
   if obj in ('Program'):
     return 'program'
-  elif obj in (
-      'Control', 'Directive', 'Contract', 'Policy', 'Regulation', 'Standard',
-      'Objective'):
+  elif obj in ('Control', 'Directive', 'Contract', 'Policy', 'Regulation', 'Objective'):
     return 'governance'
   elif obj in (
       'OrgGroup', 'Project', 'Facility', 'Product', 'DataAsset', 'Market',

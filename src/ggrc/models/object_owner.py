@@ -6,10 +6,10 @@
 from ggrc import db
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
-from .mixins import deferred, Mapping
+from .mixins import deferred, Base
 from .reflection import PublishOnly
 
-class ObjectOwner(Mapping, db.Model):
+class ObjectOwner(Base, db.Model):
   __tablename__ = 'object_owners'
 
   person_id = db.Column(db.Integer, db.ForeignKey('people.id'), nullable=False)

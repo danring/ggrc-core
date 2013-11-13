@@ -4,9 +4,9 @@
 # Maintained By: vraj@reciprocitylabs.com
 
 from ggrc import db
-from .mixins import Mapping
+from .mixins import Base
 
-class DirectiveControl(Mapping, db.Model):
+class DirectiveControl(Base, db.Model):
   __tablename__ = 'directive_controls'
 
   __table_args__ = (

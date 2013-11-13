@@ -23,7 +23,6 @@ Feature: Return collections that only provide stub representations
       | Contract           |
       | Policy             |
       | Regulation         |
-      | Standard           |
       | Document           |
       | Facility           |
       | Help               |

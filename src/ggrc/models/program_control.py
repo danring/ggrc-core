@@ -4,9 +4,9 @@
 # Maintained By: david@reciprocitylabs.com
 
 from ggrc import db
-from .mixins import Mapping
+from .mixins import Base
 
-class ProgramControl(Mapping, db.Model):
+class ProgramControl(Base, db.Model):
   __tablename__ = 'program_controls'
   __table_args__ = (
       db.UniqueConstraint('program_id', 'control_id'),

@@ -55,15 +55,8 @@ class Request(Described, Base, db.Model):
   ]
 
   def _display_name(self):
-    if len(self.description) > 32:
-      description_string = self.description[:32] + u'...'
-    else:
-      description_string = self.description
-    return u'Request with id {0} "{1}" for Audit "{2}"'.format(
-        self.id,
-        description_string,
-        self.audit.display_name
-    )
+    return u'Request with id={0} for Audit "{1}"'.format(
+        self.id, self.audit.display_name)
 
   @classmethod
   def eager_query(cls):

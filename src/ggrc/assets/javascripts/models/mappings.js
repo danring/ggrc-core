@@ -133,7 +133,6 @@
       , directives: Multi(["joined_directives"]) // "direct_directives"
       , contracts: TypeFilter("directives", "Contract")
       , policies: TypeFilter("directives", "Policy")
-      , standards: TypeFilter("directives", "Standard")
       , regulations: TypeFilter("directives", "Regulation")
       , orphaned_objects: Multi([
           "related_objects"
@@ -269,7 +268,6 @@
           null, "directive", "ProgramDirective", "program", "program_directives")
       , contracts: TypeFilter("directives", "Contract")
       , policies: TypeFilter("directives", "Policy")
-      , standards: TypeFilter("directives", "Standard")
       , regulations: TypeFilter("directives", "Regulation")
       , audits: Direct("Audit", "program")
 
@@ -418,9 +416,6 @@
     , Contract: {
         _mixins: ["directive_object"]
       }
-    , Standard: {
-        _mixins: ["directive_object"]
-      }
     , Policy: {
         _mixins: ["directive_object"]
       }
@@ -471,10 +466,6 @@
       , owned_regulations: Indirect("Regulation", "contact")
       , owned_contracts: Indirect("Contract", "contact")
       , owned_policies: Indirect("Policy", "contact")
-<<<<<<< HEAD
-=======
-      , owned_standards: Indirect("Standard", "contact")
->>>>>>> origin/feature/database-changes
       , owned_objectives: Indirect("Objective", "contact")
       , owned_controls: Indirect("Control", "contact")
       , owned_sections: Indirect("Section", "contact")
@@ -493,7 +484,6 @@
       , related_regulations: TypeFilter("related_objects", "Regulation")
       , related_contracts:   TypeFilter("related_objects", "Contract")
       , related_policies:    TypeFilter("related_objects", "Policy")
-      , related_standards:    TypeFilter("related_objects", "Standard")
       , related_objectives:  TypeFilter("related_objects", "Objective")
       , related_controls:    TypeFilter("related_objects", "Control")
       , related_sections:    TypeFilter("related_objects", "Section")
@@ -526,7 +516,7 @@
       , extended_related_systems:     Multi(["related_systems", "owned_systems"])
 
       , related_objects_via_search: Search("", [
-          "Program",  "Regulation", "Contract", "Policy", "Standard", "Section", "Objective",
+          "Program",  "Regulation", "Contract", "Policy", "Section", "Objective",
           "Control", "System", "Process", "DataAsset", "Product", "Project", "Facility",
           "Market", "OrgGroup", "Audit"//, "Request", "Response"
         ], { contact_id: "id" })
@@ -535,7 +525,6 @@
       , extended_related_regulations_via_search: TypeFilter("related_objects_via_search", "Regulation")
       , extended_related_contracts_via_search:   TypeFilter("related_objects_via_search", "Contract")
       , extended_related_policies_via_search:    TypeFilter("related_objects_via_search", "Policy")
-      , extended_related_standards_via_search:    TypeFilter("related_objects_via_search", "Standard")
       , extended_related_objectives_via_search:  TypeFilter("related_objects_via_search", "Objective")
       , extended_related_controls_via_search:    TypeFilter("related_objects_via_search", "Control")
       , extended_related_sections_via_search:    TypeFilter("related_objects_via_search", "Section")

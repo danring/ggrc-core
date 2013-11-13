@@ -119,7 +119,7 @@ $(function() {
       }
     // Prevent widget creation with <model_name>: false
     // e.g. to prevent ever creating People widget:
-    //     { all : { Person: false }}
+    //     { Person: false }
     // or to prevent creating People widget on Objective page:
     //     { Objective: { Person: false } }
     , overridden_models = {
@@ -128,13 +128,7 @@ $(function() {
             //, Control: false
             //, Regulation: false
             //, Policy: false
-            //, Standard: false
             //, Contract: false
-          }
-          , all : {
-            DocumentationResponse : false
-            , InterviewResponse : false
-            , PopulationSampleResponse : false
           }
       }
 
@@ -220,14 +214,6 @@ $(function() {
               , show_view: GGRC.mustache_path + "/directives/tree.mustache"
               , footer_view: GGRC.mustache_path + "/directives/tree_footer.mustache"
               }
-            , Standard: {
-                mapping: "standards"
-              , draw_children: true
-              , child_options: [section_child_options]
-              , fetch_post_process: sort_sections
-              , show_view: GGRC.mustache_path + "/directives/tree.mustache"
-              , footer_view: GGRC.mustache_path + "/directives/tree_footer.mustache"
-              }
             , Policy: {
                 mapping: "policies"
               , draw_children: true
@@ -257,9 +243,6 @@ $(function() {
         , Regulation: {
               _mixins: ["directive"]
             }
-        , Standard: {
-              _mixins: ["directive"]
-            }
         , Policy: {
               _mixins: ["directive"]
             }
@@ -281,13 +264,6 @@ $(function() {
               }
             , Contract: {
                 mapping: "extended_related_contracts_via_search"
-              , draw_children: true
-              , child_options: [section_child_options]
-              , fetch_post_process: sort_sections
-              , show_view: GGRC.mustache_path + "/directives/tree.mustache"
-              }
-            , Standard: {
-                mapping: "extended_related_policies_via_search"
               , draw_children: true
               , child_options: [section_child_options]
               , fetch_post_process: sort_sections

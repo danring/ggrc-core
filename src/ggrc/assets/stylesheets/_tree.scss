@@ -73,8 +73,7 @@ ul.new-tree {
             &.objective,
             &.contract,
             &.policy,
-            &.regulation,
-            &.standard {
+            &.regulation {
               color:$governance;
             }
             &.business,
@@ -161,8 +160,7 @@ ul.new-tree {
               &.objective,
               &.contract,
               &.policy,
-              &.regulation,
-              &.standard {
+              &.regulation {
                 color:$governance;
               }
               &.business,
@@ -307,8 +305,7 @@ ul.new-tree {
     &.objective,
     &.contract,
     &.policy,
-    &.regulation,
-    &.standard
+    &.regulation
       {
       .item-data {
         color:$governance;

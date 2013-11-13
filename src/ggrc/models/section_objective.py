@@ -4,9 +4,9 @@
 # Maintained By: dan@reciprocitylabs.com
 
 from ggrc import db
-from .mixins import Mapping
+from .mixins import Base
 
-class SectionObjective(Mapping, db.Model):
+class SectionObjective(Base, db.Model):
   __tablename__ = 'section_objectives'
 
   __table_args__ = (

@@ -50,17 +50,6 @@ def include_symbol(tablename, schema=None):
     if db_scheme == 'sqlite' and tablename in sqlite_fts_exclusions:
         return False
 
-    # Exclude `*_alembic_version` tables
-    # FIXME: Generate this from included extensions
-    alembic_exclusions = [
-        'ggrc_alembic_version',
-        'ggrc_basic_permissions_alembic_version',
-        'ggrc_gdrive_integration_alembic_version',
-        ]
-
-    if tablename in alembic_exclusions:
-        return False
-
     # If the tablename didn't match any exclusion cases, return True
     return True
 

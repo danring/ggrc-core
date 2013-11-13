@@ -121,7 +121,6 @@ jQuery.extend(GGRC, {
       }*/
       , "contract" : CMS.Models.Contract
       , "policy" : CMS.Models.Policy
-      , "standard" : CMS.Models.Standard
       , "regulation" : CMS.Models.Regulation
       , "org_group" : CMS.Models.OrgGroup
       , "project" : CMS.Models.Project

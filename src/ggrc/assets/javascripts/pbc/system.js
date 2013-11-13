@@ -100,7 +100,6 @@ can.Model.Cacheable("CMS.Models.SystemOrProcess", {
       , "Risk" : {}
       , "Regulation" : {}
       , "Policy" : {}
-      , "Standard" : {}
       , "Contract" : {}
       , "Objective" : {}
       }
