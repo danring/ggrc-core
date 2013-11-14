@@ -61,7 +61,24 @@
       <input tabindex="5" class="input-block-level" name="url" placeholder="http://www.domain.com/" type="text" value="{{url}}">
     </div>
   </div>
-
+  <div class="row-fluid">
+    <div class="span6">
+      <label>
+        Notes
+        <i class="grcicon-help-black" rel="tooltip" title="Append simple text or html notes here."></i>
+      </label>
+      <div class="wysiwyg-area">
+        <textarea tabindex="6" id="notes" class="span12 double wysihtml5" name="notes" placeholder="Enter Notes">{{{notes}}}</textarea>
+      </div>
+    </div>
+    <div class="span6">
+      <label>
+        Reference URL
+        <i class="grcicon-help-black" rel="tooltip" title="Description goes here"></i>
+      </label>
+      <input tabindex="7" id="reference_url" class="input-block-level" placeholder="https://www.example.com/" name="reference_url" type="text" value="{{reference_url}}">
+    </div>
+  </div>
   <div class="row-fluid">
     <div class="span12">
       <div class="expand-link">
@@ -76,7 +93,7 @@
           </span>
           Advanced
           <span class="hidden-fields out">
-            Code, Company Control, Kind/Nature, Fraud-Related, Significance, Type/Means, Notes, Effective Date, Stop Date, Frequency, Assertions, Categories, Principal Assessor, Secondary Assessor
+            Code, Company Control, Kind/Nature, Fraud-Related, Significance, Type/Means, Effective Date, Stop Date, Frequency, Assertions, Categories, Principal Assessor, Secondary Assessor
           </span>
         </a>
       </div>
@@ -89,14 +106,14 @@
           Code
           <i class="grcicon-help-black" rel="tooltip" title="The gGRC application will automatically provide codes for new objects.  If you would like to override this feature you may manually enter a code of your choosing.  You should have a specific reason for doing this."></i>
         </label>
-        <input tabindex="6" class="input-block-level" name="slug" placeholder="CONTROL-XXX" type="text" value="{{slug}}">
+        <input tabindex="8" class="input-block-level" name="slug" placeholder="CONTROL-XXX" type="text" value="{{slug}}">
       </div>
       <div class="span6">
         <label>
             Company Control
             <i class="grcicon-help-black" rel="tooltip" title="Is this a company control?"></i>
         </label>
-        <label><input tabindex="7" type="checkbox" name="company_control" {{#if company_control}}checked="checked"{{/if}}/> Is this a company control?</label>
+        <label><input tabindex="9" type="checkbox" name="company_control" {{#if company_control}}checked="checked"{{/if}}/> Is this a company control?</label>
       </div>
     </div>
     <div class="row-fluid">
@@ -105,14 +122,14 @@
           Kind/Nature
           <i class="grcicon-help-black" rel="tooltip" title="Choose from the options in the drop down list, or leave this set to None."></i>
         </label>
-        {{{option_select this "kind" "control_kind" tabindex=8}}}
+        {{{option_select this "kind" "control_kind" tabindex=10}}}
       </div>
       <div class="span3">
         <label>
           Fraud Related
           <i class="grcicon-help-black" rel="tooltip" title="Is control fraud related?"></i>
         </label>
-        <select class="input-block-level" name="fraud_related" null-if-empty="null-if-empty" tabindex="9">
+        <select class="input-block-level" name="fraud_related" null-if-empty="null-if-empty" tabindex="11">
           <option value="" {{#if_equals fraud_related ""}}selected{{/if_equals}}>---</option>
           <option value="0" {{#if_equals fraud_related "0"}}selected{{/if_equals}}>No</option>
           <option value="1" {{#if_equals fraud_related "1"}}selected{{/if_equals}}>Yes</option>
@@ -123,7 +140,7 @@
           Significance
           <i class="grcicon-help-black" rel="tooltip" title="Is this Control a Key Control?"></i>
         </label>
-        <select class="input-block-level" name="key_control" null-if-empty="null-if-empty" tabindex="10">
+        <select class="input-block-level" name="key_control" null-if-empty="null-if-empty" tabindex="12">
           <option value="" {{#if_equals key_control ""}}selected{{/if_equals}}>---</option>
           <option value="0" {{#if_equals key_control "0"}}selected{{/if_equals}}>Key</option>
           <option value="1" {{#if_equals key_control "1"}}selected{{/if_equals}}>Non-Key</option>
@@ -134,31 +151,23 @@
           Type/Means
           <i class="grcicon-help-black" rel="tooltip" title="Choose from the options in the drop down list, or leave this set to None."></i>
         </label>
-        {{{option_select this "means" "control_means" tabindex=11}}}
+        {{{option_select this "means" "control_means" tabindex=13}}}
       </div>
     </div>
     <div class="row-fluid">
       <div class="span6">
         <label>
-          Notes
-          <i class="grcicon-help-black" rel="tooltip" title="Append simple text or html notes here."></i>
-        </label>
-        <div class="wysiwyg-area">
-          <textarea tabindex="12" id="control_notes" class="span12 double wysihtml5" name="notes" placeholder="Enter Notes">{{{notes}}}</textarea>
-        </div>
-      </div>
-      <div class="span6">
-        <label>
           Effective Date
           <i class="grcicon-help-black" rel="tooltip" title="Description goes here"></i>
         </label>
-        <input tabindex="13" class="input-block-level date" name="start_date" data-toggle="datepicker" data-before="end_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date start_date}}">
-        
+        <input tabindex="14" class="input-block-level date" name="start_date" data-toggle="datepicker" data-before="end_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date start_date}}">
+      </div>
+      <div class="span6">
         <label>
           Stop Date
           <i class="grcicon-help-black" rel="tooltip" title="Description goes here"></i>
         </label>
-        <input tabindex="14" class="input-block-level date" name="end_date" data-toggle="datepicker" data-after="start_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date end_date}}">
+        <input tabindex="15" class="input-block-level date" name="end_date" data-toggle="datepicker" data-after="start_date" placeholder="MM/DD/YYYY" type="text" value="{{localize_date end_date}}">
       </div>
     </div>
     <div class="row-fluid">
@@ -167,7 +176,7 @@
           Frequency
           <i class="grcicon-help-black" rel="tooltip" title="Description goes here"></i>
         </label>
-        <select class="input-block-level" name="frequency" null-if-empty="null-if-empty" tabindex="15">
+        <select class="input-block-level" name="frequency" null-if-empty="null-if-empty" tabindex="16">
           <option value="" {{#if_equals frequency ""}}selected{{/if_equals}}>---</option>
           <option value="0" {{#if_equals frequency "0"}}selected{{/if_equals}}>Daily</option>
           <option value="1" {{#if_equals frequency "1"}}selected{{/if_equals}}>Bi-Weekly</option>
@@ -187,7 +196,7 @@
           Assertions
           <i class="grcicon-help-black" rel="tooltip" title="Description goes here"></i>
         </label>
-        <select multiple="multiple" class="input-block-level" name="assertions" null-if-empty="null-if-empty" tabindex="16">
+        <select multiple="multiple" class="input-block-level" name="assertions" null-if-empty="null-if-empty" tabindex="17">
           <option value="0" {{#if_equals assertions "0"}}selected{{/if_equals}}>Confidentiality</option>
           <option value="1" {{#if_equals assertions "1"}}selected{{/if_equals}}>Integrity</option>
           <option value="2" {{#if_equals assertions "2"}}selected{{/if_equals}}>Availability</option>
@@ -200,7 +209,7 @@
           Categories
           <i class="grcicon-help-black" rel="tooltip" title="Description goes here"></i>
         </label>
-        <select multiple="multiple" class="input-block-level" name="categories" null-if-empty="null-if-empty" tabindex="17" disabled>
+        <select multiple="multiple" class="input-block-level" name="categories" null-if-empty="null-if-empty" tabindex="18" disabled>
           <option value="1" {{#if_equals categories "1"}}selected{{/if_equals}}>Access Control</option>
           <option value="2" {{#if_equals categories "2"}}selected{{/if_equals}}>&nbsp;&nbsp;&nbsp;Access Management</option>
           <option value="3" {{#if_equals categories "3"}}selected{{/if_equals}}>&nbsp;&nbsp;&nbsp;Authorization</option>
@@ -233,7 +242,7 @@
         <i class="grcicon-person-green pull-left icon-field"></i>
         <div class="objective-selector">
           {{#using contact=instance.contact}}
-          <input tabindex="18" type="text" name="contact.email" data-lookup="Person" class="span11 audit-selector" value="{{firstnonempty contact.email ''}}">
+          <input tabindex="19" type="text" name="contact.email" data-lookup="Person" class="span11 audit-selector" value="{{firstnonempty contact.email ''}}">
           {{/using}}
         </div>
       </div>
@@ -245,7 +254,7 @@
         <i class="grcicon-person-green pull-left icon-field"></i>
         <div class="objective-selector">
           {{#using contact=instance.contact}}
-          <input tabindex="19" type="text" name="contact.email" data-lookup="Person" class="span11 audit-selector" value="{{firstnonempty contact.email ''}}">
+          <input tabindex="20" type="text" name="contact.email" data-lookup="Person" class="span11 audit-selector" value="{{firstnonempty contact.email ''}}">
           {{/using}}
         </div>
       </div>
