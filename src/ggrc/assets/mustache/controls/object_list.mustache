@@ -16,6 +16,9 @@
             <div class="item-data">
               <div class="tree-title-area">
                 {{title}}
+                <!--
+                  <span class="small gray">Yours</span>
+                -->
               </div>
             </div>
           </div>
@@ -67,6 +70,16 @@
         
         <div class="row-fluid">
           <div class="span6">
+            {{#url}}
+            <div class="tree-info">
+              <strong>URL:</strong>
+                <a class="url" href="{{schemed_url url}}" target="_blank">
+                  {{url}}
+                </a>
+            </div>
+            {{/url}}
+          </div>
+          <div class="span6">
             <div class="tree-info">
               <strong>Contact:</strong>
               {{^contact}}
@@ -79,17 +92,6 @@
               {{/if}}
             </div>
           </div>
-
-          {{#url}}
-          <div class="span6">
-            <div class="tree-info">
-              <strong>URL:</strong>
-                <a class="url" href="{{schemed_url url}}" target="_blank">
-                  {{url}}
-                </a>
-            </div>
-          </div>
-          {{/url}}
 
         </div>
       </div>

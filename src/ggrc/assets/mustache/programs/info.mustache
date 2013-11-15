@@ -16,23 +16,29 @@
   <div class="rtf-block">
     {{{firstnonempty description '<h4 class="no-data">No description</h4>'}}}
   </div>
-  <p>
-    <a href="{{schemed_url url}}" class="inner-element" target="_blank">
-      {{url}}
-    </a>
-  </p>
-  <p>
-    <strong>Contact:</strong>
-    {{#using contact=instance.contact}}
-    {{#if contact}}
-      {{contact.name}}
-    {{else}}
-      <span class="error">
-        Not Assigned
-      </span>
-    {{/if}}
-    {{/using}}
-  </p>
+  <div class="row-fluid">
+    <div class="span6">
+      <p>
+        <a href="{{schemed_url url}}" class="inner-element" target="_blank">
+          {{url}}
+        </a>
+      </p>
+    </div>
+    <div class="span6">
+      <p>
+        <strong>Contact:</strong>
+        {{#using contact=instance.contact}}
+        {{#if contact}}
+          {{contact.name}}
+        {{else}}
+          <span class="error">
+            Not Assigned
+          </span>
+        {{/if}}
+        {{/using}}
+      </p>
+    </div>
+  </div>
 
   {{{render_hooks 'Program.extended_info'}}}
 

@@ -20,6 +20,9 @@
                     {{.}}
                   </span>
                 {{/infer_roles}}
+                <!--
+                  <span class="small gray">Yours</span>
+                -->
               </div>
             </div>
           </div>
@@ -82,6 +85,16 @@
 
         <div class="row-fluid">
           <div class="span6">
+            {{#instance.url}}
+            <div class="tree-info">
+              <strong>URL:</strong>
+              <a class="url" href="{{schemed_url instance.url}}" target="_blank">
+                {{instance.url}}
+              </a>
+            </div>
+            {{/instance.url}}
+          </div>
+          <div class="span6">
             <div class="tree-info">
               <strong>Contact:</strong>
               {{^instance.contact}}
@@ -96,16 +109,6 @@
               {{/}}
             </div>
           </div>
-          {{#instance.url}}
-          <div class="span6">
-            <div class="tree-info">
-              <strong>URL:</strong>
-              <a class="url" href="{{schemed_url instance.url}}" target="_blank">
-                {{instance.url}}
-              </a>
-            </div>
-          </div>
-          {{/instance.url}}
         </div>
       </div>
 

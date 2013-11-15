@@ -16,23 +16,29 @@
   <div class="rtf-block">
     {{{firstnonempty description '<h4 class="no-data">No description</h4>'}}}
   </div>
-  <p>
-    <a href="{{schemed_url url}}" class="inner-element" target="_blank">
-      {{url}}
-    </a>
-  </p>
-  <p>
-    <strong>Contact:</strong>
-    {{#using contact=instance.contact}}
-    {{#if contact}}
-      {{contact.name}}
-    {{else}}
-      <span class="error">
-        Not Assigned
-      </span>
-    {{/if}}
-    {{/using}}
-  </p>
+  <div class="row-fluid">
+    <div class="span6">
+      <p>
+        <a href="{{schemed_url url}}" class="inner-element" target="_blank">
+          {{url}}
+        </a>
+      </p>
+    </div>
+    <div class="span6">
+      <p>
+        <strong>Contact:</strong>
+        {{#using contact=instance.contact}}
+        {{#if contact}}
+          {{contact.name}}
+        {{else}}
+          <span class="error">
+            Not Assigned
+          </span>
+        {{/if}}
+        {{/using}}
+      </p>
+    </div>
+  </div>
   {{#is_allowed 'update' instance}}
   <p>
     <a href="javascript://" class="info-edit" data-toggle="modal-ajax-form" data-object-plural="{{model.table_plural}}" data-object-singular="{{model.model_singular}}" data-modal-reset="reset" data-modal-class="modal-wide" title="Edit {{model.model_title}}" data-object-id="page">
