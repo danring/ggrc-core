@@ -31,6 +31,7 @@ from werkzeug.exceptions import BadRequest, Forbidden
 from wsgiref.handlers import format_date_time
 from urllib import urlencode
 from .attribute_query import AttributeQueryBuilder
+from ggrc.models.directive import Directive
 
 """gGRC Collection REST services implementation. Common to all gGRC collection
 resources.
@@ -447,6 +448,17 @@ class Resource(ModelView):
       raise Forbidden()
     db.session.delete(obj)
     modified_objects = get_modified_objects(db.session)
+ 
+    # Quick fix for empty logs:
+    for mo in modified_objects.deleted:
+      if not hasattr(mo, 'directive_id'):
+        continue
+      if mo.display_name != '':
+        continue
+      directive_q = db.session.query(Directive)
+      fixed = directive_q.get(mo.directive_id)
+      mo.display_name = obj.display_name + '<->' + fixed.display_name
+
     log_event(db.session, obj)
     with benchmark("Commit"):
       db.session.commit()
