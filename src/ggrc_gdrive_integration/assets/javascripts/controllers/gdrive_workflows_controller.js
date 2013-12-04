@@ -11,12 +11,17 @@ var create_folder = function(cls, title_generator, parent_attr, model, ev, insta
       dfd = $.when([{}]); //make parent_folder instance be undefined; 
                           // GDriveFolder.create will translate that into 'root'
     }
+    var redirectProgram = function(){
+      if(instance instanceof CMS.Models.Program) {
+        window.location.assign(instance.selfLink.replace('/api', ''));
+      }
+    }
     return dfd.then(function(parent_folders) {
       return new CMS.Models.GDriveFolder({
         title : title_generator(instance)
         , parents : parent_folders[0].instance
       }).save();
-    }).then(function(folder) {
+    }, redirectProgram).then(function(folder) {
       var refresh_queue;
 
       new CMS.Models.ObjectFolder({
@@ -35,7 +40,7 @@ var create_folder = function(cls, title_generator, parent_attr, model, ev, insta
           }).save();
         });
       }
-    });
+    }, redirectProgram).then(redirectProgram);
   }
   else {
     dfd = new $.Deferred();

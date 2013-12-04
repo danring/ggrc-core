@@ -15,7 +15,9 @@ can.Control("GGRC.Controllers.PbcWorkflows", {
   "{CMS.Models.Audit} created" : function(model, ev, instance) {
     var refresh_queue
     , that = this;
-    
+    var redirect = function(){
+      window.location.assign(instance.program.href.replace('/api', '') + "#audit_widget");
+    }
     if(instance instanceof CMS.Models.Audit) {
       if(instance.auto_generate) {
         refresh_queue = new RefreshQueue();
@@ -23,12 +25,17 @@ can.Control("GGRC.Controllers.PbcWorkflows", {
         instance.program.reify().refresh()
         .then(function(program) {
           return program.get_binding("extended_related_objectives").refresh_instances();
-        }).then(function(objective_mappings) {
+        }, redirect)
+        .then(function(objective_mappings) {
           can.each(objective_mappings, function(objective_mapping) {
             that.create_request(instance, objective_mapping.instance)
             .then(that.proxy("create_response"));
           });
-        });
+        }, redirect)
+        .then(redirect);
+      }
+      else{
+        redirect();
       }
     }
   }
