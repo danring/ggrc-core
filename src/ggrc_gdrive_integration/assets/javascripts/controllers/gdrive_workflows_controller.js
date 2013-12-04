@@ -61,6 +61,7 @@ function partial_proxy(fn) {
 
 var allops = [];
 function report_progress(str, xhr) {
+  return xhr;
 
   function build_flashes() {
     var flash = {}
