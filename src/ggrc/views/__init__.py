@@ -7,6 +7,7 @@ import json
 from collections import namedtuple
 from flask import request, flash, session, url_for, redirect, g
 from flask.views import View
+from ggrc import settings
 from ggrc.app import app
 from ggrc.rbac import permissions
 from ggrc.login import get_current_user
@@ -27,7 +28,10 @@ def get_permissions_json():
   return json.dumps(getattr(g, '_request_permissions', None))
 
 def get_config_json():
-  return json.dumps(app.config.public_config)
+  public_config = dict(app.config.public_config)
+  if hasattr(g, 'public_config'):
+    public_config.update(g.public_config)
+  return json.dumps(public_config)
 
 def get_current_user_json():
   current_user = get_current_user()
@@ -1019,12 +1023,9 @@ def init_all_object_views(app):
       decorators=(login_required,)
       )
 
-  if hasattr(settings, 'EXTENSIONS'):
-    for extension in settings.EXTENSIONS:
-      __import__(extension)
-      extension_module = sys.modules[extension]
-      if hasattr(extension_module, 'initialize_all_object_views'):
-        extension_module.initialize_all_object_views(app)
+  for extension_module in settings.get_extension_modules().values():
+    if hasattr(extension_module, 'initialize_all_object_views'):
+      extension_module.initialize_all_object_views(app)
 
 # Mockups HTML pages are listed here
 @app.route("/mockups")

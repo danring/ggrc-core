@@ -4,6 +4,8 @@
 # Maintained By: david@reciprocitylabs.com
 
 EXTENSIONS = ['ggrc_basic_permissions']
+exports = ['BOOTSTRAP_ADMIN_USERS']
+
 USER_PERMISSIONS_PROVIDER = 'ggrc_basic_permissions.CompletePermissionsProvider'
 
 import os

@@ -10,9 +10,6 @@ blueprint = Blueprint(
   static_url_path='/static/ggrc_gdrive_integration',
 )
 
-for key in settings.exports:
-  app.config.public_config[key] = app.config[key]
-
 import ggrc_gdrive_integration.models
 
 from ggrc import db

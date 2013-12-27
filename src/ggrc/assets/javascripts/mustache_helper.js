@@ -1084,6 +1084,18 @@ Mustache.registerHelper("person_roles", function(person, scope, options) {
             return role;
           }
         });
+
+        //  "Superuser" roles are determined from config
+        //  FIXME: Abstraction violation
+        if ((!scope || new RegExp(scope).test("System"))
+            && GGRC.config.BOOTSTRAP_ADMIN_USERS
+            && ~GGRC.config.BOOTSTRAP_ADMIN_USERS.indexOf(person.email)) {
+          roles.unshift({
+            permission_summary: "Superuser",
+            name: "Superuser"
+          });
+        }
+
         roles_deferred.resolve(roles);
       });
     });

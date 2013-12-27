@@ -16,6 +16,7 @@ DEBUG_ASSETS = False
 FULLTEXT_INDEXER = None
 USER_PERMISSIONS_PROVIDER = None
 EXTENSIONS = []
+exports = []
 
 # Deployment-specific variables
 COMPANY = "Company, Inc."

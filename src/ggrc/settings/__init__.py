@@ -49,12 +49,25 @@ for module_name in settings_modules.split(" "):
 
   try:
     _EXT = EXTENSIONS if "EXTENSIONS" in vars() else []
+    _exports = exports if "exports" in vars() else []
     execfile(fullpath)
     if "EXTENSIONS" in vars() and _EXT != EXTENSIONS:
       _EXT += EXTENSIONS
     EXTENSIONS = _EXT
     del _EXT
+    if "exports" in vars() and _exports != exports:
+      _exports += exports
+    exports = _exports
+    del _exports
   except Exception, e:
     raise
 
-#logging.info("SQLALCHEMY_DATABASE_URI: {0}".format(locals().get("SQLALCHEMY_DATABASE_URI", None)))
+_extension_modules = None
+def get_extension_modules():
+  global _extension_modules
+  if _extension_modules is None:
+    _extension_modules = {}
+    for extension in EXTENSIONS:
+      __import__(extension)
+      _extension_modules[extension] = sys.modules[extension]
+  return _extension_modules
