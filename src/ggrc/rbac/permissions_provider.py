@@ -217,3 +217,5 @@ class DefaultUserPermissions(UserPermissions):
           instance.context_id
           )
         )
+  def is_super_admin(self):
+    return self._is_allowed(self.ADMIN_PERMISSION)

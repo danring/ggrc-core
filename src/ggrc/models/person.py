@@ -4,6 +4,7 @@
 # Maintained By: david@reciprocitylabs.com
 
 from ggrc import db
+from ggrc.rbac.permissions import is_super_admin
 from sqlalchemy.orm import validates
 from .mixins import deferred, Base
 from .reflection import PublishOnly
@@ -102,6 +103,9 @@ class Person(Base, db.Model):
     the system-wide context, it shows the highest ranked one (if there are
     multiple) or "No Access" if there are none.
     """
+    if is_super_admin():
+      return u'gGRC Super Admin'
+
     ROLE_HIERARCHY = {
         u'gGRC Admin': 0,
         u'ProgramCreator': 1,

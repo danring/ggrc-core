@@ -85,3 +85,6 @@ def is_allowed_view_object_page_for(instance):
   given instance.
   """
   return permissions_for(get_user()).is_allowed_view_object_page_for(instance)
+
+def is_super_admin():
+  return permissions_for(get_user()).is_super_admin()
