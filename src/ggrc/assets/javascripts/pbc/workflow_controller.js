@@ -25,8 +25,7 @@ can.Control("GGRC.Controllers.PbcWorkflows", {
           return program.get_binding("extended_related_objectives").refresh_instances();
         }).then(function(objective_mappings) {
           can.each(objective_mappings, function(objective_mapping) {
-            that.create_request(instance, objective_mapping.instance)
-            .then(that.proxy("create_response"));
+            that.create_request(instance, objective_mapping.instance);
           });
         });
       }
