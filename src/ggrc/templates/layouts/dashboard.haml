@@ -1,9 +1,8 @@
--#
 -# Copyright (C) 2013 Google Inc., authors, and contributors <see AUTHORS file>
 -# Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 -# Created By: brad@reciprocitylabs.com
 -# Maintained By: brad@reciprocitylabs.com
--#
+
 -extends 'layouts/base.haml'
 
 -block extra_javascript
@@ -15,8 +14,6 @@
   dashboard
 
 -block body
-  -# FIXME: Fix page_type_attributes, etc
-  -#{ page_type_attributes, :class => "#{has_feature?(:BETA) ? 'BETA' : ''}" }
   %body
 
     %header.header.main
@@ -26,7 +23,6 @@
             .span12
               .logo.pull-left
                 %a{ 'href': "/dashboard" }
-                  -#FIXME: Company logo/name
                   -set logo_url = config.get("COMPANY_LOGO")
                   -set logo_text = config.get("COMPANY_LOGO_TEXT")
                   -if logo_url
@@ -45,14 +41,10 @@
                   %a.dropdown-toggle{ 'href': "#", 'data-toggle': "dropdown", 'role': "button" }
                     %i.grcicon-user
                     %span
-                      -# FIXME: Use actual account information
                       %strong
                         =current_user.email
                     %i.grcicon-carot-white
                   %ul.dropdown-menu{'aria-labelledby': 'drop1', 'role': "menu"}
-                    -#%li.show-role
-                      %i.grcicon-role-white
-                      Role: <$rolename>
                     %li
                       %a{'href': "/dashboard"}
                         %i.grcicon-dashboard
@@ -71,7 +63,6 @@
                         %i.grcicon-desktop
                         Set Layout as Default
                     %li
-                      -# FIXME: Fix link
                       %a{'href': '={ url_for("logout") }', 'tabindex': "-1"}
                         %i.grcicon-logout
                         Logout
@@ -109,7 +100,6 @@
             .inner-nav
               .object-nav
                 %ul.nav{ 'class': "internav ={ model_display_class }" }
-                -#include 'shared/_add_widget_section.haml' #Widget adding/removing isn't ready yet
             .object-area
               #show_columns.column-set{ 'data-resize': "true" }
                 #middle_column.widget-area
@@ -119,26 +109,9 @@
       .row-fluid
         .span12
           %ul.bottom-nav.pull-left
-            -#FIXME: demo mode?
-            -#%li
-              -if controller_name == 'design'
-                -path = dashboard_path
-              -else
-                -path = request.fullpath
-              -path = path.gsub(/BETA=[^&]*&?/, '').sub(/[?&]$/, '')
-              -path += path.include?('?') ? '&' : '?'
-              -if has_feature? 'BETA'
-                %a.demo-hide{ 'href': "#{path}BETA=0" }
-                  Hide Demo
-              -else
-                %a.demo-show{ 'href': "#{path}BETA=1" }
-                  Show Demo
           %p
-            -#FIXME: Copyright footer
-            -#=CMS_CONFIG['COMPANY']
             Confidential.
             Copyright &copy;
-            -#=Time.now.year
             =config.get('COMPANY')
             Version
             =config.get('VERSION')

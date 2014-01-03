@@ -15,7 +15,6 @@ from ggrc.builder.json import publish
 from werkzeug.exceptions import Forbidden
 from . import filters
 from .common import BaseObjectView, RedirectedPolymorphView
-from .tooltip import TooltipView
 from ggrc.models.task import Task, queued_task, create_task, make_task_response
 
 """ggrc.views
@@ -944,9 +943,6 @@ def object_view(model_class, base_service_class=BaseObjectView):
       model_class,
       base_service_class)
 
-def tooltip_view(model_class, base_service_class=TooltipView):
-  return object_view(model_class, base_service_class=base_service_class)
-
 def all_object_views():
   from ggrc import models
   return [
@@ -971,43 +967,11 @@ def all_object_views():
       object_view(models.Person),
       ]
 
-def all_tooltip_views():
-  from ggrc import models
-  return [
-      tooltip_view(models.Audit),
-      tooltip_view(models.Program),
-      tooltip_view(models.Contract),
-      tooltip_view(models.Policy),
-      tooltip_view(models.Regulation),
-      tooltip_view(models.Standard),
-      tooltip_view(models.Control),
-      tooltip_view(models.Objective),
-      tooltip_view(models.System),
-      tooltip_view(models.Process),
-      tooltip_view(models.Product),
-      tooltip_view(models.Request),
-      tooltip_view(models.OrgGroup),
-      tooltip_view(models.Facility),
-      tooltip_view(models.Market),
-      tooltip_view(models.Project),
-      tooltip_view(models.DataAsset),
-      tooltip_view(models.Person),
-      tooltip_view(models.Event),
-      ]
-
 def init_all_object_views(app):
   import sys
   from ggrc import settings
 
   for entry in all_object_views():
-    entry.service_class.add_to(
-      app,
-      '/{0}'.format(entry.url),
-      entry.model_class,
-      decorators=(login_required,)
-      )
-
-  for entry in all_tooltip_views():
     entry.service_class.add_to(
       app,
       '/{0}'.format(entry.url),
@@ -1029,7 +993,7 @@ def mockup():
   """The mockup guide page
   """
   return render_template("mockups/index.html")
-  
+
 @app.route("/mockups/assessments")
 @login_required
 def assessments():
