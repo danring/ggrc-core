@@ -566,7 +566,7 @@ function defer_render(tag_prefix, func, deferred, failfunc) {
       } else {
         $element.after(frag_or_html);
         if ($element.next().get(0)) {
-          can.view.live.nodeLists.replace($element.get(), $element.nextAll().get());
+          can.view.nodeLists.update($element.get(), $element.nextAll().get());
           $element.remove();
         }
       }
@@ -709,7 +709,7 @@ Mustache.registerHelper("all", function(type, params, options) {
       //since we are removing the original live bound element, replace the
       // live binding reference to it, with a reference to the new 
       // child nodes. We assume that at least one new node exists.
-      can.view.live.nodeLists.replace($el.get(), $parent.children().get());
+      can.view.nodeLists.update($el.get(), $parent.children().get());
     });
     return element.parentNode;
   }
