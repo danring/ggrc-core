@@ -106,3 +106,16 @@
     }
   }
 }
+
+// high fidelity mockup styles
+
+#newlyCreatedTask,
+#addAssessment, 
+#addObjectUnderAssessment {
+  display:none;
+}
+
+#assessmentCountObjectNav,
+#objectItemUnderAssessmentCountObjectNav {
+  font-weight:normal;
+}

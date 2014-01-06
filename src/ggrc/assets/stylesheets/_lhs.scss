@@ -368,13 +368,13 @@
         }
       }
     }
-    .add-more-object {
+    .add-more-objects {
       padding-left:20px;
       display:block;
       line-height:30px;
       font-size:13px;
       border-bottom:1px solid #ddd;
-      color:#777;
+      color:$link;
     }
   }
   ul.internav {

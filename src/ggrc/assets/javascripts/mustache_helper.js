@@ -1789,12 +1789,31 @@ Mustache.registerHelper("person_owned", function(owner_id, options) {
 });
 
 Mustache.registerHelper("default_audit_title", function(title, program, options) {
-  var computed_title = title();
-  if(typeof computed_title !== 'undefined'){
+  var computed_title = title()
+    , computed_program = resolve_computed(program)
+    , default_title
+    , index = 1
+    ;
+  
+  if(typeof computed_program === 'undefined'){
+    // Mark the title to be populated when computed_program is defined,
+    // returning an empty string here would disable the save button.
+    return 'undefined'; 
+  }
+  if(typeof computed_title !== 'undefined' && computed_title !== 'undefined'){
     return computed_title;
   }
   program = resolve_computed(program) || {title : "program"};
-  return new Date().getFullYear() + ": " + program.title + " - Audit";
+  
+  default_title = new Date().getFullYear() + ": " + program.title + " - Audit";  
+  
+  // Count the current number of audits with default_title
+  $.map(CMS.Models['Audit'].cache, function(audit){
+    if(audit.title.indexOf(default_title) === 0){
+      index += 1;
+    }
+  });
+  return new Date().getFullYear() + ": " + program.title + " - Audit " + index;
 });
 
 Mustache.registerHelper("param_current_location", function() {

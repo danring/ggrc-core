@@ -2,10 +2,11 @@ $(document).ready(function(){
   
   $('[rel=tooltip]').tooltip();
   
-  $('.lhs-holder').css('height', 100 + '%');
-  $('.inner-nav').css('height', 100 + '%');
-  $('.object-area').css('height', 100 + '%');
-  $('.object-area').css('width', 67.4 + '%'); //FIXME-UI for Predrag: Fix widht of object area
+  $('.lhs-holder').css('height', $(window).height() - 71 );
+  $('.inner-nav').css('height', $(window).height() - 126 );
+  $('.object-area').css('height', $(window).height() - 156 );
+  $('.object-area').css('width', $(window).width() - 448 );
+
   
   $('body').on('click', '.info-expand a', function() {
     var $this = $(this),
@@ -127,7 +128,7 @@ $(document).ready(function(){
   
   
   $('.internav li:gt(7)').hide();
-  $('.add-more-object').click(function() {
+  $('.add-more-objects').click(function() {
     $('.internav li:gt(7)').slideDown('fast');
     $(this).hide();
   });
@@ -183,8 +184,33 @@ $(document).ready(function(){
     }
     if($('ul.internav li.active a').attr('href') == '#regulation_widget') {
       $('#regulation_widget').addClass('widget-active').show();
-    }
+    } 
+  });
+
+  // New Assessment Created
+  $('body').on('click', '#addAssessmentCreated', function() {
+    $('#newAssessment').modal('hide');
+    $('#assessmentCountObjectNav').html('2');
+    $('#assessmentCountWidget').html('(2)');
+    $('#mainAssessmentsCountNew').html('2');
+    $('#addAssessment').fadeIn();
     
+  });
+
+  // New Object under Assessment Created
+  $('body').on('click', '#addObjectUnderAssessmentCreated', function() {
+    $('#newObjectToAssessment').modal('hide');
+    $('#objectUnderAssessmentCountObjectNav').html('5');
+    $('#objectItemUnderAssessmentCountObjectNav').html('5');
+    $('#addObjectUnderAssessment').fadeIn();  
+  });
+
+  // Create New Task
+  $('body').on('click', '#createNewTask', function() {
+    $('#newTask').modal('hide');
+    $('#newlyCreatedTaskTitle').html('Clean up');
+    $('#newlyCreatedTask').fadeIn();
+    $('#taskCounter').html('1');
   });
 
 });
