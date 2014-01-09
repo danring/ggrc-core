@@ -2,14 +2,14 @@
 """Remove Risk models
 
 Revision ID: b58e88da095
-Revises: 3fa5cf4f8ae6
+Revises: 4db2d8962a62
 Create Date: 2014-01-03 20:12:45.253372
 
 """
 
 # revision identifiers, used by Alembic.
 revision = 'b58e88da095'
-down_revision = '3fa5cf4f8ae6'
+down_revision = '4db2d8962a62'
 
 from alembic import op
 import sqlalchemy as sa
