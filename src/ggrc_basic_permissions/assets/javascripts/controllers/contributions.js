@@ -379,6 +379,7 @@
       return this.options.option_model.findAll(
         $.extend(params, this.option_query),
         function(options) {
+          options.unshift({name: "No access", id: 0});
           self.option_list.replace(options)
         });
     },
@@ -415,7 +416,10 @@
       $option_list
         .find('li[data-id] input[type=radio]')
         .prop('checked', false);
-
+      if(this.join_list.length === 0){
+        $option_list.find('li[data-id=0] input[type=radio]').prop('checked', true);
+        return;
+      }
       this.join_list.forEach(function(join, index, list) {
         $option_list
           .find('li[data-id=' + join[self.options.option_attr].id + '] input[type=radio]')
@@ -464,7 +468,7 @@
           if (join) {
             // Ensure '_removed' attribute is false
             join.attr('_removed', false);
-          } else {
+          } else if(option.id !== 0) {
             // Otherwise, create it
             join = self.get_new_join(
                 option.id, option.scope, option.constructor.shortName);

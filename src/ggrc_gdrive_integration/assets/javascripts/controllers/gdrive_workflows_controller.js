@@ -89,7 +89,7 @@ function report_progress(str, xhr) {
       flash.error = failures;
     }
     if(pendings.length) {
-      flash.warning = pendings.concat(["Please wait until" + (pendings.length === 1 ? "this operation completes" : "these operations complete")]);
+      flash.warning = pendings.concat(["Please wait until " + (pendings.length === 1 ? "this operation completes" : "these operations complete")]);
     } else {
       setTimeout(function() {
         if(can.map(allops, function(op) {

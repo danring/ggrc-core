@@ -379,7 +379,12 @@ class AssigneeHandler(ContactEmailHandler):
   def parse_item(self, value):
     # in case Assignee field does not exist or stripped version is empty
     if not value or len(value.strip()) == 0:
-      # Audit should exist; was passed from view function
+      # Use current request owner if there is one
+      current_request_assignee = self.importer.obj.assignee
+      if current_request_assignee:
+        self.add_warning("Blank field; assignee will remain as {}".format(current_request_assignee.display_name))
+        return current_request_assignee
+      # Otherwise, default to owner of audit (received via view function)
       audit = self.importer.options.get('audit')
       audit_owner = getattr(audit, 'contact', None)
       if audit_owner:

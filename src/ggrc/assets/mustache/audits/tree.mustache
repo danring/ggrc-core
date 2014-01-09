@@ -177,6 +177,8 @@
                 and #is_allowed' 'update' instance '\
               ' _1_context=instance.context.id}}
                 <strong>Auditor: </strong>
+                  {{! `with_auditors` requires `authorizations` mapping, so preload it }}
+                  {{#with_mapping 'authorizations' instance}}
                   {{#with_auditors instance}}
                     {{#using auditor=auditors.0.person}}
                       {{{render '/static/mustache/people/popover.mustache' person=auditor}}}
@@ -192,6 +194,7 @@
                     + Auditor
                     </a>
                   {{/with_auditors}}
+                  {{/with_mapping}}
                 {{else}}
                 <strong>Auditor: </strong>
                 {{#with_auditors instance}}

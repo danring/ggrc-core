@@ -45,10 +45,13 @@
                         =current_user.email
                     %i.grcicon-carot-white
                   %ul.dropdown-menu{'aria-labelledby': 'drop1', 'role': "menu"}
+                    %li.show-role
+                      %i.grcicon-role-white
+                      Role: {{current_user.system_wide_role}}
                     %li
                       %a{'href': "/dashboard"}
                         %i.grcicon-dashboard
-                        My Work ({{current_user.system_wide_role}})
+                        My Work
                     -if permissions.is_allowed_read('/admin', 1)
                       %li
                         %a{'href': "/admin"}

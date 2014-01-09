@@ -501,7 +501,7 @@ def import_sections(directive_id):
 
         if dry_run:
           return render_template("directives/import_sections_result.haml",
-              directive_id=int(directive_id), converter=converter,
+              directive_id=directive_id, converter=converter,
               results=converter.objects, heading_map=converter.object_map)
         else:
           count = len(converter.objects)
