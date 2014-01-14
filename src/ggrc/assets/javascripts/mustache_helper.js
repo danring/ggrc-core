@@ -1109,7 +1109,7 @@ Mustache.registerHelper("result_direct_mappings", function(
   }
   mappings_type = has_direct_mappings ? 
       (has_external_mappings ? "Dir & Ext" : "Dir") : "Ext";
-  options.contexts[options.contexts.length-1].mappings_type = mappings_type 
+  options.context.mappings_type = mappings_type 
   return options.fn(options.contexts);
 });
 
