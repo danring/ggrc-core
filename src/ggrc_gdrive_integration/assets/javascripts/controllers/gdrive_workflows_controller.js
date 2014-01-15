@@ -280,6 +280,97 @@ can.Control("GGRC.Controllers.GDriveWorkflow", {
       });
     }
   }
+
+  // extracted out of {Request updated} for readability.
+  , move_files_to_new_folder : function(audit_folders, new_folder, audit_files) {
+    var tldfds = [];
+    can.each(audit_files, function(file) {
+      //if the file is still referenced in more than one request without an objective,
+      // don't remove from the audit.
+      tldfds.push(
+        CMS.Models.ObjectDocument.findAll({
+          "document.link" : file.alternateLink
+        }).then(function(obds) {
+          //filter out any object-documents that aren't Responses.
+          var responses = can.map(obds, function(obd) {
+            if(obd.documentable.reify() instanceof CMS.Models.Response)
+              return obd.documentable.reify();
+          });
+          
+          file.addToParent(new_folder);
+          return new RefreshQueue().enqueue(responses).trigger().then(function(reified_responses) {
+            var dfds = [];
+
+            if(obds.length < 2
+              || can.map(reified_responses, function(resp) {
+                  if(resp.request.reify() !== instance
+                     && !resp.request.reify().objective) {
+                    return resp;
+                  }
+                })
+              .length < 1
+            ) {
+              //If no other request is still using the Audit folder version,
+              // remove from the audit folder.
+              can.each(audit_folders, function(af) {
+                dfds.push(file.removeFromParent(af));
+              });
+            }
+
+            return $.when.apply($, dfds);
+          });
+        })
+      );
+    });
+
+    report_progress(
+      "Moving files to new Request folder"
+      , $.when.apply($, tldfds)
+    );
+  }
+
+  , move_files_to_audit_folder : function(instance, audit_folders, req_folders, files) {
+    //move each file from the old Request folder to the Audit folders
+    var move_dfds = [];
+    can.each(files, function(file) {
+      var parent_ids = can.map(file.parents, function(p) { return p.id; });
+      move_dfds.push(file.addToParent(audit_folders[0]));
+      can.each(req_folders, function(rf) {
+        if(~can.inArray(rf.id, parent_ids)) {
+          move_dfds.push(file.removeFromParent(req_folders[0]));
+        }
+      });
+    });
+    report_progress(
+      "Moving files to the Audit folder"
+      , $.when.apply($, move_dfds).done(function() {
+        can.each(req_folders, function(rf) {
+          report_progress(
+            'Checking whether folder "' + rf.title + '" is empty'
+            , CMS.Models.GDriveFile.findAll({parents : rf.id}).then(function(orphs) {
+              if(orphs.length < 1) {
+                report_progress(
+                  'Deleting empty folder "' + rf.title + '"'
+                  , rf.destroy()
+                );
+              } else {
+                console.warn("can't delete folder", rf.title, "as files still exist:", orphs);
+              }
+            })
+          );
+        });
+      })
+    );
+    report_progress(
+      'Linking Request to Audit folder'
+      , new CMS.Models.ObjectFolder({
+        folder_id : instance.audit.reify().object_folders[0].reify().folder_id
+        , folderable : instance
+        , context : instance.context || { id : null }
+      }).save()
+    );
+  }
+
   , "{CMS.Models.Program} updated" : "update_owner_permission"
   , "{CMS.Models.Audit} updated" : "update_owner_permission"
   , "{CMS.Models.Request} updated" : function(model, ev, instance) {
@@ -294,21 +385,26 @@ can.Control("GGRC.Controllers.GDriveWorkflow", {
       instance.get_binding("folders").refresh_instances()
       , instance.audit.reify().get_binding("folders").refresh_instances()
     ).then(function(req_folders_mapping, audit_folders_mapping) {
-      var audit_folder, af_index, obj_folder_to_destroy;
+      var audit_folder, af_index, obj_folder_to_destroy, obj_destroy_dfds;
       if(audit_folders_mapping.length < 1)
         return; //can't do anything if the audit has no folder
       //reduce the binding lists to instances only -- makes for easier comparison
       var req_folders =  can.map(req_folders_mapping, function(rf) { return rf.instance; });
       var audit_folders = can.map(audit_folders_mapping, function(af) { return af.instance; });
 
-      if((af_index = can.inArray(req_folders[0], audit_folders)) > -1 && instance.objective) {
+      // check the array of request_folers against the array of audit_folders to see if there is a match.
+      af_index = can.reduce(req_folders, function(res, folder) {
+        return (res >= 0) ? res : can.inArray(folder, audit_folders);
+      }, -1);
+
+      if(af_index > -1 && instance.objective) {
         //we added an objective where previously there was not one.
 
         //First remove the mapping to the audit folder, else we could constantly revisit this process.
         audit_folder = audit_folders[af_index];
         obj_folder_to_destroy = req_folders_mapping[can.inArray(audit_folder, req_folders)].mappings[0].instance;
 
-        $.when(
+        return $.when(
           report_progress(
             'Linking Request "' + instance.objective.reify().title + '" to new folder'
             , new CMS.Models.GDriveFolder({
@@ -317,6 +413,7 @@ can.Control("GGRC.Controllers.GDriveWorkflow", {
             }).save().then(function(folder) {
               return new CMS.Models.ObjectFolder({
                 folder : folder
+                , folder_id : folder.id
                 , folderable : instance
                 , context : instance.context || { id : null }
               }).save().then(function() { return folder; });
@@ -324,86 +421,35 @@ can.Control("GGRC.Controllers.GDriveWorkflow", {
           )
           , CMS.Models.GDriveFile.findAll({parentfolderid : audit_folders[0].id})
           , obj_folder_to_destroy.refresh().then(function(of) { of.destroy(); })
-        ).then(function(new_folder, audit_files) {
-          var tldfds = [];
-          can.each(audit_files, function(file) {
-            //if the file is still referenced in more than one request without an objective,
-            // don't remove from the audit.
-            tldfds.push(CMS.Models.ObjectDocument.findAll({ "document.link" : file.alternateLink }).then(function(obds) {
-              //filter out any object-documents that aren't Responses.
-              var responses = can.map(obds, function(obd) {
-                if(obd.documentable.reify() instanceof CMS.Models.Response)
-                  return obd.documentable.reify();
-              });
-              
-              file.addToParent(new_folder);
-              return new RefreshQueue().enqueue(responses).trigger().then(function(reified_responses) {
-                var dfds = [];
-
-                if(obds.length < 2
-                  || can.map(reified_responses, function(resp) {
-                    if(resp.request.reify() !== instance
-                       && !resp.request.reify().objective) {
-                      return resp;
-                    }
-                }).length < 1) {
-                  //If no other request is still using the Audit folder version,
-                  // remove from the audit folder.
-                  can.each(audit_folders, function(af) {
-                    dfds.push(file.removeFromParent(af));
-                  });
-                }
-
-                return $.when.apply($, dfds);
-              });
-            }));
-          });
-
-          report_progress(
-            "Moving files to new Request folder"
-            , $.when.apply($, tldfds)
-          );
-        }, function() {
-          console.warn("a prerequisite failed", arguments[0]);
+        ).then(
+          that.proxy("move_files_to_new_folder", audit_folders)
+          , function() {
+            console.warn("a prerequisite failed", arguments[0]);
+          }
+        ).done(function() {
+          that.update_owner_permission(model, ev, instance);
         });
-        that.update_owner_permission(model, ev, instance);
       } else if(req_folders.length < 1) {
         return;
-      } else if(!~can.inArray(req_folders[0], audit_folders) && !instance.objective) {
+      } else if(af_index < 0 && !instance.objective) {
         //we removed the objective.  This is the easier case.
-        obj_folder_to_destroy = req_folders_mapping[0].mappings[0].instance;
+        obj_destroy_dfds = can.map(req_folders_mapping, function(b) {
+          b.mappings[0].instance.refresh().then(function(of) { of.destroy(); });
+          return CMS.Models.GDriveFile.findAll({parents : b.instance.id});
+        });
 
         return $.when(
           CMS.Models.GDriveFile.findAll({parents : req_folders[0].id})
-          , obj_folder_to_destroy.refresh().then(function(of) { of.destroy(); })
-        ).then(function(files) {
-          //move each file from the old Request folder to the Audit folders
-          var move_dfds = [];
-          can.each(files, function(file) {
-            move_dfds.push(file.addToParent(audit_folders[0]));
-            move_dfds.push(file.removeFromParent(req_folders[0]));
-          });
-          report_progress(
-            "Moving files to the Audit folder"
-            , $.when.apply($, move_dfds).then(function() {
-              CMS.Models.GDriveFile.findAll({parents : req_folders[0].id}).then(function(orphs) {
-                if(orphs.length < 1) {
-                  req_folders[0].destroy();
-                } else {
-                  console.warn("can't delete folder as files still exist:", orphs);
-                }
-              });
-            })
-          );
-          report_progress(
-            'Linking Request to Audit folder'
-            , new CMS.Models.ObjectFolder({
-              folder_id : instance.audit.reify().object_folders[0].reify().folder_id
-              , folderable : instance
-              , context : instance.context || { id : null }
-            }).save()
-          );
-        }).done(function() {
+          , $.when.apply($, obj_destroy_dfds).then(function() {
+            return can.unique(
+              can.reduce(arguments, function(a, b) {
+                return a.concat(b);
+              }, [])
+            );
+          })
+        ).then(
+          that.proxy("move_files_to_audit_folder", instance, audit_folders, req_folders)
+        ).done(function() {
           return that.update_owner_permission(model, ev, instance);
         });
       }

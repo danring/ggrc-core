@@ -295,12 +295,6 @@ CMS.Models.GDriveFile("CMS.Models.GDriveFolder", {
   , from_id : function(id) {
     return new this({ id : id });
   }
-  , model : function(params) {
-    if(params.url) {
-      params.selfLink = "#";
-    }
-    return this._super.apply(this, arguments);
-  }
   //Note that when you get the file and folder objects back from the server
   // the current user's permission on the file comes back in the 'userPermission'
   // property, but we can't modelize these permissions because they always have ID "me"
@@ -458,18 +452,44 @@ can.Model.Join("CMS.Models.ObjectFolder", {
 
   , model : function(params) {
     if(typeof params === "object") {
-      params.folder = {
-        id : params.folder_id
-        , type : "GDriveFolder"
-        , parentfolderid : params.parent_folder_id
-        , href : "/drive/v2/files/" + params.folder_id
-      };
+      if(params.folder_id) {
+
+        params.folder = new CMS.Models.GDriveFolder({
+          id : params.folder_id
+          , href : "/drive/v2/files/" + params.folder_id
+        }).stub();
+      }
     }
     return this._super(params);
   }
 }, {
 
-  serialize : function(attr) {
+  setup : function() {
+    // var update_folder = can.proxy(function() {
+    //   this.attr("folder", new CMS.Models.GDriveFolder({
+    //     id : this.folder_id
+    //     , parentfolderid : this.parent_folder_id
+    //     , href : "/drive/v2/files/" + this.folder_id
+    //   }));
+    // }, this);
+    this._super.apply(this, arguments);
+    // this.bind("updated", update_folder);
+    // this.bind("created", update_folder);
+  }
+
+  , init : function() {
+    this._super.apply(this, arguments);
+    if(!this.folder && this.folder_id) {
+      this.attr("folder", new CMS.Models.GDriveFolder({
+        id : this.folder_id
+        , parentfolderid : this.parent_folder_id
+        , href : "/drive/v2/files/" + this.folder_id
+      }));
+    }
+
+  }
+
+  , serialize : function(attr) {
     var serial;
     if(!attr) {
       serial = this._super.apply(this, arguments);
@@ -482,6 +502,7 @@ can.Model.Join("CMS.Models.ObjectFolder", {
     }
     return this._super.apply(this, arguments);
   }
+
 });
 
 can.Model.Join("CMS.Models.ObjectFile", {
@@ -502,13 +523,11 @@ can.Model.Join("CMS.Models.ObjectFile", {
   }
 
   , model : function(params) {
-    if(typeof params === "object") {
-      params.file = {
+    if(typeof params === "object" && params.file_id) {
+      params.file = new CMS.Models.GDriveFile({
         id : params.file_id
-        , type : "GDriveFile"
-        , parentfolderid : params.folder_id
         , href : "/drive/v2/files/" + params.file_id
-      };
+      }).stub();
     }
     return this._super(params);
   }
