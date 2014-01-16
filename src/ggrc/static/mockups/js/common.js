@@ -238,10 +238,10 @@ var dataView;
 var grid;
 var data = [];
 var columns = [
-  {id: "title", name: "Title", field: "title", width: 250, minWidth: 120, cssClass: "cell-title", editor: Slick.Editors.Text, validator: requiredFieldValidator, sortable: true},
-  {id: "assignee", name: "Assignee", field: "assignee", width: 250, minWidth: 120, cssClass: "cell-assignee", editor: Slick.Editors.Auto, sortable: true},
-  {id: "status", name: "Status", width: 140, minWidth: 80, cssClass: "cell-status", editor: Slick.Editors.Select, sortable: true},
-  {id: "finish", name: "Due on", field: "finish", width: 140, minWidth: 80, editor: Slick.Editors.Date, sortable: true}
+  {id: "title", name: "Title", field: "title", width: 330, minWidth: 120, cssClass: "cell-title", editor: Slick.Editors.Text, validator: requiredFieldValidator, sortable: true},
+  {id: "assignee", name: "Assignee", field: "assignee", width: 170, minWidth: 100, cssClass: "cell-assignee", editor: Slick.Editors.Auto, sortable: true},
+  {id: "status", name: "Status", field: "status", width: 140, minWidth: 80, cssClass: "cell-status", options: "Assigned,Accepted,Completed", editor: Slick.Editors.Select, sortable: true},
+  {id: "due-on", name: "Due on", field: "due-on", width: 140, minWidth: 80, cssClass: "cell-due-on", editor: Slick.Editors.Date, sortable: true}
 ];
 
 var options = {
@@ -269,19 +269,11 @@ function requiredFieldValidator(value) {
 }
 
 function myFilter(item, args) {
-  if (item["percentComplete"] < args.percentCompleteThreshold) {
-    return false;
-  }
-
   if (args.searchString != "" && item["title"].indexOf(args.searchString) == -1) {
     return false;
   }
 
   return true;
-}
-
-function percentCompleteSort(a, b) {
-  return a["percentComplete"] - b["percentComplete"];
 }
 
 function comparer(a, b) {
@@ -295,7 +287,7 @@ function toggleFilterRow() {
 
 $(function () {
   // prepare the data
-  for (var i = 0; i < 50; i++) {
+  for (var i = 0; i < 500; i++) {
     var d = (data[i] = {});
 
     d["id"] = "id_" + i;
@@ -303,11 +295,11 @@ $(function () {
     d["title"] = "Collect documentation " + i;
     d["assignee"] = "Cassius Clay";
     d["status"] = "Assigned";
-    d["finish"] = "Due on: 01/05/13";
+    d["due-on"] = "Due on: 01/05/13";
   }
 
 
-  dataView = new Slick.Data.DataView({ inlineFilters: true });
+  dataView = new Slick.Data.DataView({inlineFilters: true});
   grid = new Slick.Grid("#myGrid", dataView, columns, options);
   grid.setSelectionModel(new Slick.RowSelectionModel());
 
@@ -325,7 +317,7 @@ $(function () {
   });
 
   grid.onAddNewRow.subscribe(function (e, args) {
-    var item = {"num": data.length, "id": "new_" + (Math.round(Math.random() * 10000)), "title": "New task", "duration": "1 day", "percentComplete": 0, "start": "01/01/2009", "finish": "01/01/2009", "effortDriven": false};
+    var item = {"num": data.length, "id": "new_" + (Math.round(Math.random() * 10000)), "title": "New task", "assignee": "Cassius Clay", "status": "Assigned", "due-on": "Due on: 01/05/13"};
     $.extend(item, args.item);
     dataView.addItem(item);
   });
@@ -427,7 +419,6 @@ $(function () {
 
   function updateFilter() {
     dataView.setFilterArgs({
-      percentCompleteThreshold: percentCompleteThreshold,
       searchString: searchString
     });
     dataView.refresh();
@@ -451,7 +442,6 @@ $(function () {
   dataView.beginUpdate();
   dataView.setItems(data);
   dataView.setFilterArgs({
-    percentCompleteThreshold: percentCompleteThreshold,
     searchString: searchString
   });
   dataView.setFilter(myFilter);

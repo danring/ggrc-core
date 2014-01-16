@@ -1225,13 +1225,13 @@
 
         model.bind("destroyed", function(ev, mapping) {
           if (mapping instanceof model)
-            self.remove_instance_from_mapping(binding, mapping);
+            that.remove_instance_from_mapping(binding, mapping);
         });
 
         //  FIXME: This is only needed in DirectListLoader, right?
         model.bind("orphaned", function(ev, mapping) {
           if (mapping instanceof model)
-            self.remove_instance_from_mapping(binding, mapping);
+            that.remove_instance_from_mapping(binding, mapping);
         });
       }
 

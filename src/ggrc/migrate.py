@@ -93,7 +93,7 @@ def revision_command(extension_module_name, message=None, autogenerate=False, sq
     # The rest of this method is a direct copy of alembic.command:revision,
     # except for replacing ``with EnvironmentContext...`` with
     # ``pkg_env.run_env...``
-    script = ScriptDirectory.from_config(config)
+    script = pkg_env.script_dir
     template_args = {
         'config': config  # Let templates use config for
                           # e.g. multiple databases
@@ -186,7 +186,7 @@ def current(extension_module_name, head_only=False):
   pkg_env = ExtensionPackageEnv(extension_module_name)
   config = pkg_env.config
 
-  script = ScriptDirectory.from_config(config)
+  script = pkg_env.script_dir
   def display_version(rev, context):
       rev = script.get_revision(rev)
 

@@ -897,6 +897,9 @@ ul.new-tree {
 .show-description {
   position:relative;
   padding-top:16px;
+  &.bottom-space {
+    padding-bottom: 12px;
+  }
 }
 
 .tier-2-info {

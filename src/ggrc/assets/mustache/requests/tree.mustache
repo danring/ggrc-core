@@ -11,18 +11,29 @@
   <div class="item-main" {{#instance}}{{data 'model'}}{{/instance}} data-model="true">
     <a href="javascript://" class="openclose">
       <div class="row-fluid">
-        <div class="span3">
+        <div class="span2">
           <div class="item-data">
             <div class="tree-title-area">
               <i class="grcicon-request-color"></i>
+              {{instance.description}}
+            </div>
+          </div>
+        </div>
+        <div class="span2">
+          <div class="item-data">
+            <div class="tree-title-area">
+              <i class="grcicon-objective-color"></i>
               {{#using objective=instance.objective}}
-                {{objective.title}}
+                {{#if objective}}
+                  {{objective.title}}
+                {{else}}
+                  {{#is_allowed "update" "Objective" context=null}}
+                    Missing Objective
+                  {{else}}
+                    NEW
+                  {{/is_allowed}}
+                {{/if}}
               {{/using}}
-              {{#if_helpers '\
-                #if_null' instance.objective '\
-                and ^is_allowed' "update" "Objective" context=null}}
-                  NEW
-              {{/if_helpers}}
             </div>
           </div>
         </div>
@@ -34,15 +45,15 @@
                 ^if' allow_mapping_or_creating '\
                 or ^is_allowed' 'update' instance '\
               ' _1_context=instance.context.id}}
-                {{{render '/static/mustache/people/popover.mustache' person=assignee}}}
+                {{{renderLive '/static/mustache/people/popover.mustache' person=assignee}}}
               {{else}}
                 <input type="text" name="assignee.name" data-lookup="Person" class="span8 short-field" value="{{firstnonempty assignee.name assignee.email ''}}">
               {{/if_helpers}}
           </div>
         {{/using}}
         </div>
-        <div class="span3" {{ (el) -> el.ggrc_controllers_quick_form({ instance : el.closest('[data-model]').data('model')}); }}>
-          <span class="pull-left request-type black-font">type:</span>
+        <div class="span2" {{ (el) -> el.ggrc_controllers_quick_form({ instance : el.closest('[data-model]').data('model')}); }}>
+          <span class="pull-left request-type black-font"></span>
           {{#with_mapping 'responses' instance}}
             {{#if_helpers '\
               ^if' allow_mapping_or_creating '\

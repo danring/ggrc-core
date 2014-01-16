@@ -29,7 +29,7 @@ function get_template_path(url) {
 //   short-circuit the request.
 $.ajaxTransport("text", function(options, _originalOptions, _jqXHR) {
   var template_path = get_template_path(options.url),
-      template = GGRC.Templates[template_path];
+      template = template_path && GGRC.Templates[template_path];
 
   if (template) {
     return {
@@ -513,7 +513,9 @@ Mustache.registerHelper("render", function(template, context, options) {
     }
   }
 
-  return can.view.render(template, context instanceof can.view.Scope ? context : new can.view.Scope(context));
+  var ret = can.view.render(template, context instanceof can.view.Scope ? context : new can.view.Scope(context));
+  can.view.hookup(ret);
+  return ret;
 });
 
 // Like 'render', but doesn't serialize the 'context' object, and doesn't
@@ -734,21 +736,6 @@ Mustache.registerHelper("all", function(type, params, options) {
 
   items_dfd = model.findAll(params);
   return "<" + tag_name + " data-view-id='" + $dummy_content.attr("data-view-id") + "'></" + tag_name + ">";
-});
-
-Mustache.registerHelper("handle_context", function() {
-  var context_href = this.attr('context.href')
-    , context_id = this.attr('context.id')
-    ;
-
-  return [
-    "<input type='hidden' name='context.href'" +
-      (context_href ? ("value='" + context_href + "'") : "") +
-      " null-if-empty='null-if-empty' />",
-    "<input type='hidden' name='context.id'" +
-      (context_id ? ("value='" + context_id + "'") : "") +
-      " null-if-empty='null-if-empty' numeric='numeric' />"
-    ].join("\n");
 });
 
 can.each(["page_object", "current_user"], function(fname) {
@@ -1109,7 +1096,7 @@ Mustache.registerHelper("result_direct_mappings", function(
   }
   mappings_type = has_direct_mappings ? 
       (has_external_mappings ? "Dir & Ext" : "Dir") : "Ext";
-  options.contexts[options.contexts.length-1].mappings_type = mappings_type 
+  options.context.mappings_type = mappings_type 
   return options.fn(options.contexts);
 });
 
@@ -1990,5 +1977,15 @@ Mustache.registerHelper("prune_context", function(options) {
 Mustache.registerHelper("type_to_readable", function(str, options){
   return str().replace(/([A-Z])/g, ' $1').split(' ').pop();
 });
+
+Mustache.registerHelper("mixed_content_check", function(url, options) {
+  url = Mustache.getHelper("schemed_url", options.contexts).fn(url);
+  if(window.location.protocol === "https:" && !/^https:/.test(url)) {
+    return options.inverse(options.contexts);
+  } else {
+    return options.fn(options.contexts);
+  }
+});
+
 
 })(this, jQuery, can);

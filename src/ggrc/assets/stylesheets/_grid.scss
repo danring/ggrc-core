@@ -1,7 +1,18 @@
 .grid-wrap {
   position: relative;
+  margin-bottom: 20px;
   .grid-header {
     width: 100%;
+    h6 {
+      @include border-radius(4px 4px 0 0);
+      border:1px solid #ccc;
+      border-bottom:none;
+      background:#ddd;
+      color:#666;
+      padding-left:20px;
+      margin-top:20px;
+      line-height:24px;
+    }
     .advanced-filter-trigger {
       margin-right: 20px;
       float: right;
@@ -34,12 +45,24 @@
   .grid-holder {
     width: 100%;
     height: 300px;
+    box-sizing: border-box;
     border: 1px solid #ccc;
-    @include border-radius(4px 4px 0 0);
   }
   .grid-pagination {
     width: 100%;
     height: 20px;
+  }
+}
+
+.slick-top-panel-scroller {
+  &.ui-state-default {
+    border-left: none;
+    border-right: none;
+  }
+  &.advanced-filters {
+    &.pbc-filters {
+      margin: 0;
+    }
   }
 }
 
@@ -83,11 +106,25 @@
     border-top: 0px;
     border-bottom: 0px;
     float: left;
-    background: #ddd !important;
+    background: #eee !important;
     color: $text;
     font-size: 11px;
     font-weight: bold;
-    text-transform: uppercase;
+    cursor: pointer;
+  }
+  &:hover {
+    .drag {
+      position: absolute;
+      left: 3px;
+      top: -3px;
+      width: 6px;
+      height: 30px;
+      cursor: move;
+      background-image: image-url("grcicons/icons.png");
+      background-repeat: no-repeat;
+      @include background-size(368px 416px);
+      background-position: -275px -169px;
+    }
   }
 }
 
@@ -121,7 +158,7 @@
   position: absolute;
   font-size: 0.1px;
   display: block;
-  cursor: move;
+  cursor: ew-resize;
   width: 4px;
   right: 0px;
   top: 0;
@@ -256,13 +293,16 @@
 // Slick Pager
 .slick-pager {
   width: 100%;
-  height: 26px;
-  border: 1px solid gray;
+  height: 32px;
+  line-height: 32px;
+  border: 1px solid #ccc;
   border-top: 0;
   vertical-align: middle;
-  .slick-pager-status {
+  box-sizing: border-box;
+  .slick-pager-status {    
+    font-size: 75%;
     display: inline-block;
-    padding: 6px;
+    color: $gray;
   }
   .ui-icon-container {
     display: inline-block;
@@ -272,12 +312,77 @@
   .slick-pager-nav {
     display: inline-block;
     float: left;
-    padding: 2px;
+    padding-left: 16px;
+    padding-top: 5px;
+    padding-right: 10px;
+    padding-bottom: 0;
+    line-height: 26px;
+    .ui-icon-container {
+      border-color: none;
+    }
+    .ui-corner-all {
+      @include border-radius(0);
+    }
+    .ui-state-default {
+      border: none;
+      background: none;
+      margin: 0;
+      .ui-icon {
+        margin-top: 3px;
+        background-image: image-url('grcicons/icons.png');
+        display: inline-block;
+        width: 20px;
+        height: 16px;
+        line-height: 16px;
+        vertical-align: top; //necessary or button with icon embedded will sometimes be to tall.
+        background-image: image-url("grcicons/icons.png");
+        background-position: -2000px -2000px; // blank default state 
+        background-repeat: no-repeat;
+        @include background-size(368px 416px);
+        cursor: pointer;
+        &.ui-icon-seek-first { background-position:-222px -200px; }
+        &.ui-icon-seek-end { background-position:-198px -200px; }
+        &.ui-icon-seek-prev { background-position:-294px -248px; }
+        &.ui-icon-seek-next { background-position:-294px -224px; }
+        background-position:-222px -8px;
+      }
+    }
   }
   .slick-pager-settings {
     display: block;
     float: right;
-    padding: 2px;
+    padding-right: 18px;
+    padding-top: 3px;
+    padding-left: 0;
+    padding-bottom: 0;
+    line-height: 29px;
+    .ui-icon-container {
+      border-color: none;
+    }
+    .ui-corner-all {
+      @include border-radius(0);
+    }
+    .ui-state-default {
+      border: none;
+      background: none;
+      margin: 0;
+      .ui-icon {
+        margin-top: 3px;
+        background-image: image-url('grcicons/icons.png');
+        display: inline-block;
+        width: 20px;
+        height: 16px;
+        line-height: 16px;
+        vertical-align: top; //necessary or button with icon embedded will sometimes be to tall.
+        background-image: image-url("grcicons/icons.png");
+        background-position: -2000px -2000px; // blank default state 
+        background-repeat: no-repeat;
+        @include background-size(368px 416px);
+        cursor: pointer;
+        @include opacity(0.3);
+        &.ui-icon-lightbulb { background-position:-222px -8px; }
+      }
+    }
     * {
       vertical-align: middle;
     }
@@ -285,6 +390,20 @@
       padding: 2px;
       text-decoration: underline;
       cursor: pointer;
+    }
+  }
+  .slick-pager-settings-expanded {
+    font-size: 75%;
+    display: inline-block;
+    color: $gray;
+    margin-top: -6px;
+    line-height: 16px;
+    a {
+      padding: 0 5px;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }

@@ -107,6 +107,14 @@
   }
 }
 
+// Styleguide widget fix
+.widget-active {
+  .header,
+  .content {
+    display: block !important;
+  }
+}
+
 // high fidelity mockup styles
 
 #newlyCreatedTask,

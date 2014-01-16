@@ -809,7 +809,7 @@ class LinkPeopleHandler(LinksHandler):
       data = { 'email' : value }
 
     if data:
-      if data.get('email') and not re.match(Person.EMAIL_RE_STRING, data['email']):
+      if data.get('email') and not re.match(Person.EMAIL_RE_STRING, data['email'], re.IGNORECASE):
         self.add_link_warning("This email address is invalid and will not be mapped")
       else:
         return data

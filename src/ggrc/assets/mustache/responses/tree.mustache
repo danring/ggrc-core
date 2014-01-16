@@ -26,7 +26,7 @@
                   ^if' allow_mapping_or_creating '\
                   or ^is_allowed' 'update' instance '\
                 ' _1_context=instance.context.id}}
-                  {{{render '/static/mustache/people/popover.mustache' person=contact}}}
+                  {{{renderLive '/static/mustache/people/popover.mustache' person=contact}}}
                 {{else}}
                   <input type="text" name="contact.name" data-lookup="Person" class="span8 short-field" value="{{firstnonempty contact.name contact.email ''}}">
                 {{/if_helpers}}
@@ -76,7 +76,7 @@
             {{/if}}
             {{#if request.assignee}}
               {{#using assignee=request.assignee}}
-              <div class="span6"><p><strong>requested by: </strong>{{{render '/static/mustache/people/popover.mustache' person=assignee}}}</p></div>
+              <div class="span6"><p><strong>requested by: </strong>{{{renderLive '/static/mustache/people/popover.mustache' person=assignee}}}</p></div>
               {{/using}}
             {{/if}}
             </div>

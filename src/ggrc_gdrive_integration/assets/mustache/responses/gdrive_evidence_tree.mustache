@@ -66,7 +66,7 @@
           <div class="span12">
             <div class="tree-info">
               GDrive Path: 
-              <a class="reference" data-popover-trigger="sticky-hover" data-sticky-popover="true" data-content="{{render '/static/mustache/pbc/iframe_tooltip.mustache' url=instance.link}}" href="{{schemed_url instance.link}}" target="_blank">
+              <a class="reference" data-popover-trigger="sticky-hover" data-sticky-popover="true" data-content="{{renderLive '/static/mustache/pbc/iframe_tooltip.mustache' url=instance.link}}" href="{{schemed_url instance.link}}" target="_blank">
                 <div class="popover-data-title">
                   <div class='row-fluid'>
                     <div class='span12'>
@@ -104,7 +104,7 @@
           </div>
         </div>
 
-        {{{render '/static/mustache/base_objects/mappings_detail.mustache' result=result parent_instance=parent_instance}}}
+        {{{renderLive '/static/mustache/base_objects/mappings_detail.mustache' result=result parent_instance=parent_instance}}}
 
         <div class="row-fluid">
           <div class="span12">

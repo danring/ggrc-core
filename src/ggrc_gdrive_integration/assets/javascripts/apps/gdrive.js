@@ -43,7 +43,7 @@
       'client_id': GGRC.config.GAPI_CLIENT_ID
       , 'scope': scopes
       , 'immediate': !use_popup
-      , 'login_hint' : GGRC.current_user.email
+      , 'login_hint' : GGRC.current_user && GGRC.current_user.email
     }, function(authresult) {
       authdfd.resolve(authresult);
     });

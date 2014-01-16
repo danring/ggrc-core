@@ -246,7 +246,7 @@ if (typeof Slick === "undefined") {
           .css("width", getCanvasWidth() + scrollbarDimensions.width + "px")
           .appendTo($headerRowScroller);
 
-      $topPanelScroller = $("<div class='slick-top-panel-scroller ui-state-default' style='overflow:hidden;position:relative;' />").appendTo($container);
+      $topPanelScroller = $("<div class='slick-top-panel-scroller advanced-filters pbc-filters ui-state-default' style='overflow:hidden;position:relative;' />").appendTo($container);
       $topPanel = $("<div class='slick-top-panel' style='width:10000px' />").appendTo($topPanelScroller);
 
       if (!options.showTopPanel) {
@@ -726,6 +726,7 @@ if (typeof Slick === "undefined") {
           return;
         }
         $col = $(e);
+        $("<div class='drag' />").appendTo(e);
         $("<div class='slick-resizable-handle' />")
             .appendTo(e)
             .bind("dragstart", function (e, dd) {
