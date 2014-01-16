@@ -421,9 +421,9 @@ can.Control("GGRC.Controllers.GDriveWorkflow", {
       //no ObjectFolder or cannot access folder from GAPI
       el.trigger(
         "ajax:flash"
-        , { 
+        , {
           warning : 'Can\'t upload: No GDrive folder found for PBC Request '
-                  + request.objective ? ('"' + request.objective.reify().title + '"') : " with no title"
+                  + (request.objective ? ('"' + request.objective.reify().title + '"') : " with no title")
         });
       return;
     }
