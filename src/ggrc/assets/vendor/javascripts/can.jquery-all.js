@@ -3221,7 +3221,7 @@
             },
             // Used to determine the parentNode if el is directly within a documentFragment
             getParentNode: function(el, defaultParentNode) {
-                return defaultParentNode && el.parentNode.nodeType === 11 ? defaultParentNode : el.parentNode;
+                return defaultParentNode && el.parentNode && el.parentNode.nodeType === 11 ? defaultParentNode : el.parentNode;
             },
             // Set an attribute on an element
             setAttr: function(el, attrName, val) {
