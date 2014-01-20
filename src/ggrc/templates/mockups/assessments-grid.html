@@ -332,6 +332,32 @@
                           <div id="myGrid" class="grid-holder" style="height: 300px;"></div>
                           <div id="pager" class="grid-pagination"></div>
                         </div>
+                        <div id="inlineFilterPanel" style="display: none;">
+                          <div class="row-fluid">
+                            <div class="span5">
+                              <ul class="filter-date-range">
+                                <li>
+                                  <span class="requested-text">requested on or after:</span>
+                                  <input class="input-small date" name="requested_on" data-toggle="datepicker" data-after="filter_start_date" placeholder="/ /" type="text" value="" id="dateSearch">
+                                </li>
+                              </ul>
+                            </div>
+                            <div class="span3">
+                              <i class="grcicon-person-green pull-left"></i>
+                              <input type="text" class="span9 short-field" value="" id="txtSearch">
+                            </div>
+                            <div class="span2">
+                              <select name="status" class="span10 short-field" id="selectSearch">
+                                <option>Assigned</option>
+                                <option>Accepted</option>
+                                <option>Completed</option>
+                              </select>
+                            </div>
+                            <div class="span2">
+                              <button type="reset" data-toggle="filter-reset" class="btn">Reset</button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   

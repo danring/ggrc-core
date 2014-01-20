@@ -250,7 +250,7 @@ var options = {
   enableCellNavigation: true,
   asyncEditorLoading: true,
   forceFitColumns: true,
-  topPanelHeight: 25,
+  topPanelHeight: 30,
   rowHeight: 32,
 };
 
@@ -389,23 +389,8 @@ $(function () {
 
   var h_runfilters = null;
 
-  // wire up the slider to apply the filter to the model
-  $("#pcSlider,#pcSlider2").slider({
-    "range": "min",
-    "slide": function (event, ui) {
-      Slick.GlobalEditorLock.cancelCurrentEdit();
-
-      if (percentCompleteThreshold != ui.value) {
-        window.clearTimeout(h_runfilters);
-        h_runfilters = window.setTimeout(updateFilter, 10);
-        percentCompleteThreshold = ui.value;
-      }
-    }
-  });
-
-
   // wire up the search textbox to apply the filter to the model
-  $("#txtSearch,#txtSearch2").keyup(function (e) {
+  $("#txtSearch,#txtSearch2,#selectSearch,#dateSearch").keyup(function (e) {
     Slick.GlobalEditorLock.cancelCurrentEdit();
 
     // clear on Esc
