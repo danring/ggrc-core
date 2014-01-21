@@ -390,7 +390,7 @@ $(function () {
   var h_runfilters = null;
 
   // wire up the search textbox to apply the filter to the model
-  $("#txtSearch,#txtSearch2,#selectSearch,#dateSearch").keyup(function (e) {
+  $("#txtSearch,#selectSearch,#dateSearch").keyup(function (e) {
     Slick.GlobalEditorLock.cancelCurrentEdit();
 
     // clear on Esc
