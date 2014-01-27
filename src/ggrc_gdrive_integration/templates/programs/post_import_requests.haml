@@ -5,8 +5,8 @@
   GGRC.permissions = ={ permissions_json()|safe };
   GGRC.current_user = ={ current_user_json()|safe };
   GGRC.config = ={ config_json()|safe };
-  var request_ids = ={ created_updated_request_ids};
-  var audit_id = ={audit_id};
+  window.request_ids = ={ created_updated_request_ids};
+  window.audit_id = ={audit_id};
 
 -block body
   .flash
