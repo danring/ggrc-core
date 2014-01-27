@@ -881,7 +881,7 @@ Mustache.registerHelper("schemed_url", function(url) {
   if (url) {
     url = url.isComputed? url(): url;
     if (url && !url.match(/^[a-zA-Z]+:/)) {
-        return 'http://' + url;
+        return (window.location.protocol === "https:" ? 'https://' : 'http://') + url;
     }
   }
   return url;
@@ -1728,7 +1728,7 @@ Mustache.registerHelper("default_audit_title", function(title, program, options)
   
   // Count the current number of audits with default_title
   $.map(CMS.Models['Audit'].cache, function(audit){
-    if(audit.title.indexOf(default_title) === 0){
+    if(audit.title && audit.title.indexOf(default_title) === 0){
       index += 1;
     }
   });
@@ -1987,5 +1987,18 @@ Mustache.registerHelper("mixed_content_check", function(url, options) {
   }
 });
 
+
+Mustache.registerHelper("is_page_instance", function(instance, options){
+  var instance = resolve_computed(instance)
+    , page_instance = GGRC.page_instance()
+    ;
+  
+  if(instance.type === page_instance.type && instance.id === page_instance.id){
+    return options.fn(options.contexts);
+  }
+  else{
+    return options.inverse(options.contexts);
+  }
+});
 
 })(this, jQuery, can);

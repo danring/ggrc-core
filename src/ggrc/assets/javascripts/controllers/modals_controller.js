@@ -255,7 +255,9 @@ can.Control("GGRC.Controllers.Modals", {
               return that.options.instance;
             }
           }).done(function() {
-            that.on(); //listen to instance.
+            // Check if modal was closed
+            if(that.element !== null)
+              that.on(); //listen to instance.
           });
     } else {
       this.options.attr("instance", new can.Observe(params));

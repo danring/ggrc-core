@@ -26,6 +26,7 @@ all_collections = [
   service('templates', models.Template),
   service('risk_assessments', models.RiskAssessment),
   service('risk_assessment_mappings', models.RiskAssessmentMapping),
+  service('risk_assessment_control_mappings', models.RiskAssessmentControlMapping),
   service('threats', models.Threat),
   service('vulnerabilities', models.Vulnerability),
 ]

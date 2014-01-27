@@ -29,10 +29,6 @@ class RiskAssessmentMapping(Base, db.Model):
       db.Column(db.Text, nullable=True), 'RiskAssessmentMapping')
   inherent_risk = deferred(
       db.Column(db.Text, nullable=True), 'RiskAssessmentMapping')
-  control_strength = deferred(
-      db.Column(db.Text, nullable=True), 'RiskAssessmentMapping')
-  residual_risk = deferred(
-      db.Column(db.Text, nullable=True), 'RiskAssessmentMapping')
   risk_treatment = deferred(
       db.Column(db.Text, nullable=True), 'RiskAssessmentMapping')
   remarks = deferred(
@@ -59,13 +55,6 @@ class RiskAssessmentMapping(Base, db.Model):
       'RiskAssessmentMapping')
   vulnerability = db.relationship(
       'Vulnerability', foreign_keys='RiskAssessmentMapping.vulnerability_id')
-
-  control_id = deferred(
-      db.Column(
-        db.Integer, db.ForeignKey('controls.id'), nullable=False),
-      'RiskAssessmentMapping')
-  control = db.relationship(
-      'Control', foreign_keys='RiskAssessmentMapping.control_id')
 
   asset_id = deferred(
       db.Column(db.Integer, nullable=False), 'RiskAssessmentMapping')
@@ -97,13 +86,10 @@ class RiskAssessmentMapping(Base, db.Model):
     'impact_category',
     'likelihood',
     'inherent_risk',
-    'control_strength',
-    'residual_risk',
     'risk_treatment',
     'remarks',
     'risk_assessment',
     'threat',
     'vulnerability',
-    'control',
     'asset',
     ]

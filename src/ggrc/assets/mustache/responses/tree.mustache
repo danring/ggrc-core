@@ -42,7 +42,7 @@
                 <span class="black-font">{{instance.status}}</span>
               {{else}}
                 <select name="status" class="span10 short-field">
-                  {{#iterate 'Assigned' 'Accepted' 'Completed'}}
+                  {{#iterate 'Assigned' 'Submitted' 'Accepted' 'Rejected'}}
                   <option {{#if_equals iterator instance.status}}selected="true"{{/if_equals}}>{{iterator}}</option>
                   {{/iterate}}
                 </select>

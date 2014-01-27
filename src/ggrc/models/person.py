@@ -13,7 +13,7 @@ import re
 
 class Person(Base, db.Model):
   __tablename__ = 'people'
-  EMAIL_RE_STRING = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
+  EMAIL_RE_STRING = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])"
 
   email = deferred(db.Column(db.String), 'Person')
   name = deferred(db.Column(db.String), 'Person')

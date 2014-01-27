@@ -260,10 +260,15 @@
             <a href="#"><i class="grcicon-edit"></i> {{model.title_singular}} Log</a>
           </li>
           -->
+        {{/if_helpers}}
+
+        {{#is_allowed 'read' 'Request' context=instance.context.id}}
           <li>
           <a href="/audits/{{instance.id}}/export_pbcs?id={{instance_ids child_options.0.list}}"><i class="grcicon-export"></i> Export PBC List</a>
           </li>
+        {{/is_allowed}}
 
+        {{#is_allowed 'create' 'update' 'Request' context=instance.context.id}}
           <li>
           {{! FIXME: Better way to get the Audit link }}
           <a href="/audits/{{instance.id}}/import_pbcs?return_to={{param_current_location}}"><i class="grcicon-imp-exp"></i> Import PBC List</a>
@@ -274,7 +279,7 @@
           <a href="/audits/{{instance.id}}/import_pbc_template"><i class="grcicon-export"></i> Download PBC Import Template</a>
           </li>
           -->
-        {{/if_helpers}}
+        {{/is_allowed}}
       </ul>
     </div>
 

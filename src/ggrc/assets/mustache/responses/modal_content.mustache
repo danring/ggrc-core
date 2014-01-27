@@ -40,7 +40,7 @@
         Status
       </label>
       <select class="input-block-level" name="status" {{#new_object_form}}disabled="true"{{/new_object_form}} tabindex="2">
-        {{#iterate 'Assigned' 'Accepted' 'Completed'}}
+        {{#iterate 'Assigned' 'Submitted' 'Accepted' 'Rejected'}}
         <option {{#if_equals iterator instance.status}}selected="true"{{/if_equals}}>{{iterator}}</option>
         {{/iterate}}
       </select>

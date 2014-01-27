@@ -7,7 +7,7 @@ from datetime import datetime
 import re
 from .common import *
 from ggrc.models.all_models import (
-    ControlCategory, ControlAssertion,
+    Audit, ControlCategory, ControlAssertion,
     Control, Document, Objective, ObjectControl, ObjectiveControl,
     ObjectObjective, ObjectOwner, ObjectPerson, Option, Person, Process, 
     Relationship, Request, Section, SectionObjective, System, SystemOrProcess,
@@ -180,11 +180,7 @@ class BaseRowConverter(object):
     self.handle(key, OptionColumnHandler, **options)
 
   def find_by_slug(self, slug):
-    if self.importer.options.get('is_biz_process'):
-      target_class = Process
-    else:
-      target_class = self.model_class
-    return target_class.query.filter_by(slug=slug).first()
+    return self.model_class.query.filter_by(slug=slug).first()
 
   def set_attr(self, name, value):
     try:
@@ -341,7 +337,7 @@ class ContactEmailHandler(ColumnHandler):
       self.add_error("A valid email address is required")
     elif person_must_exist:
       value = self.find_contact(value, is_required=is_required)
-    elif value and not re.match(Person.EMAIL_RE_STRING, value):
+    elif value and not re.match(Person.EMAIL_RE_STRING, value, re.IGNORECASE):
       message = "{} is not a valid email. \
                 Please use following format: user@example.com".format(value)
       self.add_error(message) if is_required else self.add_warning(message)
@@ -385,7 +381,7 @@ class AssigneeHandler(ContactEmailHandler):
         self.add_warning("Blank field; assignee will remain as {}".format(current_request_assignee.display_name))
         return current_request_assignee
       # Otherwise, default to owner of audit (received via view function)
-      audit = self.importer.options.get('audit')
+      audit = Audit.query.get(self.importer.options.get('audit_id'))
       audit_owner = getattr(audit, 'contact', None)
       if audit_owner:
         # Owner should exist, and if so, return that Person
@@ -691,12 +687,9 @@ class ObjectiveHandler(ColumnHandler):
       else:
         return objective.id
     else:
-      # warn or throw error based on options
-      if self.options.get('is_required'):
-        self.add_error("Objective code is required.")
-      elif self.options.get('is_needed_later'):
+      if self.options.get('is_needed_later'):
         self.add_warning("You will need to connect an Objective later.")
-      return ''
+      return None
 
   def export(self):
     objective_id = getattr(self.importer.obj, 'objective_id', '')

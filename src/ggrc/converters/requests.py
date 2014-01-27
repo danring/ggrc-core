@@ -3,8 +3,10 @@
 # Created By: silas@reciprocitylabs.com
 # Maintained By: silas@reciprocitylabs.com
 
+
 from .base import *
-from ggrc.models import Audit, Request
+from ggrc import db
+from ggrc.models import Audit, Program, Request
 from .base_row import *
 from collections import OrderedDict
 
@@ -34,8 +36,9 @@ class RequestRowConverter(BaseRowConverter):
         person_must_exist=True)
 
   def save_object(self, db_session, **options):
-    audit = options.get('audit')
-    if audit:
+    audit_id = options.get('audit_id')
+    if audit_id:
+      audit = Audit.query.get(audit_id)
       self.obj.audit = audit
       self.obj.context = audit.context
       db_session.add(self.obj)
@@ -75,7 +78,8 @@ class RequestsConverter(BaseConverter):
     self.validate_code(attrs)
 
   def program(self):
-    return self.options['program']
+    program = Program.query.get(self.options['program_id'])
+    return program
 
   def do_export_metadata(self):
     yield self.metadata_map.keys()

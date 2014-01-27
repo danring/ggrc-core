@@ -79,3 +79,29 @@ all_collections = [
   service('object_files', models.ObjectFile),
   service('object_events', models.ObjectEvent)
 ]
+
+from ggrc_basic_permissions.contributed_roles import RoleContributions
+
+class GDriveRoleContributions(RoleContributions):
+  contributions = {
+      'Auditor': {
+        'read': ['ObjectFolder', 'ObjectFile', 'ObjectEvent'],
+        },
+      'ProgramAuditEditor': {
+        'read': ['ObjectFolder', 'ObjectFile', 'ObjectEvent'],
+        'create': ['ObjectFolder', 'ObjectFile', 'ObjectEvent'],
+        'update': ['ObjectFolder', 'ObjectFile', 'ObjectEvent'],
+        'delete': ['ObjectFolder', 'ObjectFile', 'ObjectEvent'],
+        },
+      'ProgramAuditOwner': {
+        'read': ['ObjectFolder', 'ObjectFile', 'ObjectEvent'],
+        'create': ['ObjectFolder', 'ObjectFile', 'ObjectEvent'],
+        'update': ['ObjectFolder', 'ObjectFile', 'ObjectEvent'],
+        'delete': ['ObjectFolder', 'ObjectFile', 'ObjectEvent'],
+        },
+      'ProgramAuditReader': {
+        'read': ['ObjectFolder', 'ObjectFile', 'ObjectEvent'],
+        },
+      }
+
+ROLE_CONTRIBUTIONS = GDriveRoleContributions()
