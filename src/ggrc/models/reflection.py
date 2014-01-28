@@ -54,6 +54,14 @@ class AttributeInfo(object):
     self._include_links = AttributeInfo.gather_include_links(tgt_class)
 
   @classmethod
+  def iter_bases_attrs(cls, tgt_class, src_attrs):
+    src_attrs = src_attrs if type(src_attrs) is list else [src_attrs]
+    for base in tgt_class.mro():
+      for attr in src_attrs:
+        if attr in tgt_class.__dict__:
+          yield getattr(tgt_class, attr, None)
+
+  @classmethod
   def gather_attrs(cls, tgt_class, src_attrs, accumulator=None):
     """Gathers the attrs to be included in a list for publishing, update, or
     some other purpose. Supports inheritance by iterating the list of
@@ -66,7 +74,11 @@ class AttributeInfo(object):
     accumulator = accumulator if accumulator is not None else set()
     ignore_dontpropagate = True
     for attr in src_attrs:
-      attrs = tgt_class.__dict__.get(attr, None)
+      attrs = None
+      # Only get the attribute if it is defined on the target class, but
+      # get it via `getattr`, to handle `@declared_attr`
+      if attr in tgt_class.__dict__:
+        attrs = getattr(tgt_class, attr, None)
       if attrs is not None:
         if not ignore_dontpropagate:
           attrs = [a for a in attrs if not isinstance(a, DontPropagate)]
