@@ -148,7 +148,6 @@ class UpdateAttrHandler(object):
         for item in old_set - new_set:
           coll_attr.remove(item)
     else:
-      print obj, attr_name, value
       setattr(obj, attr_name, value)
 
   @classmethod
