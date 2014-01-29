@@ -182,6 +182,10 @@ def post_example(context, resource_type, example, url=None, rbac_context=None):
         value_resource_type = value_resource_subtypes[0]
 
       value_resource_factory = factory_for(value_resource_type)
+      if value_resource_factory is None:
+        value_resource_type = \
+            value.class_.__module__ + '.' + value.class_.__name__
+        value_resource_factory = factory_for(value_resource_type)
       value_resource = value_resource_factory()
       value_response = post_example(
           context, value_resource_type, value_resource, rbac_context=rbac_context)

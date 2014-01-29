@@ -174,6 +174,10 @@ def check_resource_equality_for_response(context, resource_type):
     assert original == response, 'for {0}: expected {1}, received {2}'.format(
         k, original, response)
 
+@given('the current user email "{email}"')
+def define_current_user_by_email(context, email):
+  define_current_user(context, '{{ "email": "{0}" }}'.format(email))
+
 @given('the current user')
 def define_current_user_from_pystring(context):
   define_current_user(context, context.text.replace("\n", " ").strip())

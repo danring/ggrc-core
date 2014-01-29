@@ -114,6 +114,14 @@ def retrieve_user_link_object(context, email, object_name):
     assert person is not None and person['id'] is not None
     setattr(context, object_name, {'id': person['id']})
 
+@given('Person object for email "{email}" as "{object_name}"')
+def retrieve_person_resource_by_email(context, email, object_name):
+  with Admin(context):
+    person = retrieve_person_by_email(context, email)
+    assert person is not None and person['id'] is not None
+    person = Example('Person', {'person': person})
+    setattr(context, object_name, person)
+
 def ensure_user_and_role_assignment(context, email, role_name, context_id):
   with Admin(context):
     role = retrieve_role_by_name(context, role_name)

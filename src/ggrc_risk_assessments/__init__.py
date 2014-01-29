@@ -9,6 +9,8 @@ from ggrc.app import app
 from ggrc.rbac import permissions
 from ggrc.services.registry import service
 from ggrc.views.registry import object_view
+from ggrc_risk_assessments.roles import (
+    RiskAssessmentManager, RiskAssessmentReader, RiskAssessmentCounsel, )
 import ggrc_risk_assessments.models as models
 
 
@@ -54,3 +56,33 @@ def contributed_object_views():
       object_view(models.Threat),
       object_view(models.Vulnerability),
       ]
+
+all_collections = [
+  service('templates', models.Template),
+  service('risk_assessments', models.RiskAssessment),
+  service('risk_assessment_mappings', models.RiskAssessmentMapping),
+  service('risk_assessment_control_mappings', models.RiskAssessmentControlMapping),
+  service('threats', models.Threat),
+  service('vulnerabilities', models.Vulnerability),
+]
+
+class RoleDeclarations():
+  def roles(self):
+    return {
+        'RiskAssessmentManager': RiskAssessmentManager,
+        'RiskAssessmentReader': RiskAssessmentReader,
+        'RiskAssessmentCounsel': RiskAssessmentCounsel,
+        }
+
+class RoleImplications():
+  implications = {
+      'RiskAssessmentManager': ['ProgramMappingEditor',],
+      'RiskAssessmentReader': ['ProgramReader',],
+      'RiskAssessmentCounsel': ['ProgramReader', 'Reader',],
+      }
+
+  def implications_for(self, rolename):
+    return self.implications.get(rolename, list())
+
+ROLE_DECLARATIONS = RoleDeclarations()
+ROLE_IMPLICATIONS = RoleImplications()
