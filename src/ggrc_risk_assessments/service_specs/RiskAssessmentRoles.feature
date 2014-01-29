@@ -152,8 +152,12 @@ Feature: Risk Assessment Reader role
     And PUT of "person" is forbidden
     And DELETE of "person" is forbidden
 
+    @risk
   Scenario: Risk Assessment Object Permissions
-    Given a new "ggrc_risk_assessments.models.RiskAssessment" named "risk_assessment"
+    Given a new "ggrc_risk_assessments.models.Template" named "risk_template"
+    And "risk_template" is POSTed to its collection
+    And a new "ggrc_risk_assessments.models.RiskAssessment" named "risk_assessment"
+    And "risk_assessment" link property "template" is "risk_template"
     And the current user email "risk.reader@example.com"
     Then POST of "risk_assessment" to its collection is forbidden
     Given the current user email "risk.manager@example.com"
