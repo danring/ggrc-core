@@ -14,6 +14,12 @@ class Template(Base, db.Model):
   name = deferred(db.Column(db.String, nullable=True), 'Template')
   description = deferred(db.Column(db.Text, nullable=True), 'Template')
 
+  _fulltext_attrs = [
+    'name',
+    'description',
+    ]
+
   _publish_attrs = [
-    'name'
+    'name',
+    'description',
     ]

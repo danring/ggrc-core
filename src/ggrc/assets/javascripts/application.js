@@ -157,6 +157,9 @@ jQuery.extend(GGRC, {
       , "section_objective" : CMS.Models.SectionObjective
       , "person" : CMS.Models.Person
       , "role" : CMS.Models.Role
+      , "threat" : CMS.Models.Threat
+      , "vulnerability" : CMS.Models.Vulnerability
+      , "template" : CMS.Models.Template
     };
 
     function resolve_by_key(subtree, data) {

@@ -43,9 +43,7 @@
   }, { 
     init: function(){
       this.init_context();
-      this.init_role();
       this.init_view();
-      this.init_data();
     },
 
     init_context: function(){
@@ -56,18 +54,6 @@
         }, this.options));
       }
       return this.context;
-    },
-
-    init_role: function(){
-      var self = this
-        ;
-      return this.options.option_model.findAll(
-        this.option_query, function(roles) {
-          can.each(roles, function(role){
-            if(role.name === "Auditor")
-              self.role = role;
-          });
-        });
     },
 
     init_view: function(){
@@ -88,102 +74,23 @@
       this.on();
       return deferred;
     },
-    init_data: function(){
-      if("userRole_id" in this.options){
-        var self = this
-          , join_model = this.options.join_model
-          , binding = join_model.findInCacheById(this.options.userRole_id)
-          , instance = binding.person.reify()
-          , email = instance.attr('email')
-          ;
-        // TODO: Figure out why input field clears the value
-        setTimeout(function(){
-          self.options.$target.find('input').val(email);
-          self.options.binding = binding;
-          self.options.instance = instance;
-        }, 100);
-      }
-    },
     set_value : function(){},
-    "input[data-lookup] focus" : function(el, ev) {
-      this.autocomplete(el);
-    },
     "input[data-lookup] change" : function(el, ev) {
       // Clear the user
       if(el.val() == ""){
-        this.options.instance = null;
+        this.options.instance.auditor = null;
       }
     },
     "a.btn[data-toggle='modal-submit'] click" : function(el, ev){
       var self = this
         , instance = this.options.instance
-        , binding = this.options.binding || null
-        , role = this.role
-        , ajd
-        , join
         ;
       
       function finish(){
         CMS.Models[self.options.scope].cache[self.options.scope_id].refresh();
         self.element.trigger("modal:success").modal_form("hide");
       }
-      function destroyBinding(){
-        if(binding === null)
-          return $.Deferred().resolve();
-        return binding.refresh().then(function(){
-          binding.destroy();
-        });
-      }
-      
-      if(instance == null){
-        ajd = destroyBinding().then(finish);
-        this.bindXHRToButton(ajd, el, "Saving, please wait...");
-        return;
-      }
-      join = this.get_new_join(role.id, role.scope, role.constructor.shortName);
-      ajd = join.save().then(destroyBinding).then(finish);
-      this.bindXHRToButton(ajd, el, "Saving, please wait...");
-    },
-    get_new_join: function(option_id, option_scope, option_type) {
-      var join_params = {}
-        , instance = this.options.instance
-        ;
-
-      join_params[this.options.option_attr] = {};
-      join_params[this.options.option_attr].id = option_id;
-      join_params[this.options.option_attr].type = option_type;
-      join_params[this.options.join_attr] = {};
-      join_params[this.options.join_attr].id = instance.id;
-      join_params[this.options.join_attr].type = instance.type;
-
-      $.extend(join_params, this.options.extra_join_fields);
-      return new (this.options.join_model)(join_params);
-    },
-    autocomplete_select : function(el, event, ui) {
-      var original_event;
-      if(ui.item) {
-        el.val(ui.item.email);
-        this.options.instance = ui.item;
-        return false;
-      } else {
-        original_event = event;
-
-        $(document.body).off(".autocomplete").one("modal:success.autocomplete", function(ev, new_obj) {
-          el.data("ui-autocomplete").options.select(event, {item : new_obj});
-        }).one("hidden", function() {
-          setTimeout(function() {
-            $(this).off(".autocomplete");
-          }, 100);
-        });
-        while(original_event = original_event.originalEvent) {
-          if(original_event.type === "keydown") {
-            //This selection event was generated from a keydown, so click the add new link.
-            el.data("ui-autocomplete").menu.active.find("a").click();
-            break;
-          }
-        }
-        return false;
-      }
+      this.saveAuditor(finish);
     },
   });
 
@@ -670,8 +577,10 @@
     $('body').on('click', '[data-toggle="audit-role-modal-selector"]', function(e) {
       var $this = $(this)
         , options = $this.data('modal-selector-options')
+        , instance_id = $this.data('object-id')
         , data_set = can.extend({}, $this.data())
         , object_params = $this.attr('data-object-params')
+        , scope = $this.data('modal-scope')
         ;
       data_set.params = object_params && JSON.parse(object_params.replace(/\\n/g, "\\n"));
       can.each($this.data(), function(v, k) {
@@ -693,6 +602,8 @@
 
       e.preventDefault();
       e.stopPropagation();
+      
+      options.instance = CMS.Models[scope].cache[instance_id];
       options.userRole_id = data_set.params.userRole_id;
       options.scope_id = data_set.params.scope_id;
       GGRC.Controllers.AuditRoleSelector.launch($this, options)

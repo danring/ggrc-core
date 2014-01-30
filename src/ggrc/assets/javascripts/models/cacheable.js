@@ -823,6 +823,12 @@ can.Model("can.Model.Cacheable", {
   , autocomplete_label : function() {
     return this.title;
   }
+  , set_owner_to_current_user_if_unset : function() {
+    if(this.constructor.attributes.owners
+          && (!this.owners || this.owners.length === 0)) {
+      this.attr('owners', [{ id: GGRC.current_user.id }]);
+    }
+  }
   /**
    Set up a deferred join object deletion when this object is updated.
   */

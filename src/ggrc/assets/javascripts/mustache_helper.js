@@ -513,7 +513,9 @@ Mustache.registerHelper("render", function(template, context, options) {
     }
   }
 
-  return can.view.render(template, context instanceof can.view.Scope ? context : new can.view.Scope(context));
+  var ret = can.view.render(template, context instanceof can.view.Scope ? context : new can.view.Scope(context));
+  //can.view.hookup(ret);
+  return ret;
 });
 
 // Like 'render', but doesn't serialize the 'context' object, and doesn't
@@ -539,9 +541,8 @@ Mustache.registerHelper("renderLive", function(template, context, options) {
 });
 
 Mustache.registerHelper("render_hooks", function(hook, options) {
-
   return can.map(can.getObject(hook, GGRC.hooks) || [], function(hook_tmpl) {
-    return can.Mustache.getHelper("renderLive", options.context).fn(hook_tmpl, options.contexts, options);
+    return can.Mustache.getHelper("renderLive", options.contexts).fn(hook_tmpl, options.contexts, options);
   }).join("\n");
 });
 
@@ -879,7 +880,7 @@ Mustache.registerHelper("schemed_url", function(url) {
   if (url) {
     url = url.isComputed? url(): url;
     if (url && !url.match(/^[a-zA-Z]+:/)) {
-        return 'http://' + url;
+        return (window.location.protocol === "https:" ? 'https://' : 'http://') + url;
     }
   }
   return url;
@@ -1043,6 +1044,18 @@ Mustache.registerHelper("person_roles", function(person, scope, options) {
             return role;
           }
         });
+
+        //  "Superuser" roles are determined from config
+        //  FIXME: Abstraction violation
+        if ((!scope || new RegExp(scope).test("System"))
+            && GGRC.config.BOOTSTRAP_ADMIN_USERS
+            && ~GGRC.config.BOOTSTRAP_ADMIN_USERS.indexOf(person.email)) {
+          roles.unshift({
+            permission_summary: "Superuser",
+            name: "Superuser"
+          });
+        }
+
         roles_deferred.resolve(roles);
       });
     });
@@ -1094,7 +1107,7 @@ Mustache.registerHelper("result_direct_mappings", function(
   }
   mappings_type = has_direct_mappings ? 
       (has_external_mappings ? "Dir & Ext" : "Dir") : "Ext";
-  options.contexts[options.contexts.length-1].mappings_type = mappings_type 
+  options.context.mappings_type = mappings_type 
   return options.fn(options.contexts);
 });
 
@@ -1193,7 +1206,7 @@ Mustache.registerHelper("date", function(date) {
  *  {{#is_allowed ACTION [ACTION2 ACTION3...] RESOURCE_TYPE_STRING context=CONTEXT_ID}} content {{/is_allowed}}
  *  {{#is_allowed ACTION RESOURCE_INSTANCE}} content {{/is_allowed}}
  */
-var allowed_actions = ["create", "read", "update", "delete", "view_object_page"];
+var allowed_actions = ["create", "read", "update", "delete", "view_object_page", "__GGRC_ADMIN__"];
 Mustache.registerHelper("is_allowed", function() {
   var args = Array.prototype.slice.call(arguments, 0)
     , actions = []
@@ -1464,6 +1477,11 @@ Mustache.registerHelper("mapping_count", function(instance) {
   function update() {
     return options.fn(''+root.attr(mapping).attr('length'));
   }
+
+  if (!mapping) {
+    return "";
+  }
+
   if (!root[mapping]) {
     root.attr(mapping, new can.Observe.List());
     root.attr(mapping).attr('loading', true);
@@ -1726,7 +1744,7 @@ Mustache.registerHelper("default_audit_title", function(title, program, options)
   
   // Count the current number of audits with default_title
   $.map(CMS.Models['Audit'].cache, function(audit){
-    if(audit.title.indexOf(default_title) === 0){
+    if(audit.title && audit.title.indexOf(default_title) === 0){
       index += 1;
     }
   });
@@ -1814,7 +1832,7 @@ Mustache.registerHelper("if_helpers", function() {
         if (match = arg.match(/^\n\s*((and|or) )?([#^])?(\S+?)$/)) {
           statement = {
               fn_name: match[3] === '^' ? 'inverse' : 'fn'
-            , helper: Mustache.getHelper(match[4], options.context)
+            , helper: Mustache.getHelper(match[4], options.contexts)
             , args: []
             , logic: match[2] === 'or' ? 'or' : 'and'
           };
@@ -1927,22 +1945,33 @@ Mustache.registerHelper("if_in_map", function(list, path, value, options) {
 });
 
 Mustache.registerHelper("with_auditors", function(instance, options) {
-  var loader = resolve_computed(instance).get_binding('authorizations')
-    , auditors = $.map(loader.list, function(binding) {
-        if (binding.instance.role.reify().attr('name') === 'Auditor') {
-          return {
-            person: binding.instance.person.reify()
-            , binding: binding.instance
+
+  var auditor_hook, _el
+  , id = can.view.hook(auditor_hook = function auditor_hook(el){
+    var loader = resolve_computed(instance).get_binding('authorizations')
+      , html
+      , auditors = $.map(loader.list, function(binding) {
+          if (binding.instance.role.reify().attr('name') === 'Auditor') {
+            return {
+              person: binding.instance.person.reify()
+              , binding: binding.instance
+            }
           }
-        }
-      });
-  options.contexts = options.contexts.add({"auditors": auditors});
-  if(auditors.length > 0){
-    return options.fn(options.contexts);
-  }
-  else{
-    return options.inverse(options.contexts);
-  }
+        });
+    _el = el;
+    if(auditors.length > 0){
+      html = options.fn(options.contexts.add({"auditors": auditors}));
+    }
+    else{
+      html = options.inverse(options.contexts);
+    }
+    $(el).html(html);
+    can.view.hookup(el);
+  });
+  resolve_computed(instance).get_mapping('authorizations').bind("change", function() { auditor_hook(_el); });
+  return "<span" 
+    + id
+    + " data-replace='true'/>";
 });
 
 Mustache.registerHelper("if_instance_of", function(inst, cls, options) {
@@ -1974,6 +2003,85 @@ Mustache.registerHelper("prune_context", function(options) {
 // Turns DocumentationResponse to Response
 Mustache.registerHelper("type_to_readable", function(str, options){
   return str().replace(/([A-Z])/g, ' $1').split(' ').pop();
+});
+
+Mustache.registerHelper("mixed_content_check", function(url, options) {
+  url = Mustache.getHelper("schemed_url", options.contexts).fn(url);
+  if(window.location.protocol === "https:" && !/^https:/.test(url)) {
+    return options.inverse(options.contexts);
+  } else {
+    return options.fn(options.contexts);
+  }
+});
+
+/**
+  scriptwrap - create live-bound content contained within a <script> tag as CDATA
+  to prevent, e.g. iframes being rendered in hidden fields, or temporary storage 
+  of markup being found by $().
+
+  Usage
+  -----
+  To render a section of markup in a script tag:
+  {{#scriptwrap}}<section content>{{/scriptwrap}}
+
+  To render the output of another helper in a script tag:
+  {{scriptwrap "name_of_other_helper" helper_arg helper_arg... hashkey=hashval}}
+
+  Hash keys starting with "attr_" will be treated as attributes to place on the script tag itself.
+  e.g. {{#scriptwrap attr_class="data-popover-content" attr_aria_
+*/
+Mustache.registerHelper("scriptwrap", function(helper) {
+  var extra_attrs = ""
+  , args = can.makeArray(arguments).slice(1, arguments.length)
+  , options = args[args.length - 1] || helper
+  , ret = "<script type='text/html'" + can.view.hook(function(el, parent, view_id) {
+    var c = can.compute(function() {
+      var $d = $("<div>").html(
+        helper === options
+        ? options.fn(options.contexts)  //not calling a separate helper case
+        : Mustache.getHelper(helper, options.contexts).fn.apply(options.context, args));
+      can.view.hookup($d);
+      return "<script type='text/html'" + extra_attrs + ">" + $d.html() + "</script>";
+    });
+
+    can.view.live.html(el, c, parent);
+  });
+
+  if(options.hash) {
+    can.each(Object.keys(options.hash), function(key) {
+      if(/^attr_/.test(key)) {
+        extra_attrs += " " + key.substr(5).replace("_", "-") + "='" + resolve_computed(options.hash[key]) + "'";
+        delete options.hash[key];
+      }
+    });
+  }
+
+  ret += "></script>";
+  return new Mustache.safeString(ret);
+});
+
+Mustache.registerHelper("ggrc_config_value", function(key, default_, options) {
+  key = resolve_computed(key);
+  if (!options) {
+    options = default_;
+    default_ = null;
+  }
+  default_ = resolve_computed(default_);
+  default_ = default_ || "";
+  return can.getObject(key, [GGRC.config]) || default_;
+});
+
+Mustache.registerHelper("is_page_instance", function(instance, options){
+  var instance = resolve_computed(instance)
+    , page_instance = GGRC.page_instance()
+    ;
+  
+  if(instance.type === page_instance.type && instance.id === page_instance.id){
+    return options.fn(options.contexts);
+  }
+  else{
+    return options.inverse(options.contexts);
+  }
 });
 
 })(this, jQuery, can);

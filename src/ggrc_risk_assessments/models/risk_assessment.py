@@ -26,6 +26,22 @@ class RiskAssessment(Base, db.Model):
   custom2 = deferred(db.Column(db.Text, nullable=True), 'RiskAssessment')
   custom3 = deferred(db.Column(db.Text, nullable=True), 'RiskAssessment')
 
+  template_id = deferred(
+      db.Column(
+        db.Integer, db.ForeignKey('templates.id'), nullable=False),
+      'RiskAssessment')
+  template = db.relationship(
+      'Template',
+      foreign_keys='RiskAssessment.template_id')
+
+  _fulltext_attrs = [
+    'name',
+    'description',
+    'note',
+    'category',
+    'subcategory',
+    ]
+
   _publish_attrs = [
     'name',
     'description',
@@ -41,4 +57,5 @@ class RiskAssessment(Base, db.Model):
     'custom1',
     'custom2',
     'custom3',
+    'template',
     ]

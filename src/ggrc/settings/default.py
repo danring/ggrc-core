@@ -21,7 +21,7 @@ exports = []
 # Deployment-specific variables
 COMPANY = "Company, Inc."
 COMPANY_LOGO_TEXT = "Company GRC"
-VERSION = "s20"
+VERSION = "s21"
 
 # Initialize from environment if present
 import os

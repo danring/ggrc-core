@@ -139,12 +139,28 @@
       </div>
       <div class="span6">
         <label>
+          Auditor
+        </label>
+        <i class="grcicon-person-green pull-left icon-field"></i>
+        <div class="objective-selector">
+          {{! `with_auditors` requires `authorizations` mapping, so preload it }}
+          {{#with_mapping 'authorizations' instance}}
+          {{#with_auditors instance}}
+            {{#using auditor=auditors.0.person}}
+            <input tabindex="10" type="text" name="auditor.email" data-lookup="Person" class="span8" value="{{auditor.email}}">
+            {{/using}}
+          {{else}}
+            <input tabindex="10" type="text" name="auditor.email" data-lookup="Person" class="span8" value="">
+          {{/with_auditors instance}}
+          {{/with_mapping 'authorizations' instance}}
+        </div>
+        <label>
           Audit Firm
         </label>
         <i class="grcicon-orggroup-color pull-left icon-field"></i>
         <div class="objective-selector">
           {{#using firm=instance.audit_firm}}
-          <input tabindex="10" type="text" name="audit_firm.email" data-lookup="OrgGroup" class="span8" value="{{firstnonempty firm.title ''}}">
+          <input tabindex="11" type="text" name="audit_firm.email" data-lookup="OrgGroup" class="span8" value="{{firstnonempty firm.title ''}}">
           {{/using}}
         </div>
       </div>

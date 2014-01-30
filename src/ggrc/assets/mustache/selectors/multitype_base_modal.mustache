@@ -101,7 +101,13 @@
         </div>
         <div class="span6">
           <div class="confirm-buttons">
-            <a class="btn btn-primary preventdoubleclick {{^if selected_option}}disabled {{/if}}map-button" href="javascript://">
+            {{#is_page_instance}}
+              <span class="error">Can't map an object to itself<span>
+            {{/is_page_instance}}
+            <a class="btn btn-primary preventdoubleclick 
+              {{#if_helpers '\
+                ^if' selected_option '\
+                or #if' is_page_instance}} disabled {{/if_helpers}}map-button" href="javascript://">
               {{#if_equals option_type_count 1}}
                 {{#option_type_menu}}{{#items}}
                   {{#if_equals model_display 'References'}}

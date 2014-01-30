@@ -248,6 +248,8 @@
         background:#eee;
         span.lhs-item {
           display:block;
+          width: auto !important;
+          margin-right: 60px;
           @include oneline();
         }
         &.active {
@@ -262,6 +264,15 @@
         }
         .lhs-private {
           margin-right: 17px;
+          position: absolute;
+          top: 0px;
+          right: 20px;
+        }
+        .lhs-people {
+          margin-right: 17px;
+          position: absolute;
+          top: 0px;
+          right: 0px;
         }
       }
       &.view-more {
@@ -330,7 +341,7 @@
   background-repeat:no-repeat;
   background-position:2px 50%;
   @include opacity(0.6);
-  cursor:w-resize;
+  cursor:ew-resize;
   &:hover {
     @include opacity(1);
     background-color:#fff;

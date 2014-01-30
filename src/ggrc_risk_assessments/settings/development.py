@@ -4,3 +4,5 @@
 # Maintained By: dan@reciprocitylabs.com
 
 EXTENSIONS = ['ggrc_risk_assessments']
+
+RISK_ASSESSMENT_URL = os.environ.get('GGRC_RISK_ASSESSMENT_URL', 'http://localhost:8080')

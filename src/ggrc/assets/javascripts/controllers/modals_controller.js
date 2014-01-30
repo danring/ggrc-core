@@ -255,7 +255,9 @@ can.Control("GGRC.Controllers.Modals", {
               return that.options.instance;
             }
           }).done(function() {
-            that.on(); //listen to instance.
+            // Check if modal was closed
+            if(that.element !== null)
+              that.on(); //listen to instance.
           });
     } else {
       this.options.attr("instance", new can.Observe(params));
@@ -445,33 +447,12 @@ can.Control("GGRC.Controllers.Modals", {
       if (!instance.context)
         instance.attr('context', { id: null });
       // FIXME: This should not depend on presence of `<model>.attributes`
-      if (instance.isNew() && instance.constructor.attributes.owners
-          && (!instance.owners || instance.owners.length == 0)) {
-        // Do not add an owner to a private program. Ownership is managed
-        // through role assignment for private programs.
-        if (!(instance instanceof CMS.Models.Program) || !instance.private)
-        {
-          instance.attr('owners', [{ id: GGRC.current_user.id }]);
-        }
+      if (instance.isNew()) {
+        instance.set_owner_to_current_user_if_unset();
       }
 
       ajd = instance.save().done(function(obj) {
-        function finish() {
-          that.element.trigger("modal:success", obj).modal_form("hide");
-        };
-
-        // If this was an Objective created directly from a Section, create a join
-        var params = that.options.object_params;
-        if (obj instanceof CMS.Models.Objective && params && params.section) {
-          new CMS.Models.SectionObjective({
-            objective: obj
-            , section: CMS.Models.Section.findInCacheById(params.section.id)
-            , context: { id: null }
-          }).save().done(finish);
-        }
-        else {
-          finish();
-        }
+        that.element.trigger("modal:success", obj).modal_form("hide");
       }).fail(function(xhr, status) {
         el.trigger("ajax:flash", { error : xhr.responseText });
       });
@@ -491,7 +472,6 @@ can.Control("GGRC.Controllers.Modals", {
       });
     }
   }
-
   , " ajax:flash" : function(el, ev, mesg) {
     var that = this;
     this.options.$content.find(".flash").length || that.options.$content.prepend("<div class='flash'>");

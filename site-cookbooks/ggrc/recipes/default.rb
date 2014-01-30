@@ -82,7 +82,7 @@ def add_file_section(path, identifier, content)
   end_line = "# END #{identifier}"
 
   # Check for line with matching md5
-  if data.grep(/#{begin_line} #{digest}/).empty?
+  if (data.respond_to? :grep and data.grep(/#{begin_line} #{digest}/).empty?) or (data.lines.grep(/#{begin_line} #{digest}/).empty?)
     # Remove old additions
     data = data.gsub(/\s*#{begin_line}.*#{end_line}\s?[0-9a-f]*\s*/m, '')
 

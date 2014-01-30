@@ -183,23 +183,33 @@
                     {{#using auditor=auditors.0.person}}
                       {{{renderLive '/static/mustache/people/popover.mustache' person=auditor}}}
                     {{/using}}
-                    <span class="edit-auditor">
-                      <a href="javascript://" data-toggle="audit-role-modal-selector" data-modal-selector-options="user_roles" data-list-target="refresh" data-modal-class="modal" data-modal-title="Add Auditor to {{instance.display_name}}" data-modal-scope="Audit" data-object-params='{ "context": { "id" : {{firstexist instance.context.id "null"}}, "href" : "{{instance.context.href}}", "type" : "{{instance.context.type}}"}, "scope_id": {{instance.id}}, "userRole_id": {{auditors.0.binding.id}} }' data-base-modal="auditor">
+                    <!--<span class="edit-auditor">
+                      <a href="javascript://" data-toggle="audit-role-modal-selector" data-modal-selector-options="user_roles" data-list-target="refresh" data-modal-class="modal" data-modal-title="Add Auditor to {{instance.display_name}}" data-modal-scope="Audit" data-object-id="{{instance.id}}" data-object-params='{ "context": { "id" : {{firstexist instance.context.id "null"}}, "href" : "{{instance.context.href}}", "type" : "{{instance.context.type}}"}, "scope_id": {{instance.id}}, "userRole_id": {{auditors.0.binding.id}} }' data-base-modal="auditor">
                         <i class="grcicon-edit"></i>
                         Edit
                       </a>
-                    </span>
+                    </span>-->
                   {{else}}
-                    <a href="javascript://" data-toggle="audit-role-modal-selector" data-modal-selector-options="user_roles" data-list-target="refresh" data-modal-class="modal" data-modal-title="Add Auditor to {{instance.display_name}}" data-modal-scope="Audit" data-object-params='{ "context": { "id" : {{firstexist instance.context.id "null"}}, "href" : "{{instance.context.href}}", "type" : "{{instance.context.type}}"}, "scope_id": {{instance.id}} }' data-base-modal="auditor">
+                    No auditor assigned
+                    <!--<a href="javascript://" data-toggle="audit-role-modal-selector" data-modal-selector-options="user_roles" data-list-target="refresh" data-modal-class="modal" data-modal-title="Add Auditor to {{instance.display_name}}" data-modal-scope="Audit"  data-object-id="{{instance.id}}" data-object-params='{ "context": { "id" : {{firstexist instance.context.id "null"}}, "href" : "{{instance.context.href}}", "type" : "{{instance.context.type}}"}, "scope_id": {{instance.id}} }' data-base-modal="auditor">
                     + Auditor
-                    </a>
+                    </a>-->
                   {{/with_auditors}}
                   {{/with_mapping}}
                 {{else}}
+                <!-- TODO: Figure out how to fetch authorizations for user with no access roles
                 <strong>Auditor: </strong>
-                {{#with_auditors instance}}
-                  {{join "person.name" auditors}}
-                {{/with_auditors}}
+                {{! `with_auditors` requires `authorizations` mapping, so preload it }}
+                  {{#with_mapping 'authorizations' instance}}
+                  {{#with_auditors instance}}
+                    {{#using auditor=auditors.0.person}}
+                      {{{renderLive '/static/mustache/people/popover.mustache' person=auditor}}}
+                    {{/using}}
+                  {{else}}
+                    None
+                  {{/with_auditors}}
+                  {{/with_mapping}}
+                -->
                 {{/if_helpers}}
               </li>
             </ul>
@@ -260,10 +270,15 @@
             <a href="#"><i class="grcicon-edit"></i> {{model.title_singular}} Log</a>
           </li>
           -->
+        {{/if_helpers}}
+
+        {{#is_allowed 'read' 'Request' context=instance.context.id}}
           <li>
           <a href="/audits/{{instance.id}}/export_pbcs?id={{instance_ids child_options.0.list}}"><i class="grcicon-export"></i> Export PBC List</a>
           </li>
+        {{/is_allowed}}
 
+        {{#is_allowed 'create' 'update' 'Request' context=instance.context.id}}
           <li>
           {{! FIXME: Better way to get the Audit link }}
           <a href="/audits/{{instance.id}}/import_pbcs?return_to={{param_current_location}}"><i class="grcicon-imp-exp"></i> Import PBC List</a>
@@ -274,7 +289,7 @@
           <a href="/audits/{{instance.id}}/import_pbc_template"><i class="grcicon-export"></i> Download PBC Import Template</a>
           </li>
           -->
-        {{/if_helpers}}
+        {{/is_allowed}}
       </ul>
     </div>
 
