@@ -96,7 +96,7 @@ can.Model.Cacheable("CMS.Models.Response", {
       //0: mapped objects
       mapping : "business_objects"
       , model : can.Model.Cacheable
-      , show_view : GGRC.mustache_path + "/base_objects/tree.mustache"
+      , show_view : null
       , footer_view : GGRC.mustache_path + "/base_objects/tree_footer.mustache"
       , allow_mapping : true
       , exclude_option_types : function() {
